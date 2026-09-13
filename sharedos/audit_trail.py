@@ -1,11 +1,12 @@
-﻿"""
+"""
 SharedOS Cryptographically Linked Audit Trail
-Logs every internal turn, permission grant, search query, NLI reasoning step, and egress response.
+Logs every internal turn, permission grant, search query, NLI reasoning step, and egress response with disk persistence.
 """
 
 import time
 import hashlib
 import json
+import os
 from typing import Dict, Any, List, Optional
 
 
@@ -33,11 +34,12 @@ class AuditEvent:
 
 
 class SharedOSAuditTrail:
-    def __init__(self, audit_id: str, caller_agent_id: str = "anonymous-agent"):
+    def __init__(self, audit_id: str, caller_agent_id: str = "anonymous-agent", persist_dir: Optional[str] = None):
         self.audit_id = audit_id
         self.caller_agent_id = caller_agent_id
         self.events: List[AuditEvent] = []
         self.last_hash = "0" * 64
+        self.persist_dir = persist_dir or os.path.join(os.path.dirname(os.path.dirname(__file__)), ".sharedos")
 
     def log_turn(self, step: str, details: Dict[str, Any]) -> AuditEvent:
         event = AuditEvent(step=step, details=details, previous_hash=self.last_hash)
@@ -46,7 +48,7 @@ class SharedOSAuditTrail:
         return event
 
     def export_trail(self) -> Dict[str, Any]:
-        return {
+        trail_data = {
             "audit_id": self.audit_id,
             "caller_agent_id": self.caller_agent_id,
             "purpose": "Independent multi-source factual verification and hallucination auditing for AI agent responses.",
@@ -55,3 +57,14 @@ class SharedOSAuditTrail:
             "final_hash": self.last_hash,
             "trail": [e.to_dict() for e in self.events]
         }
+        self._persist_to_disk(trail_data)
+        return trail_data
+
+    def _persist_to_disk(self, data: Dict[str, Any]):
+        try:
+            os.makedirs(self.persist_dir, exist_ok=True)
+            log_file = os.path.join(self.persist_dir, "audit_log.jsonl")
+            with open(log_file, "a", encoding="utf-8") as f:
+                f.write(json.dumps(data) + "\n")
+        except Exception:
+            pass

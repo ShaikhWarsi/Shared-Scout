@@ -111,9 +111,8 @@ class ClaimVerifier:
                 ev_clean = [p.replace(",", "") for p in ev_prices]
                 if ev_clean and clean_cp not in ev_clean:
                     correct_price = ev_prices[0]
-                    # Find currency symbol in claim
                     curr_match = re.search(r"(rs\.?|inr|₹|\$|usd|eur|€|gbp|£)", c_lower)
-                    curr_sym = curr_match.group(1).upper() if curr_match else "Rs."
+                    curr_sym = "Rs." if curr_match and curr_match.group(1).lower().startswith("rs") else (curr_match.group(1) if curr_match else "Rs.")
                     conf = min(0.99, 0.90 + (top_weight * 0.08))
                     return (
                         VerdictEnum.CONTRADICTED,
@@ -134,30 +133,29 @@ class ClaimVerifier:
             # Map evidence units to values
             ev_unit_map: Dict[str, List[str]] = {}
             for val, unit in ev_quantities:
-                # Normalize unit variations (e.g., hrs -> hours)
                 norm_unit = "hours" if unit in {"hour", "hrs", "hr"} else "watts" if unit == "watt" else "meters" if unit == "meter" else "nits" if unit == "nit" else unit
                 ev_unit_map.setdefault(norm_unit, []).append(val)
 
             for c_val, c_unit in claim_quantities:
                 norm_c_unit = "hours" if c_unit in {"hour", "hrs", "hr"} else "watts" if c_unit == "watt" else "meters" if c_unit == "meter" else "nits" if c_unit == "nit" else c_unit
+                
+                # Check for qualifier conditions (e.g., ANC active vs ANC off)
+                if any(k in c_lower for k in ["anc", "nc on", "nc enabled", "noise cancel"]):
+                    for snippet in [e.snippet for e in evidence]:
+                        s_lower = snippet.lower()
+                        nc_on_match = re.search(r"(?:max\.?\s*)?(\d+)\s*(?:hours|hrs|hr)?\s*\((?:nc on|with anc|anc on)\)", s_lower)
+                        if nc_on_match:
+                            true_nc_val = nc_on_match.group(1)
+                            if c_val != true_nc_val:
+                                return (
+                                    VerdictEnum.CONTRADICTED,
+                                    0.98,
+                                    f"Claim asserts {c_val} {norm_c_unit} with ANC enabled, but official specifications confirm {true_nc_val} {norm_c_unit} with ANC ({c_val} {norm_c_unit} only with ANC disabled).",
+                                    f"Battery life is {true_nc_val} {norm_c_unit} with ANC enabled ({c_val} {norm_c_unit} without ANC)."
+                                )
+
                 if norm_c_unit in ev_unit_map:
                     matching_ev_vals = ev_unit_map[norm_c_unit]
-                    # Check for conditional specs (e.g., "30 hours (NC ON), 40 hours (NC OFF)")
-                    if "anc" in c_lower or "nc" in c_lower or "noise cancel" in c_lower:
-                        # If claim asserts high number with ANC, check if evidence restricts that number to NC OFF
-                        for snippet in [e.snippet for e in evidence]:
-                            s_lower = snippet.lower()
-                            if ("nc on" in s_lower or "nc enabled" in s_lower or "with anc" in s_lower) and c_val not in s_lower:
-                                nc_on_match = re.search(r"(\d+)\s*(?:hours|hrs|hr)?\s*\((?:nc on|with anc)\)", s_lower)
-                                if nc_on_match:
-                                    true_val = nc_on_match.group(1)
-                                    return (
-                                        VerdictEnum.CONTRADICTED,
-                                        0.96,
-                                        f"Claim asserts {c_val} {norm_c_unit} with ANC enabled, but official specifications confirm {true_val} {norm_c_unit} with ANC ({c_val} {norm_c_unit} only with ANC disabled).",
-                                        f"Specification is {true_val} {norm_c_unit} with ANC active."
-                                    )
-
                     # Standard numeric mismatch on identical unit
                     if c_val not in matching_ev_vals:
                         ev_val = matching_ev_vals[0]
@@ -182,7 +180,6 @@ class ClaimVerifier:
                 ev_years = re.findall(year_pattern, combined_snippets)
                 if ev_years and cy not in ev_years:
                     correct_year = ev_years[0]
-                    # Check if there's high entity overlap to ensure we are talking about the same subject
                     return (
                         VerdictEnum.CONTRADICTED,
                         0.92,
