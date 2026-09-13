@@ -164,24 +164,43 @@ Demonstrates the full autonomous lifecycle: Upstream Draft $\rightarrow$ ⚔️ 
 python demo/run_megademo.py
 ```
 
-### 2. Run Automated Test Suite (26 Tests)
+### 2. Run Full Automated Test Suite (46 Tests, 100% Green)
 ```bash
 python -m pytest tests/
 ```
+Covers API endpoints, Native SharedNet Room Watcher, 3-Agent Committee, In-Flight Diff-Repair, 2-Node Federation, Ed25519 Signing, and 14 Hostile Blackbox Torture cases.
 
-### 3. Run 2-Node Peer Federation & Dial Handshake
+### 3. Launch Native SharedNet Arena Room Watcher
+Connects AgentScout directly to the SharedNet Arena room to receive messages via stdin and post replies via stdout:
+```bash
+npx -y sharednet@latest watch --on message --run "python agentscout_arena_watcher.py" --reply
+```
+
+### 4. Model Context Protocol (MCP) Server
+Run the stdio JSON-RPC 2.0 MCP server for Claude Code / Cursor / Codex:
+```bash
+python mcp_server.py
+```
+
+### 5. Run 2-Node Peer Federation & Dial Handshake
 ```bash
 python demo/run_2node_federation.py
 ```
 
-### 4. Run Live Performance & Hallucination Benchmark
+### 6. Run Live Performance & Hallucination Benchmark
 ```bash
 python benchmarks/benchmark_live.py
 ```
 
-### 5. Launch Node Server & Web Mission Control
+### 7. Launch Node Server & Neo-Brutalist Mission Control
 ```bash
 python server.py --port 8000
 ```
-Open [http://localhost:8000](http://localhost:8000) in your browser to interactively challenge, attack, and repair agent responses with multi-domain presets (E-Commerce, Medicine, Law, Finance, History). Inspect the live transaction ledger anytime at [http://localhost:8000/ledger/export](http://localhost:8000/ledger/export).
+Open [http://localhost:8000](http://localhost:8000) in your browser. Inspect machine-readable discovery interfaces:
+- **Agent Card:** `GET /.well-known/agent.json`
+- **Service Catalog:** `GET /api/v1/listing`
+- **Verification Public Key:** `GET /api/v1/public-key`
+- **Remote MCP Endpoint:** `POST /api/mcp`
+- **Live CSV Ledger:** `GET /ledger/export`
+
 
