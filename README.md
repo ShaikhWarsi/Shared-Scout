@@ -1,26 +1,47 @@
-# AgentScout: The Pre-Action CI/CD Firewall Gate for AI Agents
+<div align="center">
 
-> **“Challenge it before it acts.”**
+# 🛡️ AgentScout
+### The Pre-Action CI/CD Firewall Gate & In-Flight Diff-Repair Middleware for AI Agents
 
-AgentScout is an autonomous **pre-action verification and in-flight diff-repair middleware** for AI agents.
+[![Live Status](https://img.shields.io/badge/Vercel%20Deployment-200%20OK%20Live-brightgreen)](https://shared-scout.vercel.app)
+[![Tests](https://img.shields.io/badge/Test%20Suite-52%2F52%20Passed%20(100%25)-success)](https://github.com/ShaikhWarsi/Shared-Scout)
+[![SharedOS](https://img.shields.io/badge/SharedOS-Kernel%20Authorized-blue)](https://www.sharedos.ai)
+[![Security](https://img.shields.io/badge/Clearance-Ed25519%20Signed%20Dockets-orange)](https://shared-scout.vercel.app/api/v1/public-key)
+[![Latency](https://img.shields.io/badge/Latency-%3C1.5s-purple)](https://shared-scout.vercel.app)
 
-It intercepts agent drafts before external execution, audits claims against multi-source ground truth, detects contradictions and hallucinations, blocks unsafe outputs, and surgically repairs verified errors before the response is shipped.
+<br/>
+
+![AgentScout Visual CI/CD Mission Control](assets/hero_screenshot.png)
+
+<br/>
+
+> **“Don’t ask an AI agent to trust itself. Challenge it before it acts.”**
+
+</div>
 
 ---
 
-## The Core Problem in Agent Economies
+## 📌 Executive Overview
+
+**AgentScout** is an autonomous **pre-action verification and in-flight diff-repair middleware** built for the **SharedOS / SharedNet** agent economy.
+
+It intercepts AI agent drafts prior to external execution, audits factual claims against multi-source ground truth (Wikipedia REST API, DuckDuckGo Live Search, and an authoritative offline verification corpus), detects hallucinations, blocks unsafe outputs, and **surgically repairs verified errors before the response is shipped**.
+
+---
+
+## 💥 The Core Problem in Agent Economies
 
 When autonomous agents interact and transact across **SharedNet / SharedOS**, a single hallucinated specification, outdated price, or fabricated capability can:
 
-1. **Drain limited Arena credits** through incorrect decisions or broken seller claims.
-2. **Trigger unauthorized or unsafe tool actions** that violate environmental constraints.
-3. **Cause cascading errors** across multi-agent pipelines.
+1. **Drain limited Arena credits** through incorrect trading decisions or broken vendor claims.
+2. **Trigger unauthorized or unsafe tool actions** that violate environmental and security constraints.
+3. **Cause cascading errors** across multi-agent pipelines where downstream agents inherit false assumptions.
 
-Existing verification systems primarily focus on determining whether a claim is trustworthy.
+Existing verification systems primarily focus on post-hoc evaluation (determining whether an already-executed claim was trustworthy).
 
 **AgentScout goes one step earlier.**
 
-Instead of allowing an unverified output to reach the user, another agent, or an external tool, AgentScout acts as a **pre-action firewall** that verifies and, when possible, repairs the output before it ships.
+Instead of allowing an unverified output to reach a user, another agent, or an external tool, AgentScout acts as an active **pre-action firewall** that verifies and surgically repairs the output in-flight before it ships.
 
 ---
 
