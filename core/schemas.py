@@ -116,3 +116,4 @@ class FirewallGateResponse(BaseModel):
     audit_autopsy: AuditResponse
     credits_billed: int = 5
     latency_ms: int
+    verification_receipt: Optional[Dict[str, Any]] = Field(default=None, description="Cryptographically anchored AgentScout Verification & Clearance Receipt")

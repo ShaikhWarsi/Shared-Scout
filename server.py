@@ -239,11 +239,47 @@ async def ui_repair_interactive(req: AuditRequest):
     """
     caller_id = "local-browser-session"
     check_rate_limit(caller_id)
-    success, bal, msg = ledger.deduct_credits(caller_id, amount=5, service_name="POST /api/ui/repair")
+    response, _ = service.execute_audit(req, caller_agent_id=caller_id)
+    response.remaining_credits = ledger.get_balance(caller_id)
+    return response
+
+
+@app.post("/audit", response_model=AuditResponse)
+@app.post("/repair", response_model=AuditResponse)
+async def audit_answer(req: AuditRequest, request: Request, caller_id: str = Depends(authenticate_caller)):
+    """
+    Standard Verification & Surgical Diff-Repair Endpoint.
+    Billed at 5 Arena Credits.
+    """
+    try:
+        success, bal, msg = ledger.deduct_credits(caller_id, amount=5, service_name="POST /repair")
+        if not success:
+            raise HTTPException(status_code=403, detail=msg)
+        response, _ = service.execute_audit(req, caller_agent_id=caller_id)
+        response.remaining_credits = bal
+        return response
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Audit execution error: {str(e)}")
+
+
+@app.post("/batch-audit", response_model=List[AuditResponse])
+async def batch_audit(requests: List[AuditRequest], request: Request, caller_id: str = Depends(authenticate_caller)):
+    """Processes multiple audit requests in sequence under single authenticated caller turn."""
+    total_fee = len(requests) * 5
+    success, bal, msg = ledger.deduct_credits(caller_id, amount=total_fee, service_name=f"POST /batch-audit ({len(requests)} items)")
     if not success:
         raise HTTPException(status_code=403, detail=msg)
-    response, _ = service.execute_audit(req, caller_agent_id=caller_id)
-    response.remaining_credits = bal
+    
+    results = []
+    for req in requests:
+        res, _ = service.execute_audit(req, caller_agent_id=caller_id)
+        res.remaining_credits = bal
+        results.append(res)
+    return results
+
+
 @app.post("/api/free/trial", response_model=AuditResponse)
 async def free_trial_audit(req: AuditRequest):
     """
