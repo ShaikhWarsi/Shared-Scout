@@ -1,5 +1,5 @@
 """
-AgentScout FastAPI Server, SharedNet Gateway, Autonomous Repair Router & Rate Limiter
+AgentScout FastAPI Server, SharedNet Gateway, Autonomous Repair Router, HMAC Auth & Rate Limiter
 """
 
 import os
@@ -7,7 +7,7 @@ import json
 import time
 from typing import List
 from collections import defaultdict
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, HTTPException, Request, Depends
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -19,7 +19,7 @@ from arena.pitch_bot import ArenaPitchAgent
 
 app = FastAPI(
     title="AgentScout - SharedOS Verification Layer",
-    version="1.1.0",
+    version="1.2.0",
     description="Independent verification and autonomous hallucination repair layer for AI agents on SharedOS."
 )
 
@@ -49,6 +49,19 @@ def check_rate_limit(caller_id: str):
     request_timestamps[caller_id] = timestamps
 
 
+async def authenticate_caller(request: Request) -> str:
+    caller_id = request.headers.get("x-sharedos-agent-id", "peer-agent-node")
+    check_rate_limit(caller_id)
+    raw_body = await request.body()
+    auth_res = cloud_adapter.verify_turn_authorization(dict(request.headers), raw_body)
+    if not auth_res["authorized"]:
+        raise HTTPException(
+            status_code=401,
+            detail="SharedOS Authentication Failed: Invalid or missing x-sharedos-signature HMAC token."
+        )
+    return caller_id
+
+
 @app.get("/manifest")
 def get_manifest():
     return JSONResponse(content=SHAREDOS_MANIFEST)
@@ -69,9 +82,7 @@ def get_node_info():
 
 
 @app.post("/audit", response_model=AuditResponse)
-def audit_answer(req: AuditRequest, request: Request):
-    caller_id = request.headers.get("x-sharedos-agent-id", "peer-agent-node")
-    check_rate_limit(caller_id)
+async def audit_answer(req: AuditRequest, request: Request, caller_id: str = Depends(authenticate_caller)):
     try:
         response, trail = service.execute_audit(req, caller_agent_id=caller_id)
         return response
@@ -80,10 +91,8 @@ def audit_answer(req: AuditRequest, request: Request):
 
 
 @app.post("/repair", response_model=AuditResponse)
-def repair_answer(req: AuditRequest, request: Request):
+async def repair_answer(req: AuditRequest, request: Request, caller_id: str = Depends(authenticate_caller)):
     """Executes audit and returns verified auto-repaired answer text."""
-    caller_id = request.headers.get("x-sharedos-agent-id", "peer-agent-repair")
-    check_rate_limit(caller_id)
     try:
         response, _ = service.execute_audit(req, caller_agent_id=caller_id)
         return response
@@ -92,10 +101,8 @@ def repair_answer(req: AuditRequest, request: Request):
 
 
 @app.post("/batch-audit", response_model=List[AuditResponse])
-def batch_audit_answers(requests: List[AuditRequest], request: Request):
+async def batch_audit_answers(requests: List[AuditRequest], request: Request, caller_id: str = Depends(authenticate_caller)):
     """Audits multiple agent answers in a single batch call."""
-    caller_id = request.headers.get("x-sharedos-agent-id", "peer-batch-node")
-    check_rate_limit(caller_id)
     results = []
     for req in requests[:5]:  # Cap at 5 per batch for safety
         res, _ = service.execute_audit(req, caller_agent_id=caller_id)

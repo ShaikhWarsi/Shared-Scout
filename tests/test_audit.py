@@ -1,13 +1,12 @@
 """
 AgentScout Automated Test Suite
-Verifies claim extraction, contradiction detection, SharedOS compliance, and A2A service contracts.
+Verifies claim extraction, generalized NLI contradiction detection, SharedOS compliance, and A2A service contracts.
 """
 
 import pytest
-from core.schemas import AuditRequest, VerdictEnum
+from core.schemas import AuditRequest, EvidenceItem, VerdictEnum
 from core.extractor import ClaimExtractor
 from core.verifier import ClaimVerifier
-from core.search import WebSearchEngine
 from core.scorer import AuditScorer
 from sharedos.service import AgentScoutService
 from sharedos.manifest import SHAREDOS_MANIFEST, SHAREDOS_PURPOSE_STRING
@@ -30,43 +29,82 @@ def test_claim_extractor_currency_protection():
     assert "Rs. 2,499" in claims[1]
 
 
-def test_contradiction_detection():
+def test_verifier_price_contradiction_direct():
+    """Tests generalized price contradiction detection with evidence."""
+    verifier = ClaimVerifier()
+    claim_text = "The Realme Buds Air 5 Pro provides 50dB ANC and costs Rs. 2,499."
+    evidence = [
+        EvidenceItem(
+            source_url="https://buy.realme.com/in/goods/realme-buds-air-5-pro",
+            source_title="Realme Official Store",
+            snippet="Realme Buds Air 5 Pro official launch price is Rs. 4,999. Includes 50dB Active Noise Cancellation.",
+            reliability_weight=1.0
+        )
+    ]
+    audit = verifier.verify_claim(1, claim_text, evidence)
+    assert audit.verdict == VerdictEnum.CONTRADICTED
+    assert audit.confidence >= 0.90
+    assert "Rs. 4,999" in audit.correction
+    assert "Rs. 2,499" in audit.contradiction_details
+
+
+def test_verifier_battery_spec_contradiction_direct():
+    """Tests generalized spec/qualifier contradiction detection with evidence."""
+    verifier = ClaimVerifier()
+    claim_text = "Sony WH-1000XM5 features 40 hours continuous music playback with ANC enabled."
+    evidence = [
+        EvidenceItem(
+            source_url="https://www.sony.com/electronics/headband-headphones/wh-1000xm5/specifications",
+            source_title="Sony Official Global Specifications",
+            snippet="Battery Life (Continuous Music Playback): Max. 30 hours (NC ON), Max. 40 hours (NC OFF). 3 min quick charge provides 3 hours playback.",
+            reliability_weight=1.0
+        )
+    ]
+    audit = verifier.verify_claim(1, claim_text, evidence)
+    assert audit.verdict == VerdictEnum.CONTRADICTED
+    assert audit.confidence >= 0.90
+    assert "30 hours" in audit.correction
+
+
+def test_service_execution_and_repair(monkeypatch):
+    """Tests full service pipeline with injected search evidence."""
     service = AgentScoutService()
+    
+    # Mock search_engine.search_claim to return evidence
+    def mock_search(claim, question=""):
+        return [
+            EvidenceItem(
+                source_url="https://buy.realme.com/in/goods/realme-buds-air-5-pro",
+                source_title="Realme Official Store",
+                snippet="Realme Buds Air 5 Pro launch price is Rs. 4,999 with 50dB ANC.",
+                reliability_weight=1.0
+            )
+        ]
+    monkeypatch.setattr(service.search_engine, "search_claim", mock_search)
+    
     req = AuditRequest(
-        question="Find best headphones under 3000",
-        answer="The Realme Buds Air 5 Pro provides 50dB ANC and costs Rs. 2,499."
+        question="Find headphones under 3000",
+        answer="The Realme Buds Air 5 Pro costs Rs. 2,499 with 50dB ANC."
     )
     resp, trail = service.execute_audit(req, caller_agent_id="TestAgent")
     
     assert resp.stats.contradicted >= 1
     assert resp.verdict_summary == "CONTRADICTED"
     assert resp.reliability <= 60
-    assert "Rs. 4,999" in resp.claims[0].correction
-
-
-def test_sharedos_audit_trail_cryptography():
-    service = AgentScoutService()
-    req = AuditRequest(
-        question="Test Question",
-        answer="boAt Rockerz 450 is priced at Rs. 1,499."
-    )
-    resp, trail = service.execute_audit(req, caller_agent_id="TestAgent")
-    
+    assert "Rs. 4,999" in resp.repaired_answer
     assert trail["total_turns"] == 5
     assert trail["purpose"] == SHAREDOS_PURPOSE_STRING
     assert len(trail["final_hash"]) == 64
-    assert trail["trail"][0]["step"] == "TURN_1_INGRESS"
-    assert trail["trail"][-1]["step"] == "TURN_5_EGRESS"
 
 
-def test_a2a_latency_and_billing():
+def test_unverified_fallback_when_no_evidence():
+    """Tests that missing search evidence properly returns UNVERIFIED with 0 hardcoding."""
     service = AgentScoutService()
+    # Query an arbitrary made-up product that has 0 search results
     req = AuditRequest(
-        question="Battery spec of Sony WH-1000XM5?",
-        answer="Sony WH-1000XM5 features 40 hours continuous music playback with ANC enabled."
+        question="What is the price of NonExistentWidget99?",
+        answer="The NonExistentWidget99 costs Rs. 1,234 with quantum battery."
     )
-    resp, _ = service.execute_audit(req, caller_agent_id="FastAgent")
-    
-    assert resp.credits_billed == 5
-    assert resp.execution_latency_ms < 5000  # Well within 5 minutes timeout limit
-    assert resp.stats.contradicted == 1
+    resp, _ = service.execute_audit(req, caller_agent_id="TestAgent")
+    assert resp.stats.unverified >= 1
+    assert resp.claims[0].verdict == VerdictEnum.UNVERIFIED

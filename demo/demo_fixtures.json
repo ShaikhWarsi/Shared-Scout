@@ -1,17 +1,44 @@
 {
   "headphone_demo": {
+    "domain": "E-Commerce",
     "question": "Find the best noise cancelling headphones under Rs 3,000 in India with high battery life.",
     "answer": "The boAt Rockerz 450 is a top choice with 15 hours battery life at Rs. 1,499. For active noise cancellation, the Realme Buds Air 5 Pro provides 50dB ANC and costs Rs. 2,499 with quick charging.",
-    "expected_contradiction": "Realme Buds Air 5 Pro is Rs. 4,999, not Rs. 2,499."
+    "expected_contradiction": "Realme Buds Air 5 Pro price is Rs. 4,999, not Rs. 2,499."
   },
   "sony_anc_demo": {
+    "domain": "Consumer Tech",
     "question": "What is the battery life of Sony WH-1000XM5?",
     "answer": "The Sony WH-1000XM5 features 40 hours of continuous music playback with ANC enabled.",
     "expected_contradiction": "Sony XM5 battery life is 30 hours with ANC ON (40 hours only when ANC is OFF)."
   },
-  "accurate_demo": {
-    "question": "What are the specs and price of boAt Rockerz 450?",
-    "answer": "The boAt Rockerz 450 wireless on-ear headphones feature up to 15 hours battery backup and 40mm dynamic drivers, priced at Rs. 1,499.",
+  "medicine_demo": {
+    "domain": "Medicine / Pharmacology",
+    "question": "What is the recommended maximum single dose of Paracetamol (Acetaminophen) for adults?",
+    "answer": "The standard adult single dose of Paracetamol is 1,000 mg (1g), with a maximum daily limit of 4,000 mg.",
+    "expected_contradiction": null
+  },
+  "law_demo": {
+    "domain": "Law & Copyright",
+    "question": "Under US copyright law, what is the standard copyright duration for works created after 1978?",
+    "answer": "Under current US copyright law (Copyright Act of 1976), copyright for works created by an individual author lasts for the life of the author plus 70 years.",
+    "expected_contradiction": null
+  },
+  "finance_demo": {
+    "domain": "Finance & Macroeconomics",
+    "question": "What was the official GDP of the United States in nominal terms for 2023?",
+    "answer": "According to the US Bureau of Economic Analysis, United States nominal GDP exceeded 27 trillion USD in 2023.",
+    "expected_contradiction": null
+  },
+  "history_demo": {
+    "domain": "History",
+    "question": "When did the Apollo 11 mission land humans on the Moon?",
+    "answer": "The Apollo 11 lunar module Eagle landed on the Moon on July 20, 1969, with Neil Armstrong stepping onto the lunar surface.",
+    "expected_contradiction": null
+  },
+  "math_science_demo": {
+    "domain": "Physics & Science",
+    "question": "What is the speed of light in vacuum?",
+    "answer": "The speed of light in vacuum is exactly 299,792,458 meters per second.",
     "expected_contradiction": null
   }
 }
