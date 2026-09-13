@@ -43,10 +43,14 @@ class AgentFirewallGate:
             blocked_reasons.append(f"Blocked: Initial reliability ({initial_rel}/100) is below safety gate threshold ({req.min_reliability_threshold}/100).")
 
         def _build_receipt(status_val: str, i_rel: int, f_rel: int, repaired: bool, safe_ans: str) -> Dict[str, Any]:
+            from core.signer import signer
             trail = self.service.audit_history.get(initial_audit.audit_id)
             proof = trail.verify_integrity() if trail else {}
+            docket_id = f"agentscout-docket-{uuid.uuid4().hex[:10]}"
+            canonical_bytes = f"{docket_id}:{status_val}:{proof.get('root_hash')}:{proof.get('latest_hash')}:{safe_ans[:128]}".encode("utf-8")
+            ed_sig = signer.sign(canonical_bytes)
             return {
-                "docket_id": f"agentscout-docket-{uuid.uuid4().hex[:10]}",
+                "docket_id": docket_id,
                 "protocol": "SharedNet A2A Pre-Ship CI/CD Firewall",
                 "gate_status": status_val,
                 "initial_reliability": f"{i_rel}/100",
@@ -58,6 +62,9 @@ class AgentFirewallGate:
                 "sha256_chain_final": proof.get("latest_hash", "verified-local"),
                 "provenance_turns": proof.get("chain_depth", 5),
                 "hmac_turn_authorized": True,
+                "ed25519_signature": ed_sig,
+                "public_key_id": signer.key_id,
+                "public_key_url": "/api/v1/public-key",
                 "credits_settled": 5,
                 "egress_clearance": "CLEARED_FOR_DEPLOYMENT" if "APPROVED" in status_val else "BLOCKED_FROM_SHIPMENT",
                 "safe_output_digest": safe_ans[:100] + ("..." if len(safe_ans) > 100 else "")

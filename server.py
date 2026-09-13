@@ -105,8 +105,16 @@ def get_agent_card():
             "diff_repair": "5 credits (POST /repair)"
         },
         "grants": SHAREDOS_MANIFEST["grants"],
-        "crypto_signature_scheme": "HMAC-SHA256 & Linked SHA-256 Provenance Chain"
+        "crypto_signature_scheme": "Ed25519 & HMAC-SHA256 with Linked SHA-256 Provenance Chain",
+        "public_key_endpoint": "http://localhost:8000/api/v1/public-key"
     })
+
+
+@app.get("/api/v1/public-key")
+def get_public_key():
+    """Returns official AgentScout Ed25519 verification public key for verifying clearance dockets."""
+    from core.signer import signer
+    return JSONResponse(content=signer.get_public_key_description())
 
 
 @app.get("/api/v1/listing")
@@ -119,6 +127,7 @@ def get_api_listing():
         "free_services": [
             {"endpoint": "GET /.well-known/agent.json", "description": "Machine-readable agent discovery card"},
             {"endpoint": "GET /api/v1/listing", "description": "Full machine-readable API catalog"},
+            {"endpoint": "GET /api/v1/public-key", "description": "Ed25519 public key description for clearance dockets"},
             {"endpoint": "POST /api/free/trial", "description": "1-claim factual verification trial (0 credits)"},
             {"endpoint": "GET /api/audit-trail/{audit_id}/verify", "description": "Cryptographic proof chain verification"}
         ]

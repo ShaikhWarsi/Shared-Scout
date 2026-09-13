@@ -263,3 +263,41 @@ def test_sharednet_peers_endpoints():
     assert "seed_peers" in data
 
 
+def test_public_key_endpoint_and_ed25519_docket_verification():
+    from core.signer import signer
+
+    # 1. Test GET /api/v1/public-key
+    res = client.get("/api/v1/public-key")
+    assert res.status_code == 200
+    data = res.json()
+    assert data["algorithm"] == "Ed25519"
+    assert "BEGIN PUBLIC KEY" in data["publicKey"]
+    assert "publicKeyId" in data
+
+    # 2. Test firewall gate returns valid ed25519_signature in docket
+    caller = "Ed25519TestAgent"
+    payload = {
+        "question": "What is the continuous music playback battery life of the Sony WH-1000XM5?",
+        "answer": "The Sony WH-1000XM5 headphones offer up to 40 hours of continuous music playback with ANC enabled.",
+        "auto_repair": True
+    }
+    headers = get_signed_headers(caller, payload)
+    gate_res = client.post("/firewall/gate", json=payload, headers=headers)
+    assert gate_res.status_code == 200
+    gate_data = gate_res.json()
+    receipt = gate_data.get("verification_receipt", {})
+    assert "ed25519_signature" in receipt
+    assert receipt["public_key_url"] == "/api/v1/public-key"
+    
+    # Verify signature
+    sig_hex = receipt["ed25519_signature"]
+    docket_id = receipt["docket_id"]
+    status_val = receipt["gate_status"]
+    root_hash = receipt["sha256_chain_root"]
+    latest_hash = receipt["sha256_chain_final"]
+    safe_ans = gate_data["safe_to_ship_answer"]
+    canonical_bytes = f"{docket_id}:{status_val}:{root_hash}:{latest_hash}:{safe_ans[:128]}".encode("utf-8")
+    assert signer.verify(canonical_bytes, sig_hex) is True
+
+
+
