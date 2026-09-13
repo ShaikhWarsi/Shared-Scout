@@ -1,4 +1,4 @@
-﻿"""
+"""
 SharedOS Manifest and Purpose Declarations
 Defines the required grants, permission scope, and immutable purpose string.
 """
@@ -26,12 +26,34 @@ SHAREDOS_MANIFEST: Dict[str, Any] = {
     ],
     "services": [
         {
-            "name": "audit",
-            "alias": "Challenge an Answer",
-            "description": "Deconstructs an agent response into atomic factual claims, conducts independent multi-source research, detects contradictions and outdated facts, and returns an evidence-backed reliability autopsy.",
+            "name": "firewall/gate",
+            "alias": "Pre-Ship CI/CD Firewall Gate",
+            "description": "Evaluates candidate AI agent drafts before user shipment, enforces reliability safety thresholds (>=80/100), blocks unsafe hallucinations, and surgically auto-repairs contradictions with verified ground truth.",
             "price_credits": 5,
-            "timeout_seconds": 30,
-            "max_input_chars": 4000
+            "timeout_seconds": 10,
+            "endpoint": "POST /firewall/gate",
+            "input_schema": {"question": "string", "answer": "string", "min_reliability_threshold": 80, "auto_repair": True},
+            "output_schema": {"status": "string", "initial_reliability": "int", "final_reliability": "int", "safe_to_ship_answer": "string"}
+        },
+        {
+            "name": "repair",
+            "alias": "Challenge & Repair",
+            "description": "Deconstructs an agent response into atomic factual claims, conducts independent multi-source research, detects contradictions and outdated facts, and returns an evidence-backed reliability autopsy with surgical diff repair.",
+            "price_credits": 5,
+            "timeout_seconds": 15,
+            "endpoint": "POST /repair",
+            "input_schema": {"question": "string", "answer": "string", "mode": "VERIFY"},
+            "output_schema": {"reliability": "int", "verdict_summary": "string", "repaired_answer": "string", "claims": "array"}
+        },
+        {
+            "name": "attack",
+            "alias": "Adversarial Stress-Test",
+            "description": "Actively attacks candidate propositions, hunting for numeric boundary violations, outdated specifications, and ungrounded marketing superlatives.",
+            "price_credits": 5,
+            "timeout_seconds": 15,
+            "endpoint": "POST /attack",
+            "input_schema": {"question": "string", "answer": "string", "mode": "ATTACK"},
+            "output_schema": {"reliability": "int", "verdict_summary": "string", "repaired_answer": "string", "claims": "array"}
         }
     ]
 }
