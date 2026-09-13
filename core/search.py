@@ -9,6 +9,7 @@ import urllib.parse
 import json
 import re
 import time
+from typing import List, Dict, Any, Optional, Tuple
 try:
     from bs4 import BeautifulSoup
 except ImportError:
