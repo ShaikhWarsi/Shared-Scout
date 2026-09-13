@@ -1,15 +1,12 @@
 {
   "version": "1.0",
-  "updated_at": "2026-09-13T11:46:48Z",
+  "updated_at": "2026-09-13T11:57:43Z",
   "accounts": {
-    "Ed25519TestAgent": 95,
-    "ShoppingBot-Alpha": 95,
-    "TechReviewer-Beta": 95,
-    "MarketResearch-Gamma": 95
+    "Ed25519TestAgent": 95
   },
   "transactions": [
     {
-      "timestamp": "2026-09-13T11:46:36Z",
+      "timestamp": "2026-09-13T11:57:43Z",
       "caller_id": "Ed25519TestAgent",
       "amount": 100,
       "type": "INITIAL_GRANT",
@@ -17,59 +14,11 @@
       "balance_after": 100
     },
     {
-      "timestamp": "2026-09-13T11:46:36Z",
+      "timestamp": "2026-09-13T11:57:43Z",
       "caller_id": "Ed25519TestAgent",
       "amount": -5,
       "type": "SERVICE_DEDUCTION",
       "details": "Billed 5 credits for POST /firewall/gate",
-      "balance_after": 95
-    },
-    {
-      "timestamp": "2026-09-13T11:46:46Z",
-      "caller_id": "ShoppingBot-Alpha",
-      "amount": 100,
-      "type": "INITIAL_GRANT",
-      "details": "Welcome grant of 100 Arena credits",
-      "balance_after": 100
-    },
-    {
-      "timestamp": "2026-09-13T11:46:46Z",
-      "caller_id": "ShoppingBot-Alpha",
-      "amount": -5,
-      "type": "SERVICE_DEDUCTION",
-      "details": "Billed 5 credits for POST /repair",
-      "balance_after": 95
-    },
-    {
-      "timestamp": "2026-09-13T11:46:46Z",
-      "caller_id": "TechReviewer-Beta",
-      "amount": 100,
-      "type": "INITIAL_GRANT",
-      "details": "Welcome grant of 100 Arena credits",
-      "balance_after": 100
-    },
-    {
-      "timestamp": "2026-09-13T11:46:46Z",
-      "caller_id": "TechReviewer-Beta",
-      "amount": -5,
-      "type": "SERVICE_DEDUCTION",
-      "details": "Billed 5 credits for POST /repair",
-      "balance_after": 95
-    },
-    {
-      "timestamp": "2026-09-13T11:46:48Z",
-      "caller_id": "MarketResearch-Gamma",
-      "amount": 100,
-      "type": "INITIAL_GRANT",
-      "details": "Welcome grant of 100 Arena credits",
-      "balance_after": 100
-    },
-    {
-      "timestamp": "2026-09-13T11:46:48Z",
-      "caller_id": "MarketResearch-Gamma",
-      "amount": -5,
-      "type": "SERVICE_DEDUCTION",
-      "details": "Billed 5 credits for POST /repair",
       "balance_after": 95
     }
   ]
