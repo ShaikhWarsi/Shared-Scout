@@ -80,11 +80,78 @@ async def authenticate_caller(request: Request) -> str:
 
 
 @app.get("/manifest")
+@app.get("/sharedos/manifest.json")
 def get_manifest():
     return JSONResponse(content=SHAREDOS_MANIFEST)
 
 
+@app.get("/.well-known/agent.json")
+def get_agent_card():
+    """Standard Machine-Readable A2A Agent Card for SharedNet Discovery."""
+    return JSONResponse(content={
+        "name": "AgentScout",
+        "handle": "agentscout",
+        "node_id": "agentscout.sharedos.net",
+        "version": "1.0.0",
+        "tagline": "Pre-Ship CI/CD Firewall Gate & Adversarial Verification for AI Agents.",
+        "purpose": SHAREDOS_PURPOSE_STRING,
+        "mcp_endpoint": "http://localhost:8000/api/mcp",
+        "listing_endpoint": "http://localhost:8000/api/v1/listing",
+        "pricing": {
+            "free_discovery": "0 credits (GET /.well-known/agent.json, GET /api/v1/listing)",
+            "free_trial": "0 credits (POST /api/free/trial)",
+            "pre_ship_gate": "5 credits (POST /firewall/gate)",
+            "adversarial_attack": "5 credits (POST /attack)",
+            "diff_repair": "5 credits (POST /repair)"
+        },
+        "grants": SHAREDOS_MANIFEST["grants"],
+        "crypto_signature_scheme": "HMAC-SHA256 & Linked SHA-256 Provenance Chain"
+    })
+
+
+@app.get("/api/v1/listing")
+def get_api_listing():
+    """API Service Listing for autonomous agents on SharedNet."""
+    return JSONResponse(content={
+        "provider": "AgentScout",
+        "node_id": "agentscout.sharedos.net",
+        "services": SHAREDOS_MANIFEST["services"],
+        "free_services": [
+            {"endpoint": "GET /.well-known/agent.json", "description": "Machine-readable agent discovery card"},
+            {"endpoint": "GET /api/v1/listing", "description": "Full machine-readable API catalog"},
+            {"endpoint": "POST /api/free/trial", "description": "1-claim factual verification trial (0 credits)"},
+            {"endpoint": "GET /api/audit-trail/{audit_id}/verify", "description": "Cryptographic proof chain verification"}
+        ]
+    })
+
+
+@app.post("/api/mcp")
+async def http_mcp_handler(request: Request):
+    """HTTP JSON-RPC MCP Endpoint for remote agents calling tools over HTTP."""
+    from mcp_server import handle_tool_call, TOOLS_DEFINITIONS
+    try:
+        body = await request.json()
+        req_id = body.get("id")
+        method = body.get("method")
+        
+        if method == "tools/list":
+            return JSONResponse(content={"jsonrpc": "2.0", "id": req_id, "result": {"tools": TOOLS_DEFINITIONS}})
+        elif method == "tools/call":
+            params = body.get("params", {})
+            result = handle_tool_call(params.get("name"), params.get("arguments", {}))
+            return JSONResponse(content={"jsonrpc": "2.0", "id": req_id, "result": {"content": [{"type": "text", "text": json.dumps(result, indent=2)}]}})
+        elif method == "initialize":
+            return JSONResponse(content={
+                "jsonrpc": "2.0", "id": req_id,
+                "result": {"protocolVersion": "2024-11-05", "serverInfo": {"name": "agentscout-mcp", "version": "1.0.0"}, "capabilities": {"tools": {}}}
+            })
+        return JSONResponse(content={"jsonrpc": "2.0", "id": req_id, "result": {}})
+    except Exception as e:
+        return JSONResponse(status_code=400, content={"jsonrpc": "2.0", "id": None, "error": {"code": -32603, "message": str(e)}})
+
+
 @app.get("/purpose")
+@app.get("/sharedos/purpose")
 def get_purpose():
     return JSONResponse(content={
         "agent_id": "agentscout-v1",
