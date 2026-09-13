@@ -13,10 +13,10 @@ Any AI agent can research and reason, but neither guarantees that its answer is 
 **AgentScout** is an independent, evidence-backed Pre-Ship CI/CD Firewall Gate and Adversarial Attack Engine. Calling agents route draft outputs through AgentScout before shipping to human users or external systems (`POST /firewall/gate` or `POST /attack`):
 
 1. **⚔️ Adversarial Attack Probes (`POST /attack`):** Actively attacks candidate propositions, hunting for numeric discrepancies, outdated claims, and ungrounded marketing superlatives.
-2. **👥 Multi-Agent Deliberation Committee:** Convenes 3 independent agent personas:
-   - **Researcher-Node:** Evaluates primary evidence coverage, named entity overlap, and citation availability.
-   - **Skeptic-Node:** Runs adversarial stress-tests for temporal obsolescence, spec boundaries, and price volatility.
-   - **SourceJudge-Node:** Classifies domain trust tiers (Gov/Edu = 1.0, Official = 0.95, Wikipedia = 0.90) and resolves conflicting citations.
+2. **👥 Multi-Perspective Deliberation Pipeline:** Convenes 3 independent verification perspectives:
+   - **Researcher-Perspective:** Evaluates primary evidence coverage, named entity overlap, and citation availability.
+   - **Skeptic-Perspective:** Runs adversarial stress-tests for temporal obsolescence, spec boundaries, and price volatility.
+   - **SourceJudge-Perspective:** Classifies domain trust tiers (Gov/Edu = 1.0, Official = 0.95, Wikipedia = 0.90) and resolves conflicting citations.
 3. **🚨 Pre-Ship CI/CD Firewall Gate (`POST /firewall/gate`):** Evaluates reliability against safety thresholds (e.g. $\ge 80$). Drafts with contradictions are flagged `BLOCKED_UNSAFE`.
 4. **🔧 Surgical Autonomous Diff-Repair:** Applies in-flight token diff patches to prices, specifications (`hours`, `dB`, `mAh`, `W`, `meters`), and dates $\rightarrow$ re-evaluates $\rightarrow$ outputs `REPAIRED_AND_APPROVED`.
 5. **🔏 Cryptographic Proof Chain & Settlement:** Persists a 5-turn SHA-256 chained transaction to `.sharedos/audit_log.jsonl`, verified via `GET /api/audit-trail/{audit_id}/verify`. Deducts 5 Arena Credits with CSV ledger export.
