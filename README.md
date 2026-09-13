@@ -1,206 +1,380 @@
-# AgentScout: Pre-Ship CI/CD Firewall Gate & Adversarial Attack Engine for AI Agents
+# AgentScout: The Pre-Action CI/CD Firewall Gate for AI Agents
 
-> **"Don't ask an agent to trust itself. Challenge it with independent adversarial verification."**
+> **“Challenge it before it acts.”**
 
-**The Standard CI/CD Safety Primitive for Autonomous Agents on SharedOS** (`Agent -> AgentScout Firewall -> World`)
+AgentScout is an autonomous **pre-action verification and in-flight diff-repair middleware** for AI agents.
 
----
-
-## 🎯 Executive Summary & Core Proposition
-
-Any AI agent can research and reason, but neither guarantees that its answer is correct. When an agent attempts to self-verify its conclusions, it suffers from **circular confirmation bias**—affirming the very hallucinations it generated.
-
-**AgentScout** is an independent, evidence-backed Pre-Ship CI/CD Firewall Gate and Adversarial Attack Engine. Calling agents route draft outputs through AgentScout before shipping to human users or external systems (`POST /firewall/gate` or `POST /attack`):
-
-1. **⚔️ Adversarial Attack Probes (`POST /attack`):** Actively attacks candidate propositions, hunting for numeric discrepancies, outdated claims, and ungrounded marketing superlatives.
-2. **👥 Multi-Perspective Deliberation Pipeline:** Convenes 3 independent verification perspectives:
-   - **Researcher-Perspective:** Evaluates primary evidence coverage, named entity overlap, and citation availability.
-   - **Skeptic-Perspective:** Runs adversarial stress-tests for temporal obsolescence, spec boundaries, and price volatility.
-   - **SourceJudge-Perspective:** Classifies domain trust tiers (Gov/Edu = 1.0, Official = 0.95, Wikipedia = 0.90) and resolves conflicting citations.
-3. **🚨 Pre-Ship CI/CD Firewall Gate (`POST /firewall/gate`):** Evaluates reliability against safety thresholds (e.g. $\ge 80$). Drafts with contradictions are flagged `BLOCKED_UNSAFE`.
-4. **🔧 Surgical Autonomous Diff-Repair:** Applies in-flight token diff patches to prices, specifications (`hours`, `dB`, `mAh`, `W`, `meters`), and dates $\rightarrow$ re-evaluates $\rightarrow$ outputs `REPAIRED_AND_APPROVED`.
-5. **🔏 Cryptographic Proof Chain & Settlement:** Persists a 5-turn SHA-256 chained transaction to `.sharedos/audit_log.jsonl`, verified via `GET /api/audit-trail/{audit_id}/verify`. Deducts 5 Arena Credits with CSV ledger export.
-
+It intercepts agent drafts before external execution, audits claims against multi-source ground truth, detects contradictions and hallucinations, blocks unsafe outputs, and surgically repairs verified errors before the response is shipped.
 
 ---
 
-## ⚙️ System Architecture
+## The Core Problem in Agent Economies
 
-```
-+-------------------------------------------------------------------------------+
-|                                Calling AI Agent                               |
-|                  (e.g., ShoppingBot-Node-71, ResearchAgent)                   |
-+-------------------------------------------------------------------------------+
-                                        |
-                                        | 1. Signed A2A Call: POST /repair
-                                        |    Headers: x-sharedos-agent-id, x-sharedos-signature
-                                        v
-+-------------------------------------------------------------------------------+
-|                       SharedNet HTTP Node / Gateway Router                    |
-|                (HMAC-SHA256 Auth, Rate Limiter: 60 req/min)                   |
-+-------------------------------------------------------------------------------+
-                                        |
-                                        | 2. Initiates 5-Turn Audit Task
-                                        v
-+-------------------------------------------------------------------------------+
-|                           AgentScout Core Service Runtime                     |
-|  - Purpose: "Independent multi-source factual verification for AI agents"     |
-|  - Grants: network:http_client, tools:web_search, storage:audit_log           |
-+-------------------------------------------------------------------------------+
-         |                                                 ^
-         | 3. Deconstruct Propositions                     | 7. Structured Autopsy &
-         v                                                 |    Repaired Output
-+----------------------+                                   |
-|   Claim Extractor    |                                   |
-| (Decimal-safe regex) |                                   |
-+----------------------+                                   |
-         |                                                 |
-         | 4. Parallel Query Formulation                   |
-         v                                                 |
-+----------------------+                                   |
-| Multi-Engine Search  |                                   |
-| - Wikipedia REST API |                                   |
-| - DuckDuckGo Live    |                                   |
-+----------------------+                                   |
-         |                                                 |
-         | 5. Evidence Snippets & Domain Scores            |
-         v                                                 |
-+----------------------+                                   |
-| NLI Verifier Engine  |                                   |
-| - Numeric/Spec Match |                                   |
-| - Optional GPT-4o    |                                   |
-+----------------------+                                   |
-         |                                                 |
-         +----------------- 6. Scorer & Auto-Repair -------+
+When autonomous agents interact and transact across **SharedNet / SharedOS**, a single hallucinated specification, outdated price, or fabricated capability can:
+
+1. **Drain limited Arena credits** through incorrect decisions or broken seller claims.
+2. **Trigger unauthorized or unsafe tool actions** that violate environmental constraints.
+3. **Cause cascading errors** across multi-agent pipelines.
+
+Existing verification systems primarily focus on determining whether a claim is trustworthy.
+
+**AgentScout goes one step earlier.**
+
+Instead of allowing an unverified output to reach the user, another agent, or an external tool, AgentScout acts as a **pre-action firewall** that verifies and, when possible, repairs the output before it ships.
+
+---
+
+# What AgentScout Does
+
+```text
+                    AI AGENT
+                       |
+                       | Draft / Proposed Action
+                       v
+              +--------------------+
+              |    AGENTSCOUT      |
+              |   FIREWALL GATE    |
+              +---------+----------+
+                        |
+            +-----------v-----------+
+            | 1. Atomic Claim       |
+            |    Deconstruction      |
+            +------------------------+
+            | 2. Ground Truth        |
+            |    Retrieval           |
+            +------------------------+
+            | 3. Multi-Perspective   |
+            |    Verification        |
+            +------------------------+
+            | 4. Contradiction &     |
+            |    Boundary Detection  |
+            +-----------+------------+
+                        |
+                +-------+-------+
+                |               |
+              VALID        CONTRADICTED
+                |               |
+                v               v
+          CLEARED FOR        BLOCKED
+           SHIPMENT             |
+                                v
+                       IN-FLIGHT REPAIR
+                                |
+                                v
+                         RE-VERIFICATION
+                                |
+                                v
+                            APPROVED
 ```
 
 ---
 
-## 🛡️ Technical Implementation Realities
+## 1. Pre-Action CI/CD Firewall Gate
 
-To ensure complete transparency and credibility during judging:
+**`POST /firewall/gate`**
 
-- **Verification Engine:** Uses deterministic regex pattern matching, numeric unit normalization, and semantic keyword overlap for fast, reproducible evaluation ($<1$s latency); optional GPT-4o-mini reasoning is invoked when `OPENAI_API_KEY` is provided.
-- **SharedOS Compliance & Peer Federation:** Operates as a SharedNet-compliant HTTP server enforcing HMAC-SHA256 turn authorization by default. Dials SharedNet peers via signed HMAC-SHA256 handshakes (`POST /sharednet/peers/dial`) and maintains active peer routing tables (`GET /sharednet/peers`).
-- **Cryptographic Audit Trail:** Logs 5 distinct turns (`TURN_1_INGRESS` to `TURN_5_EGRESS`) with linked SHA-256 event hashes permanently saved to `.sharedos/audit_log.jsonl`.
-- **Search Engine:** All searches query live public REST APIs (Wikipedia REST API) and DuckDuckGo HTML parser, complemented by an authoritative multi-domain verification corpus fallback (`AUTHORITATIVE_CORPUS`) for offline or throttled sandbox execution to prevent unhandled network drops.
-- **Arena Credits Ledger:** Enforces real balance tracking in `.sharedos/ledger.json` (100 credits initial grant, 5 credits billed per audit/repair, HTTP 403 on insufficient balance, and full CSV export at `GET /ledger/export`).
+AgentScout evaluates a candidate output against configurable reliability and safety thresholds, with a default clearance threshold of **80/100**.
 
----
+Contradicted propositions are intercepted before they can be delivered or used for downstream execution.
 
-## 📡 A2A Service Contracts
+Possible outcomes include:
 
-### 1. Endpoint: `POST /repair` (Challenge & Repair)
-- **Node Target:** `agentscout.sharedos.net/repair`
-- **Fee:** `5 Arena Credits`
+* `APPROVED_CLEAN`
+* `BLOCKED_UNSAFE`
+* `REPAIRED_AND_APPROVED`
 
-#### Input Schema
-```json
-{
-  "question": "Find the best noise cancelling headphones under Rs 3,000 in India.",
-  "answer": "The boAt Rockerz 450 is a top choice at Rs. 1,499. For ANC, the Realme Buds Air 5 Pro provides 50dB ANC and costs Rs. 2,499 with quick charging."
-}
-```
-
-#### Output Schema (The Answer Autopsy + Repaired Text)
-```json
-{
-  "audit_id": "as-audit-c0854398",
-  "reliability": 50,
-  "verdict_summary": "CONTRADICTED",
-  "stats": {
-    "total_claims": 2,
-    "supported": 1,
-    "contradicted": 1,
-    "unverified": 0,
-    "outdated": 0
-  },
-  "claims": [
-    {
-      "claim_id": 1,
-      "claim_text": "The boAt Rockerz 450 is a top choice at Rs. 1,499",
-      "verdict": "SUPPORTED",
-      "confidence": 0.86,
-      "evidence": [
-        {
-          "source_url": "https://www.boat-lifestyle.com/products/rockerz-450",
-          "source_title": "boAt Lifestyle Official Catalog",
-          "snippet": "boAt Rockerz 450 wireless on-ear headphones feature up to 15 hours battery backup, priced at Rs. 1,499."
-        }
-      ]
-    },
-    {
-      "claim_id": 2,
-      "claim_text": "Realme Buds Air 5 Pro provides 50dB ANC and costs Rs. 2,499 with quick charging.",
-      "verdict": "CONTRADICTED",
-      "confidence": 0.96,
-      "contradiction_details": "Claim states price Rs. 2,499, but verified manufacturer/retailer catalog confirms Rs. 4,999.",
-      "correction": "Actual verified price is Rs. 4,999",
-      "evidence": [
-        {
-          "source_url": "https://buy.realme.com/in/goods/realme-buds-air-5-pro",
-          "source_title": "Realme Official Store",
-          "snippet": "Realme Buds Air 5 Pro official launch price is Rs. 4,999. Includes 50dB Active Noise Cancellation."
-        }
-      ]
-    }
-  ],
-  "recommendation": "Found 1 factual contradiction(s). Autopsy generated repaired answer below with verified values.",
-  "repaired_answer": "The boAt Rockerz 450 is a top choice at Rs. 1,499. For ANC, the Realme Buds Air 5 Pro provides 50dB ANC and costs Rs. 4,999 with quick charging.",
-  "execution_latency_ms": 412,
-  "sharedos_purpose": "Independent multi-source factual verification and hallucination auditing for AI agent responses.",
-  "credits_billed": 5,
-  "remaining_credits": 95
-}
-```
+This turns verification into a **deployment gate for AI-generated outputs**.
 
 ---
 
-## 🚀 Quickstart & Reproduction
+## 2. Surgical In-Flight Diff Repair
 
-### 1. 🎬 Run the 90-Second Cinematic Mega-Demo (Single Command)
-Demonstrates the full autonomous lifecycle: Upstream Draft $\rightarrow$ ⚔️ Adversarial Attack $\rightarrow$ 3-Agent Committee $\rightarrow$ 🚨 Pre-Ship Gate Interception $\rightarrow$ 🔧 Surgical Diff-Repair $\rightarrow$ 🔏 SHA-256 Provenance & Arena Settlement.
+**`POST /repair`**
+
+Detection is only half the problem.
+
+When AgentScout finds a contradiction, it attempts to repair the affected portion of the response using verified ground truth.
+
+### Example
+
+An agent proposes:
+
+> “Sony WH-1000XM5 has 50 hours of battery life with ANC enabled.”
+
+AgentScout discovers the verified specification:
+
+> **30 hours with ANC enabled**
+
+Instead of simply returning `FAILED`, AgentScout performs an in-flight correction:
+
+```diff
+- 50 hours with ANC enabled
++ 30 hours with ANC enabled
+```
+
+The repaired output is then **re-verified before clearance**.
+
+---
+
+## 3. Adversarial Arena Stress Testing
+
+**`POST /attack`**
+
+AgentScout can actively challenge an agent's output rather than simply accepting supporting evidence.
+
+The adversarial verification layer hunts for:
+
+* Numerical boundary violations
+* Contradictory specifications
+* Deprecated or outdated information
+* Unsupported claims
+* Ungrounded marketing superlatives
+* Temporal inconsistencies
+
+The goal is simple:
+
+> **Try to break the answer before the real world does.**
+
+---
+
+## 4. Ed25519 Cryptographic Clearance Dockets
+
+Every verified response can be accompanied by a cryptographically verifiable clearance record.
+
+AgentScout combines:
+
+* **Ed25519 asymmetric signatures**
+* **SHA-256 hash-chain provenance**
+* Audit identifiers
+* Verification results
+* Evidence references
+
+Downstream agents can retrieve the public key through:
+
+`GET /api/v1/public-key`
+
+This creates a portable proof that the output passed AgentScout's verification pipeline.
+
+---
+
+# Deep SharedOS Native Integration
+
+AgentScout is designed around the SharedOS security model.
+
+### Deny-by-Default Capability Authorization
+
+Internal tool calls and resource access are authorized through the SharedOS capability model against durable capability grants.
+
+### Sandboxed `files` Resource Plane
+
+Evidence, benchmarks, and audit resources operate inside controlled resource boundaries designed to prevent path traversal and unauthorized filesystem access.
+
+### Fail-Closed Authorization
+
+If the authorization datastore becomes unavailable, AgentScout fails closed and returns an `authority_unavailable` refusal rather than silently continuing without authorization.
+
+### Durable Audit Sync
+
+Decision records are persisted locally in:
+
+```text
+.sharedos/audit_log.jsonl
+```
+
+and can be synchronized with the SharedOS audit service using bounded timeouts, retries, and preserved event IDs.
+
+---
+
+# Agent Access & Transport
+
+AgentScout is accessible through multiple agent-facing interfaces.
+
+## 1. SharedNet Arena Room Watcher
+
+AgentScout can operate directly inside a SharedNet Arena room through the SharedNet watcher:
+
 ```bash
-python demo/run_megademo.py
+npx -y sharednet@latest watch \
+  --on message \
+  --run "python agentscout_arena_watcher.py" \
+  --reply
 ```
 
-### 2. Run Full Automated Test Suite (46 Tests, 100% Green)
-```bash
-python -m pytest tests/
-```
-Covers API endpoints, Native SharedNet Room Watcher, 3-Agent Committee, In-Flight Diff-Repair, 2-Node Federation, Ed25519 Signing, and 14 Hostile Blackbox Torture cases.
+The watcher supports commands such as:
 
-### 3. Launch Native SharedNet Arena Room Watcher
-Connects AgentScout directly to the SharedNet Arena room to receive messages via stdin and post replies via stdout:
-```bash
-npx -y sharednet@latest watch --on message --run "python agentscout_arena_watcher.py" --reply
+```text
+@agentscout gate <draft>
+@agentscout trial <claim>
 ```
 
-### 4. Model Context Protocol (MCP) Server
-Run the stdio JSON-RPC 2.0 MCP server for Claude Code / Cursor / Codex:
+as well as structured service requests.
+
+---
+
+## 2. Model Context Protocol (MCP)
+
+AgentScout exposes MCP interfaces for agent-native integration.
+
+### HTTP
+
+```text
+/mcp
+```
+
+### Stdio
+
 ```bash
 python mcp_server.py
 ```
 
-### 5. Run 2-Node Peer Federation & Dial Handshake
+This allows compatible AI agents to invoke AgentScout verification capabilities directly as tools.
+
+---
+
+## 3. Machine-Readable Discovery
+
+AgentScout exposes machine-readable service metadata:
+
+| Interface       | Endpoint                      |
+| --------------- | ----------------------------- |
+| Agent Card      | `GET /.well-known/agent.json` |
+| Service Catalog | `GET /api/v1/listing`         |
+| Public Key      | `GET /api/v1/public-key`      |
+
+This allows autonomous agents to discover AgentScout's capabilities without relying on a human-readable webpage.
+
+---
+
+## 4. Zero-Config CLI
+
+AgentScout can also be invoked directly from the command line:
+
 ```bash
-python demo/run_2node_federation.py
+python agentscout_cli.py gate \
+  "The Eiffel Tower was built in 1950."
 ```
 
-### 6. Run Live Performance & Hallucination Benchmark
-```bash
-python benchmarks/benchmark_live.py
+---
+
+# Verification & Test Metrics
+
+AgentScout has been tested across API endpoints, adversarial black-box scenarios, committee verification, and SharedOS capability authorization.
+
+### Current Metrics
+
+* **52 / 52 automated tests passing**
+* **100% green test suite**
+* **Median response latency: <1.5 seconds**
+* **Zero external API key requirement**
+* **Deterministic offline knowledge-corpus fallback**
+* **Fail-safe behavior when evidence retrieval is unavailable**
+
+The system is designed to **degrade safely rather than silently approve unverifiable claims**.
+
+---
+
+# Why AgentScout?
+
+AI agents are increasingly capable of making decisions and executing actions autonomously.
+
+But there is a fundamental problem:
+
+> **An agent should not be the only system responsible for deciding whether its own output is trustworthy.**
+
+AgentScout introduces an independent verification layer between:
+
+```text
+Agent Thought
+     |
+     v
+AgentScout
+     |
+     v
+Verified / Repaired Output
+     |
+     v
+External World
 ```
 
-### 7. Launch Node Server & Neo-Brutalist Mission Control
-```bash
-python server.py --port 8000
+Instead of asking an agent:
+
+> *“Are you sure?”*
+
+AgentScout asks:
+
+> **“Can your claim survive an adversarial verification process?”**
+
+---
+
+# AgentScout vs. Traditional Verification
+
+Traditional verification:
+
+```text
+Claim
+  |
+  v
+Check
+  |
+  v
+PASS / FAIL
 ```
-Open [http://localhost:8000](http://localhost:8000) in your browser. Inspect machine-readable discovery interfaces:
-- **Agent Card:** `GET /.well-known/agent.json`
-- **Service Catalog:** `GET /api/v1/listing`
-- **Verification Public Key:** `GET /api/v1/public-key`
-- **Remote MCP Endpoint:** `POST /api/mcp`
-- **Live CSV Ledger:** `GET /ledger/export`
 
+AgentScout:
 
+```text
+Claim
+  |
+  v
+Evidence
+  |
+  v
+Adversarial Challenge
+  |
+  v
+Contradiction Detection
+  |
+  v
+Surgical Repair
+  |
+  v
+Re-verification
+  |
+  v
+Cryptographic Clearance
+```
+
+**It doesn't just identify the failure. It attempts to fix it before the failure reaches the real world.**
+
+---
+
+# Built For the SharedOS / MentorMates Arena Hackathon
+
+AgentScout is built as an agent-native verification service for autonomous systems operating within the SharedOS / SharedNet ecosystem.
+
+> ### **Don't ask an AI agent to trust itself.**
+>
+> ### **Challenge it before it acts.**
+
+---
+
+# Project Links
+
+### Live Deployment
+`https://shared-scout.vercel.app`
+
+### Machine-Readable Agent Card
+
+`/.well-known/agent.json`
+
+### Public API Listing
+
+`/api/v1/listing`
+
+### Public Key
+
+`/api/v1/public-key`
+
+### Repository
+
+`https://github.com/ShaikhWarsi/Shared-Scout`
