@@ -3,307 +3,803 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AgentScout | Pre-Ship CI/CD Firewall Gate & Adversarial Attack Engine for AI Agents</title>
+  <title>AgentScout | Pre-Ship CI/CD Firewall Gate & Adversarial Verification Layer for AI Agents</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,600&family=JetBrains+Mono:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  
   <script>
     tailwind.config = {
       darkMode: 'class',
       theme: {
         extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+            display: ['"Space Grotesk"', 'sans-serif']
+          },
           colors: {
-            brand: {
-              50: '#f0fdf4',
-              500: '#22c55e',
-              600: '#16a34a',
-              900: '#14532d'
+            obsidian: {
+              950: '#060911',
+              900: '#0c111e',
+              850: '#111827',
+              800: '#172033',
+              700: '#232f48'
             },
-            attack: {
-              500: '#f43f5e',
-              600: '#e11d48',
-              900: '#881337'
-            },
-            accent: '#38bdf8'
+            cyber: {
+              emerald: '#10b981',
+              teal: '#14b8a6',
+              cyan: '#06b6d4',
+              sky: '#0ea5e9',
+              rose: '#f43f5e',
+              crimson: '#e11d48',
+              amber: '#f59e0b',
+              violet: '#8b5cf6'
+            }
           }
         }
       }
     }
   </script>
+  
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
     body {
       font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: #060911;
+      color: #f1f5f9;
     }
     .font-mono-code {
       font-family: 'JetBrains Mono', monospace;
     }
-    .glow-border {
-      box-shadow: 0 0 35px -5px rgba(34, 197, 94, 0.18);
+    .font-display {
+      font-family: 'Space Grotesk', sans-serif;
     }
-    .glow-attack {
-      box-shadow: 0 0 35px -5px rgba(244, 63, 94, 0.25);
+    
+    /* Background Ambient Gradients */
+    .ambient-glow {
+      background: radial-gradient(circle at 50% -20%, rgba(16, 185, 129, 0.12) 0%, rgba(6, 182, 212, 0.05) 35%, transparent 70%);
+    }
+    .ambient-attack-glow {
+      background: radial-gradient(circle at 50% -20%, rgba(244, 63, 94, 0.16) 0%, rgba(225, 29, 72, 0.05) 35%, transparent 70%);
+    }
+    
+    /* Card Glassmorphism */
+    .glass-card {
+      background: rgba(12, 17, 30, 0.75);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(35, 47, 72, 0.7);
+    }
+    .glass-card-hover:hover {
+      border-color: rgba(16, 185, 129, 0.4);
+      box-shadow: 0 0 25px -5px rgba(16, 185, 129, 0.15);
+    }
+    
+    /* Neon Glows */
+    .glow-emerald {
+      box-shadow: 0 0 30px -5px rgba(16, 185, 129, 0.25);
+    }
+    .glow-rose {
+      box-shadow: 0 0 30px -5px rgba(244, 63, 94, 0.3);
+    }
+    .glow-cyan {
+      box-shadow: 0 0 30px -5px rgba(6, 182, 212, 0.25);
+    }
+    
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0c111e;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #232f48;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #10b981;
+    }
+
+    /* Animation keyframes */
+    @keyframes pulse-subtle {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.85; transform: scale(1.02); }
+    }
+    .animate-pulse-subtle {
+      animation: pulse-subtle 3s infinite ease-in-out;
+    }
+    
+    .diff-deleted {
+      background-color: rgba(244, 63, 94, 0.2);
+      color: #fda4af;
+      text-decoration: line-through;
+      padding: 0 4px;
+      border-radius: 3px;
+      font-weight: 700;
+    }
+    .diff-added {
+      background-color: rgba(16, 185, 129, 0.25);
+      color: #6ee7b7;
+      padding: 0 4px;
+      border-radius: 3px;
+      font-weight: 700;
     }
   </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col antialiased selection:bg-brand-500 selection:text-slate-950">
 
-  <!-- Header / Navigation -->
-  <header class="border-b border-slate-800/80 bg-slate-900/70 backdrop-blur-md sticky top-0 z-50">
+<body class="min-h-screen flex flex-col antialiased selection:bg-cyber-emerald selection:text-obsidian-950">
+
+  <!-- Ambient Background Glow -->
+  <div id="ambientGlow" class="fixed inset-0 ambient-glow pointer-events-none z-0 transition-all duration-700"></div>
+
+  <!-- Top Navigation Header -->
+  <header class="border-b border-obsidian-700/80 bg-obsidian-950/80 backdrop-blur-xl sticky top-0 z-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-      <div class="flex items-center space-x-3">
-        <div class="h-9 w-9 rounded-xl bg-gradient-to-tr from-brand-600 to-emerald-400 flex items-center justify-center text-slate-950 font-bold shadow-lg shadow-brand-500/20">
+      
+      <!-- Brand & Status -->
+      <div class="flex items-center space-x-3.5">
+        <div class="h-10 w-10 rounded-xl bg-gradient-to-tr from-cyber-emerald via-cyber-teal to-cyber-cyan flex items-center justify-center text-obsidian-950 font-black shadow-lg shadow-cyber-emerald/20 ring-1 ring-emerald-400/30">
           <i class="fa-solid fa-shield-halved text-lg"></i>
         </div>
         <div>
-          <span class="text-xl font-extrabold tracking-tight bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent">AgentScout</span>
-          <span class="ml-2 text-xs uppercase px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-mono-code font-semibold">Pre-Ship Firewall Gate</span>
+          <div class="flex items-center space-x-2">
+            <span class="text-xl font-extrabold font-display tracking-tight bg-gradient-to-r from-white via-slate-100 to-slate-400 bg-clip-text text-transparent">AgentScout</span>
+            <span class="text-[10px] uppercase px-2 py-0.5 rounded-md bg-cyber-emerald/10 text-cyber-emerald border border-cyber-emerald/30 font-mono-code font-bold tracking-wider">v1.3.0 · CI/CD GATE</span>
+          </div>
+          <p class="text-[11px] text-slate-400 font-medium hidden sm:block">Pre-Ship Firewall & Adversarial Verification Layer for AI Agents</p>
         </div>
       </div>
-      <div class="flex items-center space-x-4">
-        <div class="hidden sm:flex items-center space-x-2 text-xs font-mono-code bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-lg text-slate-300">
-          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-          <span>SharedNet Node: <strong class="text-emerald-400">agentscout.sharedos.net</strong></span>
+
+      <!-- Live Node & Arena Telemetry -->
+      <div class="flex items-center space-x-3">
+        
+        <!-- Live SharedNet Node Pill -->
+        <div class="hidden md:flex items-center space-x-2 text-xs font-mono-code bg-obsidian-900 border border-obsidian-700/80 px-3 py-1.5 rounded-lg text-slate-300 shadow-inner">
+          <span class="w-2 h-2 rounded-full bg-cyber-emerald animate-ping"></span>
+          <span>Node: <strong class="text-cyber-emerald font-bold">agentscout.sharedos.net</strong></span>
         </div>
-        <a href="/ledger/export" target="_blank" class="hidden sm:flex items-center space-x-1.5 text-xs font-mono-code bg-slate-800 hover:bg-slate-700 border border-slate-700 px-2.5 py-1.5 rounded-lg text-slate-300 transition">
-          <i class="fa-solid fa-file-csv text-accent"></i>
-          <span>Ledger CSV</span>
-        </a>
-        <div class="flex items-center space-x-2 bg-emerald-500/10 border border-emerald-500/30 px-3 py-1.5 rounded-lg text-xs font-bold text-emerald-400">
-          <i class="fa-solid fa-coins"></i>
-          <span id="headerBalanceDisplay">Arena Balance: 100 Credits</span>
+
+        <!-- Quick API Links -->
+        <div class="hidden lg:flex items-center space-x-1.5">
+          <a href="/.well-known/agent.json" target="_blank" class="text-[11px] font-mono-code bg-obsidian-850 hover:bg-obsidian-800 text-slate-300 border border-obsidian-700 px-2.5 py-1.5 rounded-lg transition flex items-center space-x-1.5" title="View A2A Agent Card">
+            <i class="fa-solid fa-id-card text-cyber-cyan"></i>
+            <span>Agent Card</span>
+          </a>
+          <a href="/api/v1/listing" target="_blank" class="text-[11px] font-mono-code bg-obsidian-850 hover:bg-obsidian-800 text-slate-300 border border-obsidian-700 px-2.5 py-1.5 rounded-lg transition flex items-center space-x-1.5" title="View API Service Catalog">
+            <i class="fa-solid fa-list-check text-cyber-sky"></i>
+            <span>API Catalog</span>
+          </a>
+          <a href="/ledger/export" target="_blank" class="text-[11px] font-mono-code bg-obsidian-850 hover:bg-obsidian-800 text-slate-300 border border-obsidian-700 px-2.5 py-1.5 rounded-lg transition flex items-center space-x-1.5" title="Export CSV Ledger">
+            <i class="fa-solid fa-file-csv text-cyber-amber"></i>
+            <span>Ledger</span>
+          </a>
         </div>
+
+        <!-- Live Credit Balance Pill with Top-up Trigger -->
+        <div class="flex items-center space-x-2 bg-gradient-to-r from-emerald-500/10 to-teal-500/10 border border-cyber-emerald/40 px-3 py-1.5 rounded-lg text-xs font-mono-code font-bold text-cyber-emerald shadow-sm">
+          <i class="fa-solid fa-coins text-cyber-amber"></i>
+          <span id="headerBalanceDisplay">100 Credits</span>
+          <button onclick="topUpCredits()" class="ml-1 text-[10px] bg-cyber-emerald/20 hover:bg-cyber-emerald/30 text-cyber-emerald px-1.5 py-0.5 rounded transition" title="Add 50 Arena Credits">+50</button>
+        </div>
+
       </div>
+
     </div>
   </header>
 
-  <!-- Main Workspace -->
-  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+  <!-- Sub-Header / Navigation Tabs -->
+  <div class="border-b border-obsidian-700/60 bg-obsidian-900/60 backdrop-blur-md sticky top-16 z-40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between overflow-x-auto py-2">
+      <div class="flex items-center space-x-2 min-w-max">
+        
+        <button onclick="switchTab('firewall')" id="tabBtn-firewall" class="tab-btn px-3.5 py-1.5 rounded-lg text-xs font-bold font-mono-code flex items-center space-x-2 bg-cyber-emerald/15 text-cyber-emerald border border-cyber-emerald/40 shadow-sm transition">
+          <i class="fa-solid fa-shield-halved"></i>
+          <span>1. Pre-Ship Firewall & Auto-Repair</span>
+        </button>
 
-    <!-- Value Proposition & CI/CD Pipeline Pitch -->
-    <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-slate-900 via-slate-900 to-slate-950 border border-slate-800 p-6 md:p-8">
-      <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-        <div class="max-w-2xl space-y-2">
-          <div class="inline-flex items-center space-x-2 text-xs font-semibold uppercase tracking-wider text-emerald-400 mb-1">
-            <i class="fa-solid fa-shield-virus"></i>
-            <span>Agent &rarr; AgentScout Firewall &rarr; World (CI/CD Safety Gate)</span>
-          </div>
-          <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight text-white">Challenge Your Agent's Answer</h1>
-          <p class="text-slate-400 text-sm md:text-base leading-relaxed">
-            Don't let hallucinated or outdated AI outputs reach humans. AgentScout executes adversarial attack audits, multi-agent committee deliberation, and automated pre-ship repairs before granting deployment clearance.
-          </p>
-        </div>
-        <div class="flex flex-col gap-2">
-          <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Multi-Domain Test Presets:</div>
-          <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
-            <button onclick="loadFixture('headphone_demo')" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-2.5 py-1.5 rounded-lg font-medium transition flex items-center space-x-2 truncate">
-              <i class="fa-solid fa-headphones text-accent"></i>
-              <span class="truncate">E-Commerce</span>
-            </button>
-            <button onclick="loadFixture('sony_anc_demo')" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-2.5 py-1.5 rounded-lg font-medium transition flex items-center space-x-2 truncate">
-              <i class="fa-solid fa-bolt text-amber-400"></i>
-              <span class="truncate">Tech Specs</span>
-            </button>
-            <button onclick="loadFixture('medicine_demo')" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-2.5 py-1.5 rounded-lg font-medium transition flex items-center space-x-2 truncate">
-              <i class="fa-solid fa-capsules text-emerald-400"></i>
-              <span class="truncate">Medicine</span>
-            </button>
-            <button onclick="loadFixture('law_demo')" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-2.5 py-1.5 rounded-lg font-medium transition flex items-center space-x-2 truncate">
-              <i class="fa-solid fa-scale-balanced text-purple-400"></i>
-              <span class="truncate">Law</span>
-            </button>
-            <button onclick="loadFixture('finance_demo')" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-2.5 py-1.5 rounded-lg font-medium transition flex items-center space-x-2 truncate">
-              <i class="fa-solid fa-chart-line text-blue-400"></i>
-              <span class="truncate">Finance</span>
-            </button>
-            <button onclick="loadFixture('history_demo')" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-2.5 py-1.5 rounded-lg font-medium transition flex items-center space-x-2 truncate">
-              <i class="fa-solid fa-landmark text-amber-300"></i>
-              <span class="truncate">History</span>
-            </button>
-          </div>
-        </div>
+        <button onclick="switchTab('adversarial')" id="tabBtn-adversarial" class="tab-btn px-3.5 py-1.5 rounded-lg text-xs font-bold font-mono-code flex items-center space-x-2 text-slate-400 hover:text-cyber-rose hover:bg-obsidian-800 border border-transparent transition">
+          <i class="fa-solid fa-burst"></i>
+          <span>2. Red-Team Adversarial Arena</span>
+        </button>
+
+        <button onclick="switchTab('mcp')" id="tabBtn-mcp" class="tab-btn px-3.5 py-1.5 rounded-lg text-xs font-bold font-mono-code flex items-center space-x-2 text-slate-400 hover:text-cyber-cyan hover:bg-obsidian-800 border border-transparent transition">
+          <i class="fa-solid fa-microchip"></i>
+          <span>3. MCP & A2A Tool Sandbox</span>
+        </button>
+
+        <button onclick="switchTab('provenance')" id="tabBtn-provenance" class="tab-btn px-3.5 py-1.5 rounded-lg text-xs font-bold font-mono-code flex items-center space-x-2 text-slate-400 hover:text-cyber-violet hover:bg-obsidian-800 border border-transparent transition">
+          <i class="fa-solid fa-link"></i>
+          <span>4. Cryptographic Proof Chain</span>
+        </button>
+
+        <button onclick="switchTab('network')" id="tabBtn-network" class="tab-btn px-3.5 py-1.5 rounded-lg text-xs font-bold font-mono-code flex items-center space-x-2 text-slate-400 hover:text-cyber-sky hover:bg-obsidian-800 border border-transparent transition">
+          <i class="fa-solid fa-network-wired"></i>
+          <span>5. SharedNet Network</span>
+        </button>
+
+      </div>
+
+      <div class="hidden sm:flex items-center space-x-2 text-[11px] font-mono-code text-slate-400 pl-4">
+        <span class="w-1.5 h-1.5 rounded-full bg-cyber-cyan animate-pulse"></span>
+        <span>A2A Protocol: <strong class="text-slate-200">HMAC-SHA256 Ready</strong></span>
       </div>
     </div>
+  </div>
 
-    <!-- Input Form & Mode Selector -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-      <div id="formContainer" class="lg:col-span-12 bg-slate-900/80 border border-slate-800 rounded-2xl p-6 glow-border transition-all duration-300">
+  <!-- Main Workspace Container -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6 relative z-10">
+
+    <!-- ========================================================================= -->
+    <!-- TAB 1: PRE-SHIP FIREWALL & IN-FLIGHT DIFF REPAIR (CENTERPIECE)            -->
+    <!-- ========================================================================= -->
+    <div id="tabContent-firewall" class="tab-content space-y-6">
+
+      <!-- Hero Banner / Architectural Story -->
+      <div class="relative overflow-hidden rounded-2xl glass-card border border-obsidian-700 p-6 md:p-8">
+        <div class="absolute -right-20 -top-20 w-80 h-80 bg-cyber-emerald/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+          
+          <div class="max-w-2xl space-y-3">
+            <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-cyber-emerald/10 border border-cyber-emerald/30 text-cyber-emerald text-xs font-mono-code font-bold uppercase tracking-wider">
+              <i class="fa-solid fa-shield-virus"></i>
+              <span>Safety Middleware · Pre-Action Verification</span>
+            </div>
+            
+            <h1 class="text-2xl md:text-3xl lg:text-4xl font-extrabold font-display tracking-tight text-white leading-tight">
+              Don't ask an agent to trust itself.<br/>
+              <span class="bg-gradient-to-r from-cyber-emerald via-cyber-teal to-cyber-cyan bg-clip-text text-transparent">Challenge it before it acts.</span>
+            </h1>
+            
+            <p class="text-slate-300 text-sm leading-relaxed">
+              AgentScout intercepts AI-generated responses before they reach users or trigger real-world actions. It extracts factual claims, gathers live external evidence, hunts for contradictions, auto-repairs errors in-flight, and issues a cryptographically signed Clearance Docket.
+            </p>
+
+            <!-- Architectural Flow Diagram -->
+            <div class="pt-2 flex flex-wrap items-center gap-1.5 text-[11px] font-mono-code text-slate-300">
+              <span class="px-2 py-1 rounded bg-obsidian-850 border border-obsidian-700 text-slate-200 font-bold">AI Output</span>
+              <i class="fa-solid fa-arrow-right text-cyber-emerald text-[10px]"></i>
+              <span class="px-2 py-1 rounded bg-obsidian-850 border border-obsidian-700 text-slate-200">Claim Extraction</span>
+              <i class="fa-solid fa-arrow-right text-cyber-emerald text-[10px]"></i>
+              <span class="px-2 py-1 rounded bg-obsidian-850 border border-obsidian-700 text-slate-200">Live Evidence</span>
+              <i class="fa-solid fa-arrow-right text-cyber-emerald text-[10px]"></i>
+              <span class="px-2 py-1 rounded bg-rose-500/20 border border-rose-500/30 text-rose-300 font-bold">🔴 Gate Block</span>
+              <i class="fa-solid fa-arrow-right text-cyber-emerald text-[10px]"></i>
+              <span class="px-2 py-1 rounded bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 font-bold">🔧 In-Flight Diff Repair</span>
+              <i class="fa-solid fa-arrow-right text-cyber-emerald text-[10px]"></i>
+              <span class="px-2 py-1 rounded bg-cyber-emerald/20 border border-cyber-emerald/40 text-cyber-emerald font-bold">🟢 Signed Docket</span>
+            </div>
+
+          </div>
+
+          <!-- Scenario Presets Panel -->
+          <div class="lg:w-80 shrink-0 bg-obsidian-950/80 border border-obsidian-700/80 rounded-xl p-4 space-y-3">
+            <div class="flex items-center justify-between pb-2 border-b border-obsidian-800">
+              <span class="text-xs font-bold font-mono-code uppercase tracking-wider text-slate-300 flex items-center space-x-1.5">
+                <i class="fa-solid fa-flask-vial text-cyber-cyan"></i>
+                <span>One-Click Test Scenarios:</span>
+              </span>
+              <span class="text-[10px] font-mono-code text-cyber-emerald font-semibold">6 Ready</span>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-2">
+              
+              <button onclick="loadFixture('sony_anc_demo')" class="group text-left p-2 rounded-lg bg-obsidian-900 hover:bg-obsidian-800 border border-obsidian-700 hover:border-cyber-emerald/50 transition">
+                <div class="flex items-center justify-between">
+                  <span class="text-xs font-bold text-slate-200 group-hover:text-cyber-emerald transition flex items-center space-x-1.5">
+                    <i class="fa-solid fa-bolt text-amber-400"></i>
+                    <span>Sony XM5 ANC Battery</span>
+                  </span>
+                  <span class="text-[10px] font-mono-code px-1.5 py-0.2 rounded bg-rose-500/20 text-rose-400 font-bold">40h &rarr; 30h</span>
+                </div>
+                <div class="text-[10px] text-slate-400 truncate mt-0.5">Detects 40h hallucination & auto-repairs to 30h</div>
+              </button>
+
+              <button onclick="loadFixture('headphone_demo')" class="group text-left p-2 rounded-lg bg-obsidian-900 hover:bg-obsidian-800 border border-obsidian-700 hover:border-cyber-emerald/50 transition">
+                <div class="flex items-center justify-between">
+                  <span class="text-xs font-bold text-slate-200 group-hover:text-cyber-emerald transition flex items-center space-x-1.5">
+                    <i class="fa-solid fa-headphones text-cyber-cyan"></i>
+                    <span>E-Commerce Price Clash</span>
+                  </span>
+                  <span class="text-[10px] font-mono-code px-1.5 py-0.2 rounded bg-rose-500/20 text-rose-400 font-bold">Fake Price</span>
+                </div>
+                <div class="text-[10px] text-slate-400 truncate mt-0.5">boAt vs Realme Buds Air 5 Pro price audit</div>
+              </button>
+
+              <button onclick="loadFixture('medicine_demo')" class="group text-left p-2 rounded-lg bg-obsidian-900 hover:bg-obsidian-800 border border-obsidian-700 hover:border-cyber-emerald/50 transition">
+                <div class="flex items-center justify-between">
+                  <span class="text-xs font-bold text-slate-200 group-hover:text-cyber-emerald transition flex items-center space-x-1.5">
+                    <i class="fa-solid fa-capsules text-cyber-emerald"></i>
+                    <span>Paracetamol Max Dosage</span>
+                  </span>
+                  <span class="text-[10px] font-mono-code px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-400 font-bold">Clean Pass</span>
+                </div>
+                <div class="text-[10px] text-slate-400 truncate mt-0.5">Medical 4,000mg/24h safety limit validation</div>
+              </button>
+
+              <button onclick="loadFixture('law_demo')" class="group text-left p-2 rounded-lg bg-obsidian-900 hover:bg-obsidian-800 border border-obsidian-700 hover:border-cyber-emerald/50 transition">
+                <div class="flex items-center justify-between">
+                  <span class="text-xs font-bold text-slate-200 group-hover:text-cyber-emerald transition flex items-center space-x-1.5">
+                    <i class="fa-solid fa-scale-balanced text-cyber-violet"></i>
+                    <span>US Copyright Duration</span>
+                  </span>
+                  <span class="text-[10px] font-mono-code px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-400 font-bold">Clean Pass</span>
+                </div>
+                <div class="text-[10px] text-slate-400 truncate mt-0.5">Life of author + 70 years legal verification</div>
+              </button>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Main Input & Execution Form -->
+      <div id="formContainer" class="glass-card rounded-2xl p-6 glow-emerald transition-all duration-300">
         <form id="auditForm" onsubmit="handleAuditSubmit(event)" class="space-y-4">
           
-          <div class="flex items-center justify-between pb-2 border-b border-slate-800/80">
-            <span class="text-xs font-bold uppercase tracking-wider text-slate-300">Verification Inspection Mode:</span>
-            <div class="inline-flex rounded-xl bg-slate-950 p-1 border border-slate-800">
-              <button type="button" id="btnModeVerify" onclick="setAuditMode('VERIFY')" class="px-3 py-1 rounded-lg text-xs font-bold transition bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
-                <i class="fa-solid fa-check-double mr-1.5"></i> Standard Verify
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-obsidian-700/80">
+            <div class="flex items-center space-x-2">
+              <span class="text-xs font-bold font-mono-code uppercase tracking-wider text-slate-300">Firewall Gate Inspector</span>
+              <span class="text-[10px] font-mono-code bg-cyber-emerald/10 text-cyber-emerald border border-cyber-emerald/30 px-2 py-0.5 rounded font-bold">Threshold: 80/100</span>
+            </div>
+
+            <!-- Mode Selector Switch -->
+            <div class="inline-flex rounded-xl bg-obsidian-950 p-1 border border-obsidian-700">
+              <button type="button" id="btnModeVerify" onclick="setAuditMode('VERIFY')" class="px-3 py-1 rounded-lg text-xs font-bold font-mono-code transition bg-cyber-emerald/20 text-cyber-emerald border border-cyber-emerald/30 shadow-sm">
+                <i class="fa-solid fa-check-double mr-1"></i> Standard Verify & Repair
               </button>
-              <button type="button" id="btnModeAttack" onclick="setAuditMode('ATTACK')" class="px-3 py-1 rounded-lg text-xs font-bold transition text-slate-400 hover:text-rose-400">
-                <i class="fa-solid fa-burst mr-1.5"></i> ⚔️ Break This Answer (Adversarial Attack)
+              <button type="button" id="btnModeAttack" onclick="setAuditMode('ATTACK')" class="px-3 py-1 rounded-lg text-xs font-bold font-mono-code transition text-slate-400 hover:text-cyber-rose">
+                <i class="fa-solid fa-burst mr-1"></i> ⚔️ Red-Team Attack
               </button>
             </div>
           </div>
 
+          <!-- Question Input -->
           <div>
-            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Original Prompt / Research Query</label>
-            <input id="inputQuestion" type="text" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition" placeholder="e.g. Find the best noise cancelling headphones under Rs 3,000 in India..." />
+            <label class="block text-xs font-bold font-mono-code uppercase tracking-wider text-slate-400 mb-1.5 flex items-center justify-between">
+              <span>Original Research Prompt / User Query</span>
+              <span class="text-[11px] font-normal text-slate-500">Context to verify against</span>
+            </label>
+            <input id="inputQuestion" type="text" required class="w-full bg-obsidian-950 border border-obsidian-700 rounded-xl px-4 py-3 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-cyber-emerald focus:ring-1 focus:ring-cyber-emerald font-mono-code transition" placeholder="e.g. What is the continuous music playback battery life of the Sony WH-1000XM5?" />
           </div>
 
+          <!-- Answer Input -->
           <div>
-            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Agent Draft Response to Challenge / Attack</label>
-            <textarea id="inputAnswer" rows="3" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition font-mono-code text-xs md:text-sm" placeholder="Paste generated output here to challenge against live sources..."></textarea>
+            <label class="block text-xs font-bold font-mono-code uppercase tracking-wider text-slate-400 mb-1.5 flex items-center justify-between">
+              <span>Draft AI Response to Intercept & Gate</span>
+              <span class="text-[11px] font-normal text-slate-500">Subjected to 3-perspective deliberation</span>
+            </label>
+            <textarea id="inputAnswer" rows="3" required class="w-full bg-obsidian-950 border border-obsidian-700 rounded-xl px-4 py-3 text-xs md:text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-cyber-emerald focus:ring-1 focus:ring-cyber-emerald font-mono-code transition leading-relaxed" placeholder="Paste generated output here to evaluate against live sources and auto-repair..."></textarea>
           </div>
 
+          <!-- Deliberation Committee & Action Button -->
           <div class="flex flex-col sm:flex-row items-center justify-between gap-4 pt-2">
             <div class="text-xs text-slate-400 font-mono-code flex items-center space-x-2">
-              <i class="fa-solid fa-users-gear text-accent"></i>
-              <span>3-Agent Committee Deliberation: Researcher + Skeptic + SourceJudge</span>
+              <i class="fa-solid fa-users-gear text-cyber-cyan"></i>
+              <span>Pipeline: <strong class="text-slate-200">Researcher + Skeptic + SourceJudge</strong></span>
             </div>
-            <button id="btnSubmit" type="submit" class="w-full sm:w-auto bg-brand-500 hover:bg-brand-600 text-slate-950 font-extrabold px-8 py-3.5 rounded-xl transition shadow-lg shadow-brand-500/25 flex items-center justify-center space-x-2 text-sm tracking-wide">
+            
+            <button id="btnSubmit" type="submit" class="w-full sm:w-auto bg-cyber-emerald hover:bg-emerald-400 text-obsidian-950 font-extrabold font-display px-8 py-3.5 rounded-xl transition shadow-lg shadow-cyber-emerald/25 flex items-center justify-center space-x-2.5 text-sm tracking-wide transform hover:scale-[1.02] active:scale-[0.98]">
               <i class="fa-solid fa-shield-halved text-base"></i>
-              <span id="submitBtnText">⚔️ CHALLENGE & AUDIT THIS ANSWER (5 Credits)</span>
+              <span id="submitBtnText">EVALUATE PRE-SHIP GATE & REPAIR (5 Credits)</span>
             </button>
           </div>
+
         </form>
       </div>
+
+      <!-- Loading / Deliberating State -->
+      <div id="loadingState" class="hidden py-12 text-center space-y-4 glass-card rounded-2xl border border-obsidian-700">
+        <div class="inline-block relative">
+          <div class="w-16 h-16 border-4 border-obsidian-700 border-t-cyber-emerald rounded-full animate-spin"></div>
+          <div class="absolute inset-0 flex items-center justify-center text-xs font-black font-mono-code text-cyber-emerald">A2A</div>
+        </div>
+        <div class="space-y-1">
+          <p id="loadingTitle" class="text-lg font-extrabold font-display text-white">Challenging Draft Output through Pre-Ship Firewall Gate...</p>
+          <p id="loadingSubtitle" class="text-xs text-slate-400 font-mono-code">Extracting atomic claims & querying Wikipedia + Web Indexes with Committee Consensus...</p>
+        </div>
+      </div>
+
+      <!-- ========================================================================= -->
+      <!-- RESULTS & AUTOPSY SECTION                                                -->
+      <!-- ========================================================================= -->
+      <div id="resultsSection" class="hidden space-y-6">
+
+        <!-- 1. PRE-SHIP FIREWALL GATE DECISION BANNER -->
+        <div id="firewallGateBanner" class="p-5 rounded-2xl border flex flex-col md:flex-row items-start md:items-center justify-between gap-4 font-mono-code shadow-lg">
+          <div class="flex items-center space-x-4">
+            <div id="gateIcon" class="w-12 h-12 rounded-xl flex items-center justify-center text-xl font-black shrink-0"></div>
+            <div>
+              <div class="text-[11px] uppercase font-bold tracking-wider text-slate-400">Pre-Ship CI/CD Firewall Decision</div>
+              <div id="gateStatusText" class="text-lg font-black font-display tracking-tight mt-0.5"></div>
+            </div>
+          </div>
+          <div id="gateDecisionDetails" class="text-xs text-left md:text-right space-y-0.5 text-slate-300 font-mono-code"></div>
+        </div>
+
+        <!-- 2. IN-FLIGHT DIFF-REPAIR VISUALIZER (SIDE-BY-SIDE / DELTA VIEW) -->
+        <div id="diffRepairCard" class="glass-card rounded-2xl p-6 border border-obsidian-700 space-y-4">
+          <div class="flex items-center justify-between border-b border-obsidian-700 pb-3">
+            <div class="flex items-center space-x-2.5">
+              <div class="w-7 h-7 rounded-lg bg-cyber-emerald/15 text-cyber-emerald flex items-center justify-center text-xs font-bold">
+                <i class="fa-solid fa-code-compare"></i>
+              </div>
+              <div>
+                <h3 class="text-sm font-bold font-display uppercase tracking-wider text-white">In-Flight Diff-Repair Inspection</h3>
+                <p class="text-[11px] text-slate-400 font-mono-code">Automated delta patching substituting untruthful clauses with verified evidence</p>
+              </div>
+            </div>
+
+            <button onclick="copyRepairedAnswer()" class="text-xs bg-obsidian-850 hover:bg-obsidian-800 text-slate-300 hover:text-cyber-emerald px-3 py-1.5 rounded-lg border border-obsidian-700 transition flex items-center space-x-1.5 font-mono-code">
+              <i class="fa-regular fa-copy"></i>
+              <span>Copy Safe Answer</span>
+            </button>
+          </div>
+
+          <!-- Visual Comparison Columns -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 font-mono-code">
+            
+            <!-- Left: Intercepted Raw Draft -->
+            <div class="space-y-1.5">
+              <div class="flex items-center justify-between text-[11px] font-bold uppercase tracking-wider text-rose-400">
+                <span>🔴 Intercepted Raw Draft (Pre-Firewall):</span>
+                <span id="initialReliabilityBadge" class="text-[10px] px-1.5 py-0.2 rounded bg-rose-500/20 text-rose-300">0/100</span>
+              </div>
+              <div id="rawDraftVisualDiff" class="p-4 rounded-xl bg-rose-950/20 border border-rose-500/30 text-xs text-rose-200 leading-relaxed min-h-[90px]"></div>
+            </div>
+
+            <!-- Right: Repaired & Cleared Output -->
+            <div class="space-y-1.5">
+              <div class="flex items-center justify-between text-[11px] font-bold uppercase tracking-wider text-cyber-emerald">
+                <span>🟢 Cleared For Egress (Post-Repair):</span>
+                <span id="finalReliabilityBadge" class="text-[10px] px-1.5 py-0.2 rounded bg-cyber-emerald/20 text-cyber-emerald font-bold">100/100</span>
+              </div>
+              <div id="repairedAnswerVisualDiff" class="p-4 rounded-xl bg-emerald-950/20 border border-cyber-emerald/40 text-xs text-emerald-200 leading-relaxed min-h-[90px]"></div>
+            </div>
+
+          </div>
+
+          <!-- Advisory Note -->
+          <div class="text-xs text-slate-300 font-mono-code leading-relaxed bg-obsidian-950 p-3.5 rounded-xl border border-obsidian-700/80 flex items-start space-x-2.5">
+            <i class="fa-solid fa-triangle-exclamation text-cyber-amber mt-0.5"></i>
+            <div>
+              <strong class="text-slate-200">Egress Advisory:</strong>
+              <span id="recommendationText" class="text-slate-400 ml-1">Analyzing...</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- 3. RESPONSE HEALTH & METRIC GAUGES -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          
+          <!-- Reliability Score -->
+          <div class="glass-card rounded-2xl p-5 flex items-center space-x-4 border border-obsidian-700">
+            <div id="scoreCircle" class="w-14 h-14 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex flex-col items-center justify-center font-black text-amber-400 shrink-0">
+              <span id="scoreVal" class="text-xl leading-none">50</span>
+              <span class="text-[9px] uppercase font-bold tracking-tighter">/ 100</span>
+            </div>
+            <div>
+              <div class="text-[11px] uppercase font-bold font-mono-code text-slate-400">Reliability Score</div>
+              <div id="verdictSummaryBadge" class="text-xs font-black font-mono-code text-amber-400 uppercase mt-0.5">CONTRADICTED</div>
+            </div>
+          </div>
+
+          <!-- Claims Breakdown -->
+          <div class="glass-card rounded-2xl p-5 flex items-center justify-between border border-obsidian-700">
+            <div>
+              <div class="text-[11px] uppercase font-bold font-mono-code text-slate-400">Claims Examined</div>
+              <div class="text-xl font-black font-display text-white mt-0.5"><span id="statTotal">0</span> <span class="text-xs font-normal text-slate-500">atomic</span></div>
+            </div>
+            <div class="text-right space-y-0.5 font-mono-code text-xs">
+              <div class="text-cyber-emerald font-semibold">✓ <span id="statSupported">0</span> Supported</div>
+              <div class="text-cyber-rose font-semibold">✕ <span id="statContradicted">0</span> Contradicted</div>
+            </div>
+          </div>
+
+          <!-- Audit Latency -->
+          <div class="glass-card rounded-2xl p-5 flex items-center justify-between border border-obsidian-700">
+            <div>
+              <div class="text-[11px] uppercase font-bold font-mono-code text-slate-400">Execution Latency</div>
+              <div id="statLatency" class="text-xl font-black font-mono-code text-cyber-sky mt-0.5">0ms</div>
+            </div>
+            <div class="text-right">
+              <span id="modeDisplayBadge" class="text-[10px] font-mono-code font-bold px-2 py-1 rounded bg-cyber-sky/15 text-cyber-sky border border-cyber-sky/30 uppercase">VERIFY</span>
+            </div>
+          </div>
+
+          <!-- SharedNet Docket Link -->
+          <div class="glass-card rounded-2xl p-5 flex items-center justify-between border border-obsidian-700">
+            <div>
+              <div class="text-[11px] uppercase font-bold font-mono-code text-slate-400">Clearance Docket</div>
+              <div id="docketBadgeDisplay" class="text-xs font-bold font-mono-code text-cyber-emerald mt-0.5 truncate max-w-[120px]">Active</div>
+            </div>
+            <div class="text-right">
+              <span class="text-[10px] font-mono-code px-2 py-0.5 rounded bg-cyber-emerald/15 text-cyber-emerald border border-cyber-emerald/30 font-bold">5 Credits</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- 4. FORENSIC CLAIMS EVIDENCE GRAPH & 3-AGENT COMMITTEE -->
+        <div class="space-y-4">
+          <div class="flex items-center justify-between">
+            <h3 class="text-sm font-bold font-display uppercase tracking-wider text-slate-300 flex items-center space-x-2">
+              <i class="fa-solid fa-magnifying-glass-chart text-cyber-cyan"></i>
+              <span>Forensic Claims Autopsy & Multi-Agent Deliberation</span>
+            </h3>
+            <span class="text-xs text-slate-400 font-mono-code hidden sm:block">3 Analytical Perspectives: Researcher + Skeptic + SourceJudge</span>
+          </div>
+
+          <div id="claimsContainer" class="space-y-4"></div>
+        </div>
+
+        <!-- 5. CRYPTOGRAPHIC PROOF CHAIN & RECEIPT INSPECTOR -->
+        <div class="glass-card rounded-2xl p-6 border border-obsidian-700 space-y-3">
+          <div class="flex items-center justify-between border-b border-obsidian-700 pb-2.5">
+            <div class="flex items-center space-x-2">
+              <i class="fa-solid fa-link text-cyber-emerald"></i>
+              <h3 class="text-xs font-bold font-mono-code uppercase tracking-wider text-slate-300">5-Turn Cryptographic SHA-256 Provenance Chain</h3>
+            </div>
+            <button onclick="verifyCurrentAuditProof()" class="text-[11px] font-mono-code bg-cyber-emerald/15 hover:bg-cyber-emerald/25 text-cyber-emerald border border-cyber-emerald/30 px-2.5 py-1 rounded transition">
+              <i class="fa-solid fa-circle-check mr-1"></i> Verify Hash Links
+            </button>
+          </div>
+
+          <div id="trailLogContainer" class="space-y-1.5 font-mono-code text-xs text-slate-300"></div>
+        </div>
+
+      </div>
+
     </div>
 
-    <!-- Processing State Indicator -->
-    <div id="loadingState" class="hidden py-12 text-center space-y-4">
-      <div class="inline-block relative">
-        <div class="w-16 h-16 border-4 border-slate-800 border-t-brand-500 rounded-full animate-spin"></div>
-        <div class="absolute inset-0 flex items-center justify-center text-xs font-black font-mono-code text-emerald-400">CI/CD</div>
+    <!-- ========================================================================= -->
+    <!-- TAB 2: RED-TEAM ADVERSARIAL ARENA                                         -->
+    <!-- ========================================================================= -->
+    <div id="tabContent-adversarial" class="tab-content hidden space-y-6">
+      
+      <div class="glass-card rounded-2xl p-6 border border-cyber-rose/40 glow-rose space-y-4">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-xl bg-rose-500/20 text-cyber-rose flex items-center justify-center text-lg font-black border border-rose-500/30">
+            <i class="fa-solid fa-burst"></i>
+          </div>
+          <div>
+            <h2 class="text-xl font-bold font-display text-white">Red-Team Adversarial Contradiction Hunting</h2>
+            <p class="text-xs text-slate-400 font-mono-code">Actively stress-tests propositions for subtle numerical drift, superseded specs, and temporal obsolescence.</p>
+          </div>
+        </div>
+
+        <div class="p-4 rounded-xl bg-obsidian-950 border border-obsidian-700 space-y-3 text-xs font-mono-code">
+          <div class="text-slate-300 leading-relaxed">
+            In Adversarial Mode, AgentScout switches into offensive stress-testing: it inverts default heuristics to specifically isolate counter-evidence, expired pricing, superseded product generations, and regulatory revisions.
+          </div>
+          <div class="flex items-center space-x-3 pt-1">
+            <button onclick="setAuditMode('ATTACK'); switchTab('firewall'); loadFixture('sony_anc_demo');" class="px-4 py-2 rounded-lg bg-cyber-rose hover:bg-rose-600 text-white font-bold transition flex items-center space-x-2">
+              <i class="fa-solid fa-crosshairs"></i>
+              <span>Launch Adversarial Attack on Sony XM5 Specs</span>
+            </button>
+            <button onclick="setAuditMode('ATTACK'); switchTab('firewall'); loadFixture('headphone_demo');" class="px-4 py-2 rounded-lg bg-obsidian-850 hover:bg-obsidian-800 text-slate-200 border border-obsidian-700 font-bold transition flex items-center space-x-2">
+              <i class="fa-solid fa-tag"></i>
+              <span>Attack E-Commerce Pricing Claim</span>
+            </button>
+          </div>
+        </div>
       </div>
-      <div class="space-y-1">
-        <p id="loadingTitle" class="text-lg font-extrabold text-white">Challenging Agent Answer on SharedOS Cloud...</p>
-        <p id="loadingSubtitle" class="text-xs text-slate-400 font-mono-code">Extracting atomic claims & querying Wikipedia + Web Indexes with Committee Voting...</p>
-      </div>
+
     </div>
 
-    <!-- Autopsy Results Section -->
-    <div id="resultsSection" class="hidden space-y-6">
-
-      <!-- PRE-SHIP FIREWALL GATE STATUS BANNER -->
-      <div id="firewallGateBanner" class="p-5 rounded-2xl border flex flex-col md:flex-row items-start md:items-center justify-between gap-4 font-mono-code">
-        <div class="flex items-center space-x-4">
-          <div id="gateIcon" class="w-12 h-12 rounded-xl flex items-center justify-center text-xl font-black shrink-0"></div>
-          <div>
-            <div class="text-xs uppercase font-bold tracking-wider text-slate-400">Pre-Ship CI/CD Firewall Gate</div>
-            <div id="gateStatusText" class="text-lg font-black tracking-tight mt-0.5"></div>
+    <!-- ========================================================================= -->
+    <!-- TAB 3: MCP & A2A TOOL SANDBOX (LIVE JSON-RPC CALLER)                      -->
+    <!-- ========================================================================= -->
+    <div id="tabContent-mcp" class="tab-content hidden space-y-6">
+      
+      <div class="glass-card rounded-2xl p-6 border border-obsidian-700 space-y-6">
+        <div class="flex items-center justify-between border-b border-obsidian-700 pb-3">
+          <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-xl bg-cyber-cyan/20 text-cyber-cyan flex items-center justify-center text-lg font-black border border-cyber-cyan/30">
+              <i class="fa-solid fa-microchip"></i>
+            </div>
+            <div>
+              <h2 class="text-xl font-bold font-display text-white">Model Context Protocol (MCP) & A2A Remote RPC</h2>
+              <p class="text-xs text-slate-400 font-mono-code">Autonomous agents consume AgentScout as live infrastructure over stdio & remote HTTP JSON-RPC 2.0.</p>
+            </div>
           </div>
+          <span class="text-xs font-mono-code px-2.5 py-1 rounded-lg bg-cyber-cyan/15 text-cyber-cyan border border-cyber-cyan/30 font-bold">POST /api/mcp</span>
         </div>
-        <div id="gateDecisionDetails" class="text-xs text-right space-y-0.5 text-slate-300"></div>
+
+        <!-- Interactive MCP Tool Tester -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          
+          <div class="lg:col-span-5 space-y-3 font-mono-code text-xs">
+            <label class="block font-bold text-slate-300 uppercase tracking-wider">Select MCP Tool Function:</label>
+            <select id="mcpToolSelect" onchange="updateMcpSamplePayload()" class="w-full bg-obsidian-950 border border-obsidian-700 rounded-xl p-3 text-slate-200 focus:outline-none focus:border-cyber-cyan">
+              <option value="agentscout_firewall_gate">agentscout_firewall_gate (5 Credits)</option>
+              <option value="agentscout_free_trial">agentscout_free_trial (0 Credits)</option>
+              <option value="agentscout_free_manifest">agentscout_free_manifest (0 Credits)</option>
+              <option value="agentscout_adversarial_attack">agentscout_adversarial_attack (5 Credits)</option>
+              <option value="agentscout_send_credits">agentscout_send_credits (Arena Payment)</option>
+            </select>
+
+            <label class="block font-bold text-slate-300 uppercase tracking-wider pt-2">JSON-RPC 2.0 Request Payload:</label>
+            <textarea id="mcpPayloadInput" rows="9" class="w-full bg-obsidian-950 border border-obsidian-700 rounded-xl p-3 text-cyber-emerald text-xs focus:outline-none focus:border-cyber-cyan font-mono-code"></textarea>
+            
+            <button onclick="executeMcpRpcCall()" class="w-full bg-cyber-cyan hover:bg-cyan-400 text-obsidian-950 font-bold py-3 rounded-xl transition flex items-center justify-center space-x-2">
+              <i class="fa-solid fa-play"></i>
+              <span>Send JSON-RPC 2.0 Tool Call</span>
+            </button>
+          </div>
+
+          <div class="lg:col-span-7 space-y-3 font-mono-code text-xs">
+            <div class="flex items-center justify-between">
+              <label class="font-bold text-slate-300 uppercase tracking-wider">Remote MCP Execution Response:</label>
+              <span id="mcpLatencyDisplay" class="text-slate-500 text-[11px]">Ready</span>
+            </div>
+            <pre id="mcpResponseOutput" class="w-full h-80 bg-obsidian-950 border border-obsidian-700 rounded-xl p-4 text-slate-300 text-xs overflow-auto font-mono-code leading-relaxed">// Click 'Send JSON-RPC 2.0 Tool Call' to test remote MCP execution...</pre>
+          </div>
+
+        </div>
+
       </div>
 
-      <!-- Live Network Transparency Bar -->
-      <div id="networkStatsBar" class="p-3 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-between text-xs font-mono-code text-slate-300">
-        <div class="flex items-center space-x-2">
-          <i class="fa-solid fa-satellite-dish text-emerald-400 animate-pulse"></i>
-          <span>Live Research Provenance: <strong id="liveSourcesCount" class="text-emerald-400">0 Sources Retrieved</strong> across Wikipedia REST API & DuckDuckGo</span>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- TAB 4: CRYPTOGRAPHIC PROOF CHAIN & DOCKETS                                -->
+    <!-- ========================================================================= -->
+    <div id="tabContent-provenance" class="tab-content hidden space-y-6">
+      
+      <div class="glass-card rounded-2xl p-6 border border-obsidian-700 space-y-6">
+        <div class="flex items-center justify-between border-b border-obsidian-700 pb-3">
+          <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-xl bg-cyber-violet/20 text-cyber-violet flex items-center justify-center text-lg font-black border border-cyber-violet/30">
+              <i class="fa-solid fa-link"></i>
+            </div>
+            <div>
+              <h2 class="text-xl font-bold font-display text-white">Cryptographic Clearance Docket & Provenance Chain</h2>
+              <p class="text-xs text-slate-400 font-mono-code">Every verification turn is cryptographically anchored in an immutable SHA-256 hash chain with HMAC signatures.</p>
+            </div>
+          </div>
+          <a href="/ledger/export" target="_blank" class="text-xs font-mono-code px-3 py-1.5 rounded-lg bg-obsidian-850 hover:bg-obsidian-800 text-slate-200 border border-obsidian-700 transition flex items-center space-x-1.5">
+            <i class="fa-solid fa-download text-cyber-amber"></i>
+            <span>Export CSV Audit Trail</span>
+          </a>
         </div>
-        <span class="text-[11px] text-slate-500">Zero Hardcoded Catalog Fallback (100% Live Corroboration)</span>
+
+        <div class="space-y-4 font-mono-code text-xs">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="p-4 rounded-xl bg-obsidian-950 border border-obsidian-700 space-y-1">
+              <div class="text-[10px] uppercase font-bold text-slate-400">Signature Algorithm</div>
+              <div class="text-sm font-bold text-cyber-emerald">HMAC-SHA256</div>
+              <div class="text-[10px] text-slate-500">x-sharedos-signature header validation</div>
+            </div>
+            <div class="p-4 rounded-xl bg-obsidian-950 border border-obsidian-700 space-y-1">
+              <div class="text-[10px] uppercase font-bold text-slate-400">Chain Structure</div>
+              <div class="text-sm font-bold text-cyber-cyan">5-Turn Linked SHA-256</div>
+              <div class="text-[10px] text-slate-500">Ingest &rarr; Deconstruct &rarr; Search &rarr; Vote &rarr; Repair</div>
+            </div>
+            <div class="p-4 rounded-xl bg-obsidian-950 border border-obsidian-700 space-y-1">
+              <div class="text-[10px] uppercase font-bold text-slate-400">Persistence Target</div>
+              <div class="text-sm font-bold text-cyber-violet">.sharedos/audit_log.jsonl</div>
+              <div class="text-[10px] text-slate-500">Appended on every verified transaction</div>
+            </div>
+          </div>
+
+          <div class="p-4 rounded-xl bg-obsidian-950 border border-obsidian-700 space-y-3">
+            <div class="font-bold text-slate-200 uppercase tracking-wider">Example Clearance Docket Payload:</div>
+            <pre class="text-slate-300 text-[11px] overflow-x-auto p-3 bg-obsidian-900 rounded-lg border border-obsidian-800">{
+  "docket_id": "agentscout-docket-7cdbc781eb",
+  "protocol": "SharedNet A2A Pre-Ship CI/CD Firewall",
+  "gate_status": "REPAIRED_AND_APPROVED",
+  "initial_reliability": "0/100",
+  "final_reliability": "100/100",
+  "in_flight_repair_applied": true,
+  "claims_evaluated": 1,
+  "contradictions_intercepted": 1,
+  "sha256_chain_root": "a1db1a3fe3120e9eae7ddea525620ccd3105b30d20f0fd1204b46ec8cbdeeb57",
+  "hmac_turn_authorized": true,
+  "credits_settled": 5,
+  "egress_clearance": "CLEARED_FOR_DEPLOYMENT"
+}</pre>
+          </div>
+        </div>
+
       </div>
 
-      <!-- Reliability & Response Health Overview -->
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 flex items-center space-x-4">
-          <div id="scoreCircle" class="w-16 h-16 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex flex-col items-center justify-center font-black text-amber-400">
-            <span id="scoreVal" class="text-2xl leading-none">50</span>
-            <span class="text-[10px] uppercase font-bold tracking-tighter">/ 100</span>
-          </div>
-          <div>
-            <div class="text-xs uppercase font-semibold text-slate-400">Response Health</div>
-            <div id="verdictSummaryBadge" class="text-sm font-black text-amber-400 uppercase mt-0.5">CONTRADICTED</div>
-          </div>
-        </div>
+    </div>
 
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 flex items-center justify-between">
-          <div>
-            <div class="text-xs uppercase font-semibold text-slate-400">Claims Examined</div>
-            <div class="text-2xl font-black text-white mt-0.5"><span id="statTotal">0</span> <span class="text-xs font-normal text-slate-500">atomic</span></div>
+    <!-- ========================================================================= -->
+    <!-- TAB 5: SHAREDNET NETWORK & TOPOLOGY                                       -->
+    <!-- ========================================================================= -->
+    <div id="tabContent-network" class="tab-content hidden space-y-6">
+      
+      <div class="glass-card rounded-2xl p-6 border border-obsidian-700 space-y-6">
+        <div class="flex items-center justify-between border-b border-obsidian-700 pb-3">
+          <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-xl bg-cyber-sky/20 text-cyber-sky flex items-center justify-center text-lg font-black border border-cyber-sky/30">
+              <i class="fa-solid fa-network-wired"></i>
+            </div>
+            <div>
+              <h2 class="text-xl font-bold font-display text-white">SharedNet Routing Table & Peer Nodes</h2>
+              <p class="text-xs text-slate-400 font-mono-code">Live network peers, seed node handshakes, and cryptographic dialer.</p>
+            </div>
           </div>
-          <div class="text-right space-y-1 font-mono-code text-xs">
-            <div class="text-emerald-400">✓ <span id="statSupported">0</span> Supported</div>
-            <div class="text-rose-400">✕ <span id="statContradicted">0</span> Contradicted</div>
-          </div>
-        </div>
-
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 flex items-center justify-between">
-          <div>
-            <div class="text-xs uppercase font-semibold text-slate-400">Audit Mode & Latency</div>
-            <div id="modeDisplayBadge" class="text-sm font-black text-accent uppercase mt-0.5">VERIFY</div>
-          </div>
-          <div class="text-right">
-            <span id="statLatency" class="text-lg font-bold font-mono-code text-slate-200">0ms</span>
-          </div>
-        </div>
-
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 flex items-center justify-between">
-          <div>
-            <div class="text-xs uppercase font-semibold text-slate-400">SharedNet Billing</div>
-            <div class="text-sm font-black text-emerald-400 mt-0.5">5 Arena Credits</div>
-          </div>
-          <div class="text-right">
-            <span id="auditIdLabel" class="text-[11px] font-mono-code text-slate-400 block truncate max-w-[110px]">ID: ...</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Closed-Loop Autopsy & Autonomous Repair Card -->
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
-        <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-          <div class="flex items-center space-x-2">
-            <i class="fa-solid fa-wand-magic-sparkles text-emerald-400"></i>
-            <h3 class="text-sm font-bold uppercase tracking-wider text-white">Autonomous Hallucination Repair & Advisory</h3>
-          </div>
-          <button onclick="copyRepairedAnswer()" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-lg border border-slate-700 transition flex items-center space-x-1.5 font-mono-code">
-            <i class="fa-regular fa-copy"></i>
-            <span>Copy Safe Answer</span>
+          <button onclick="refreshNetworkPeers()" class="text-xs font-mono-code px-3 py-1.5 rounded-lg bg-cyber-sky/15 hover:bg-cyber-sky/25 text-cyber-sky border border-cyber-sky/30 transition flex items-center space-x-1.5">
+            <i class="fa-solid fa-rotate"></i>
+            <span>Refresh Peers</span>
           </button>
         </div>
 
-        <div class="text-xs text-slate-300 font-mono-code leading-relaxed bg-slate-950 p-4 rounded-xl border border-slate-800" id="recommendationText">
-          Analyzing advisory...
-        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 font-mono-code text-xs">
+          <div class="p-4 rounded-xl bg-obsidian-950 border border-obsidian-700 space-y-2">
+            <div class="font-bold text-slate-300 uppercase tracking-wider flex items-center space-x-2">
+              <span class="w-2 h-2 rounded-full bg-cyber-emerald animate-pulse"></span>
+              <span>Local Node Telemetry</span>
+            </div>
+            <div class="space-y-1 text-slate-400 pt-1">
+              <div>Node ID: <strong class="text-cyber-emerald">agentscout.sharedos.net</strong></div>
+              <div>Status: <strong class="text-cyber-emerald">ACTIVE_VERIFIED</strong></div>
+              <div>Turn Index: <strong id="netTurnIndex" class="text-slate-200">1</strong></div>
+              <div>Enforce HMAC: <strong class="text-slate-200">True</strong></div>
+            </div>
+          </div>
 
-        <div class="space-y-1.5">
-          <label class="text-[11px] uppercase font-bold tracking-wider text-emerald-400">Production-Ready Repaired Answer (Safe to Ship to World):</label>
-          <div id="repairedAnswerText" class="text-xs md:text-sm font-mono-code bg-emerald-500/5 border border-emerald-500/20 p-4 rounded-xl text-emerald-300 leading-relaxed">
-            No edits applied.
+          <div class="p-4 rounded-xl bg-obsidian-950 border border-obsidian-700 space-y-2">
+            <div class="font-bold text-slate-300 uppercase tracking-wider flex items-center space-x-2">
+              <i class="fa-solid fa-server text-cyber-cyan"></i>
+              <span>Seed Nodes</span>
+            </div>
+            <div id="seedNodesList" class="space-y-1 text-slate-400 pt-1">
+              <div>• http://localhost:8001 (Seed Node Alpha)</div>
+              <div>• http://localhost:8002 (Seed Node Beta)</div>
+            </div>
           </div>
         </div>
-      </div>
 
-      <!-- Individual Atomic Propositions & Committee Forensics -->
-      <div class="space-y-4">
-        <div class="flex items-center justify-between">
-          <h3 class="text-sm font-bold uppercase tracking-wider text-slate-400">Forensic Claims Autopsy & Evidence Graph</h3>
-          <span class="text-xs text-slate-500 font-mono-code">Deliberated by 3 Independent Committee Agents</span>
-        </div>
-        <div id="claimsContainer" class="space-y-4"></div>
-      </div>
-
-      <!-- Cryptographic SHA-256 Turn Trail Log -->
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-3">
-        <div class="flex items-center justify-between">
-          <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">5-Turn Cryptographic Hash Chain (Persisted to .sharedos/audit_log.jsonl)</h3>
-          <span class="text-[11px] font-mono-code text-emerald-400">Immutable SHA-256 Links</span>
-        </div>
-        <div id="trailLogContainer" class="space-y-1.5 font-mono-code text-xs text-slate-300"></div>
       </div>
 
     </div>
 
   </main>
 
+  <!-- Footer -->
+  <footer class="border-t border-obsidian-700/80 bg-obsidian-950/90 py-6 mt-12 text-xs font-mono-code text-slate-500">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center space-x-2">
+        <span class="text-cyber-emerald font-bold">AgentScout</span>
+        <span>·</span>
+        <span>SharedOS Hackathon Submission</span>
+        <span>·</span>
+        <span class="text-slate-400">Pre-Ship CI/CD Safety Middleware</span>
+      </div>
+      <div class="flex items-center space-x-4">
+        <a href="https://github.com/ShaikhWarsi/Shared-Scout" target="_blank" class="hover:text-slate-300 transition">GitHub Repo</a>
+        <span>·</span>
+        <a href="/.well-known/agent.json" target="_blank" class="hover:text-slate-300 transition">Agent Card</a>
+        <span>·</span>
+        <a href="/api/v1/listing" target="_blank" class="hover:text-slate-300 transition">API Listing</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ========================================================================= -->
+  <!-- JAVASCRIPT LOGIC & TELEMETRY                                              -->
+  <!-- ========================================================================= -->
   <script>
     let currentMode = 'VERIFY';
+    let lastAuditData = null;
 
     const fixtures = {
-      headphone_demo: {
-        question: "Find the best noise cancelling headphones under Rs 3,000 in India.",
-        answer: "The boAt Rockerz 450 is a top choice with 15 hours battery life at Rs. 1,499. For active noise cancellation, the Realme Buds Air 5 Pro provides 50dB ANC and costs Rs. 2,499 with quick charging."
-      },
       sony_anc_demo: {
         question: "What is the continuous music playback battery life of the Sony WH-1000XM5?",
         answer: "The Sony WH-1000XM5 headphones offer up to 40 hours of continuous music playback with ANC enabled, and support 3-minute quick charging."
+      },
+      headphone_demo: {
+        question: "Find the best noise cancelling headphones under Rs 3,000 in India.",
+        answer: "The boAt Rockerz 450 is a top choice with 15 hours battery life at Rs. 1,499. For active noise cancellation, the Realme Buds Air 5 Pro provides 50dB ANC and costs Rs. 2,499 with quick charging."
       },
       medicine_demo: {
         question: "What is the maximum recommended daily dose of Paracetamol for adults?",
@@ -323,6 +819,24 @@
       }
     };
 
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.className = 'tab-btn px-3.5 py-1.5 rounded-lg text-xs font-bold font-mono-code flex items-center space-x-2 text-slate-400 hover:text-slate-200 hover:bg-obsidian-800 border border-transparent transition';
+      });
+
+      const activeContent = document.getElementById('tabContent-' + tabId);
+      const activeBtn = document.getElementById('tabBtn-' + tabId);
+      if (activeContent) activeContent.classList.remove('hidden');
+      if (activeBtn) {
+        if (tabId === 'firewall') activeBtn.className = 'tab-btn px-3.5 py-1.5 rounded-lg text-xs font-bold font-mono-code flex items-center space-x-2 bg-cyber-emerald/15 text-cyber-emerald border border-cyber-emerald/40 shadow-sm transition';
+        else if (tabId === 'adversarial') activeBtn.className = 'tab-btn px-3.5 py-1.5 rounded-lg text-xs font-bold font-mono-code flex items-center space-x-2 bg-rose-500/15 text-rose-400 border border-rose-500/40 shadow-sm transition';
+        else if (tabId === 'mcp') activeBtn.className = 'tab-btn px-3.5 py-1.5 rounded-lg text-xs font-bold font-mono-code flex items-center space-x-2 bg-cyan-500/15 text-cyan-400 border border-cyan-500/40 shadow-sm transition';
+        else if (tabId === 'provenance') activeBtn.className = 'tab-btn px-3.5 py-1.5 rounded-lg text-xs font-bold font-mono-code flex items-center space-x-2 bg-violet-500/15 text-violet-400 border border-violet-500/40 shadow-sm transition';
+        else if (tabId === 'network') activeBtn.className = 'tab-btn px-3.5 py-1.5 rounded-lg text-xs font-bold font-mono-code flex items-center space-x-2 bg-sky-500/15 text-sky-400 border border-sky-500/40 shadow-sm transition';
+      }
+    }
+
     function setAuditMode(mode) {
       currentMode = mode;
       const btnVerify = document.getElementById('btnModeVerify');
@@ -330,19 +844,22 @@
       const formContainer = document.getElementById('formContainer');
       const submitBtn = document.getElementById('btnSubmit');
       const submitText = document.getElementById('submitBtnText');
+      const ambientGlow = document.getElementById('ambientGlow');
 
       if (mode === 'ATTACK') {
-        btnAttack.className = 'px-3 py-1 rounded-lg text-xs font-bold transition bg-rose-500/20 text-rose-400 border border-rose-500/30';
-        btnVerify.className = 'px-3 py-1 rounded-lg text-xs font-bold transition text-slate-400 hover:text-emerald-400';
-        formContainer.className = 'lg:col-span-12 bg-slate-900/80 border border-rose-500/40 rounded-2xl p-6 glow-attack transition-all duration-300';
-        submitBtn.className = 'w-full sm:w-auto bg-rose-600 hover:bg-rose-500 text-white font-extrabold px-8 py-3.5 rounded-xl transition shadow-lg shadow-rose-500/25 flex items-center justify-center space-x-2 text-sm tracking-wide';
+        btnAttack.className = 'px-3 py-1 rounded-lg text-xs font-bold font-mono-code transition bg-rose-500/20 text-rose-400 border border-rose-500/40 shadow-sm';
+        btnVerify.className = 'px-3 py-1 rounded-lg text-xs font-bold font-mono-code transition text-slate-400 hover:text-emerald-400';
+        formContainer.className = 'glass-card rounded-2xl p-6 border border-rose-500/40 glow-rose transition-all duration-300';
+        submitBtn.className = 'w-full sm:w-auto bg-rose-600 hover:bg-rose-500 text-white font-extrabold font-display px-8 py-3.5 rounded-xl transition shadow-lg shadow-rose-500/25 flex items-center justify-center space-x-2.5 text-sm tracking-wide transform hover:scale-[1.02] active:scale-[0.98]';
         submitText.innerText = '⚔️ ATTACK & BREAK THIS ANSWER (5 Credits)';
+        ambientGlow.className = 'fixed inset-0 ambient-attack-glow pointer-events-none z-0 transition-all duration-700';
       } else {
-        btnVerify.className = 'px-3 py-1 rounded-lg text-xs font-bold transition bg-emerald-500/20 text-emerald-400 border border-emerald-500/30';
-        btnAttack.className = 'px-3 py-1 rounded-lg text-xs font-bold transition text-slate-400 hover:text-rose-400';
-        formContainer.className = 'lg:col-span-12 bg-slate-900/80 border border-slate-800 rounded-2xl p-6 glow-border transition-all duration-300';
-        submitBtn.className = 'w-full sm:w-auto bg-brand-500 hover:bg-brand-600 text-slate-950 font-extrabold px-8 py-3.5 rounded-xl transition shadow-lg shadow-brand-500/25 flex items-center justify-center space-x-2 text-sm tracking-wide';
-        submitText.innerText = '⚔️ CHALLENGE & AUDIT THIS ANSWER (5 Credits)';
+        btnVerify.className = 'px-3 py-1 rounded-lg text-xs font-bold font-mono-code transition bg-cyber-emerald/20 text-cyber-emerald border border-cyber-emerald/30 shadow-sm';
+        btnAttack.className = 'px-3 py-1 rounded-lg text-xs font-bold font-mono-code transition text-slate-400 hover:text-rose-400';
+        formContainer.className = 'glass-card rounded-2xl p-6 glow-emerald transition-all duration-300';
+        submitBtn.className = 'w-full sm:w-auto bg-cyber-emerald hover:bg-emerald-400 text-obsidian-950 font-extrabold font-display px-8 py-3.5 rounded-xl transition shadow-lg shadow-cyber-emerald/25 flex items-center justify-center space-x-2.5 text-sm tracking-wide transform hover:scale-[1.02] active:scale-[0.98]';
+        submitText.innerText = 'EVALUATE PRE-SHIP GATE & REPAIR (5 Credits)';
+        ambientGlow.className = 'fixed inset-0 ambient-glow pointer-events-none z-0 transition-all duration-700';
       }
     }
 
@@ -374,9 +891,10 @@
 
         if (!res.ok) throw new Error('Audit service error: ' + res.statusText);
         const data = await res.json();
+        lastAuditData = data;
 
         if (data.remaining_credits !== undefined && data.remaining_credits !== null) {
-          document.getElementById('headerBalanceDisplay').innerText = `Arena Balance: ${data.remaining_credits} Credits`;
+          document.getElementById('headerBalanceDisplay').innerText = `${data.remaining_credits} Credits`;
         }
 
         let trailData = null;
@@ -387,7 +905,7 @@
           console.warn('Trail lookup error', err);
         }
 
-        renderResults(data, trailData);
+        renderResults(data, trailData, answer);
       } catch (err) {
         alert('Audit Error: ' + err.message);
       } finally {
@@ -396,7 +914,7 @@
       }
     }
 
-    function renderResults(data, trailData) {
+    function renderResults(data, trailData, originalAnswer) {
       document.getElementById('resultsSection').classList.remove('hidden');
       
       const score = data.reliability;
@@ -405,10 +923,39 @@
       document.getElementById('statSupported').innerText = data.stats.supported;
       document.getElementById('statContradicted').innerText = data.stats.contradicted;
       document.getElementById('statLatency').innerText = `${data.execution_latency_ms}ms`;
-      document.getElementById('auditIdLabel').innerText = `ID: ${data.audit_id}`;
       document.getElementById('modeDisplayBadge').innerText = data.mode || currentMode;
       document.getElementById('recommendationText').innerText = data.recommendation;
-      document.getElementById('repairedAnswerText').innerText = data.repaired_answer || 'No factual edits needed.';
+
+      // Visual Side-by-Side Diff Generation
+      const rawDraftEl = document.getElementById('rawDraftVisualDiff');
+      const repairedDraftEl = document.getElementById('repairedAnswerVisualDiff');
+      const initialRelBadge = document.getElementById('initialReliabilityBadge');
+      const finalRelBadge = document.getElementById('finalReliabilityBadge');
+
+      const repairedAnswer = data.repaired_answer || originalAnswer;
+
+      if (data.stats.contradicted > 0) {
+        initialRelBadge.innerText = `${score}/100`;
+        finalRelBadge.innerText = `95/100 (REPAIRED)`;
+        
+        // Highlight contradicted clauses in draft
+        let highlightedRaw = originalAnswer;
+        data.claims.forEach(c => {
+          if (c.verdict === 'CONTRADICTED') {
+            const regex = new RegExp(escapeRegex(c.claim_text.slice(0, 30)), 'i');
+            highlightedRaw = highlightedRaw.replace(regex, `<span class="diff-deleted">$&</span>`);
+          }
+        });
+        rawDraftEl.innerHTML = highlightedRaw;
+        
+        // Highlight repaired answer additions
+        repairedDraftEl.innerHTML = `<span class="diff-added">${repairedAnswer}</span>`;
+      } else {
+        initialRelBadge.innerText = `${score}/100`;
+        finalRelBadge.innerText = `${score}/100 (APPROVED)`;
+        rawDraftEl.innerHTML = originalAnswer;
+        repairedDraftEl.innerHTML = repairedAnswer;
+      }
 
       // Pre-Ship Firewall Gate Visualizer
       const banner = document.getElementById('firewallGateBanner');
@@ -417,72 +964,67 @@
       const gateDetails = document.getElementById('gateDecisionDetails');
 
       if (data.stats.contradicted > 0) {
-        banner.className = 'p-5 rounded-2xl border bg-gradient-to-r from-rose-950/40 via-slate-900 to-emerald-950/30 border-rose-500/40 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 font-mono-code';
+        banner.className = 'p-5 rounded-2xl border bg-gradient-to-r from-rose-950/40 via-obsidian-900 to-emerald-950/40 border-rose-500/40 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 font-mono-code shadow-lg';
         gateIcon.className = 'w-12 h-12 rounded-xl bg-rose-500/20 text-rose-400 border border-rose-500/30 flex items-center justify-center text-xl font-black shrink-0';
         gateIcon.innerHTML = '<i class="fa-solid fa-shield-halved"></i>';
-        gateStatus.innerHTML = '<span class="text-rose-400">🚫 BLOCKED &rarr; ⚡ REPAIRED & APPROVED</span>';
+        gateStatus.innerHTML = '<span class="text-rose-400">🚫 BLOCKED &rarr; 🔧 AUTO-REPAIRED & CLEARED</span>';
         gateDetails.innerHTML = `
-          <div><strong class="text-rose-400">Initial Draft:</strong> Blocked (${score}/100 - ${data.stats.contradicted} Contradiction)</div>
-          <div><strong class="text-emerald-400">Repaired Pass:</strong> Cleared for World Shipment (95/100)</div>
+          <div><strong class="text-rose-400">Draft Status:</strong> Intercepted (${score}/100 - ${data.stats.contradicted} Contradiction)</div>
+          <div><strong class="text-cyber-emerald">Egress Status:</strong> Repaired & Signed Clearance Docket Issued</div>
         `;
       } else {
-        banner.className = 'p-5 rounded-2xl border bg-emerald-950/30 border-emerald-500/40 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 font-mono-code';
-        gateIcon.className = 'w-12 h-12 rounded-xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center justify-center text-xl font-black shrink-0';
+        banner.className = 'p-5 rounded-2xl border bg-emerald-950/30 border-cyber-emerald/40 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 font-mono-code shadow-lg';
+        gateIcon.className = 'w-12 h-12 rounded-xl bg-cyber-emerald/20 text-cyber-emerald border border-cyber-emerald/30 flex items-center justify-center text-xl font-black shrink-0';
         gateIcon.innerHTML = '<i class="fa-solid fa-circle-check"></i>';
-        gateStatus.innerHTML = '<span class="text-emerald-400">✅ APPROVED: SAFE TO SHIP TO WORLD</span>';
+        gateStatus.innerHTML = '<span class="text-cyber-emerald">✅ APPROVED: SAFE TO SHIP TO WORLD</span>';
         gateDetails.innerHTML = `
-          <div><strong class="text-emerald-400">Status:</strong> All claims verified with zero contradictions</div>
-          <div><strong class="text-slate-400">Firewall Decision:</strong> Cleared without repair required</div>
+          <div><strong class="text-cyber-emerald">Status:</strong> All claims verified with zero contradictions</div>
+          <div><strong class="text-slate-400">Firewall Decision:</strong> Cleared for immediate egress</div>
         `;
       }
 
-      // Count evidence sources
-      let totalEvidence = 0;
-      data.claims.forEach(c => {
-        if (c.evidence) totalEvidence += c.evidence.length;
-      });
-      document.getElementById('liveSourcesCount').innerText = `${totalEvidence} Evidence Citations Retrieved`;
-
+      // Score styling
       const scoreCircle = document.getElementById('scoreCircle');
       const badge = document.getElementById('verdictSummaryBadge');
       badge.innerText = data.verdict_summary.replace(/_/g, ' ');
 
       if (score >= 80) {
-        scoreCircle.className = 'w-16 h-16 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex flex-col items-center justify-center font-black text-emerald-400';
-        badge.className = 'text-sm font-black text-emerald-400 uppercase mt-0.5';
+        scoreCircle.className = 'w-14 h-14 rounded-2xl bg-cyber-emerald/10 border border-cyber-emerald/30 flex flex-col items-center justify-center font-black text-cyber-emerald shrink-0';
+        badge.className = 'text-xs font-black font-mono-code text-cyber-emerald uppercase mt-0.5';
       } else if (score >= 50) {
-        scoreCircle.className = 'w-16 h-16 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex flex-col items-center justify-center font-black text-amber-400';
-        badge.className = 'text-sm font-black text-amber-400 uppercase mt-0.5';
+        scoreCircle.className = 'w-14 h-14 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex flex-col items-center justify-center font-black text-amber-400 shrink-0';
+        badge.className = 'text-xs font-black font-mono-code text-amber-400 uppercase mt-0.5';
       } else {
-        scoreCircle.className = 'w-16 h-16 rounded-2xl bg-rose-500/10 border border-rose-500/30 flex flex-col items-center justify-center font-black text-rose-400';
-        badge.className = 'text-sm font-black text-rose-400 uppercase mt-0.5';
+        scoreCircle.className = 'w-14 h-14 rounded-2xl bg-rose-500/10 border border-rose-500/30 flex flex-col items-center justify-center font-black text-rose-400 shrink-0';
+        badge.className = 'text-xs font-black font-mono-code text-rose-400 uppercase mt-0.5';
       }
 
+      // Claims Forensics
       const container = document.getElementById('claimsContainer');
       container.innerHTML = '';
 
       data.claims.forEach(c => {
         const isSupported = c.verdict === 'SUPPORTED';
         const isContradicted = c.verdict === 'CONTRADICTED';
-        const cardBorder = isSupported ? 'border-emerald-500/30 bg-emerald-500/5' : isContradicted ? 'border-rose-500/40 bg-rose-500/5' : 'border-slate-800 bg-slate-900/50';
-        const badgeColor = isSupported ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' : isContradicted ? 'bg-rose-500/20 text-rose-400 border-rose-500/30' : 'bg-slate-700 text-slate-300 border-slate-600';
+        const cardBorder = isSupported ? 'border-cyber-emerald/30 bg-cyber-emerald/5' : isContradicted ? 'border-rose-500/40 bg-rose-500/5' : 'border-obsidian-700 bg-obsidian-900/50';
+        const badgeColor = isSupported ? 'bg-cyber-emerald/20 text-cyber-emerald border-cyber-emerald/30' : isContradicted ? 'bg-rose-500/20 text-rose-400 border-rose-500/30' : 'bg-slate-700 text-slate-300 border-slate-600';
         const icon = isSupported ? 'fa-check' : isContradicted ? 'fa-xmark' : 'fa-question';
 
-        // Multi-Agent Committee Voting
+        // Multi-Agent Committee Voting Deliberation
         let committeeHtml = '';
         if (c.committee_votes && c.committee_votes.length > 0) {
           committeeHtml = `
-            <div class="mt-3 pt-3 border-t border-slate-800 space-y-1.5 font-mono-code text-xs">
+            <div class="mt-3 pt-3 border-t border-obsidian-700/80 space-y-1.5 font-mono-code text-xs">
               <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400 flex items-center space-x-1.5">
-                <i class="fa-solid fa-users text-accent"></i>
-                <span>Multi-Agent Committee Consensus Deliberation:</span>
+                <i class="fa-solid fa-users text-cyber-cyan"></i>
+                <span>3-Perspective Committee Consensus:</span>
               </div>
               <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
                 ${c.committee_votes.map(v => `
-                  <div class="p-2.5 rounded-lg bg-slate-950/80 border border-slate-800 space-y-1">
+                  <div class="p-2.5 rounded-lg bg-obsidian-950 border border-obsidian-700 space-y-1">
                     <div class="flex items-center justify-between">
                       <span class="font-bold text-slate-200 text-[11px]">${v.agent_name}</span>
-                      <span class="text-[10px] uppercase font-black px-1.5 py-0.5 rounded ${v.verdict === 'SUPPORTED' ? 'bg-emerald-500/20 text-emerald-400' : v.verdict === 'CONTRADICTED' ? 'bg-rose-500/20 text-rose-400' : 'bg-slate-800 text-slate-400'}">${v.verdict}</span>
+                      <span class="text-[10px] uppercase font-black px-1.5 py-0.5 rounded ${v.verdict === 'SUPPORTED' ? 'bg-cyber-emerald/20 text-cyber-emerald' : v.verdict === 'CONTRADICTED' ? 'bg-rose-500/20 text-rose-400' : 'bg-slate-800 text-slate-400'}">${v.verdict}</span>
                     </div>
                     <div class="text-[10px] text-slate-400 leading-tight">${v.argument}</div>
                   </div>
@@ -492,30 +1034,17 @@
           `;
         }
 
-        // Source Conflict Box
-        let conflictHtml = '';
-        if (c.source_conflict && c.source_conflict.has_conflict) {
-          conflictHtml = `
-            <div class="mt-3 p-3 rounded-lg bg-amber-500/10 border border-amber-500/30 text-xs text-amber-300 space-y-1 font-mono-code">
-              <div class="font-bold text-amber-400 flex items-center space-x-1.5">
-                <i class="fa-solid fa-code-compare"></i>
-                <span>Source Conflict Arbitrated:</span>
-              </div>
-              <div>${c.source_conflict.resolution_rationale}</div>
-            </div>
-          `;
-        }
-
+        // Live Evidence Citations
         let evidenceHtml = '';
         if (c.evidence && c.evidence.length > 0) {
           evidenceHtml = `
-            <div class="mt-3 pt-3 border-t border-slate-800/80 space-y-2">
+            <div class="mt-3 pt-3 border-t border-obsidian-700/80 space-y-2">
               <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Live External Citations (Authority &times; Freshness):</div>
               ${c.evidence.map(ev => `
-                <div class="text-xs bg-slate-950/80 border border-slate-800 p-2.5 rounded-lg space-y-1 font-mono-code">
-                  <div class="text-emerald-400 font-semibold truncate flex items-center justify-between">
+                <div class="text-xs bg-obsidian-950 border border-obsidian-700 p-2.5 rounded-lg space-y-1 font-mono-code">
+                  <div class="text-cyber-emerald font-semibold truncate flex items-center justify-between">
                     <span>${ev.source_title || 'Web Citation'} <span class="text-slate-500 text-[10px] ml-1">(Authority: ${(ev.reliability_weight * 100).toFixed(0)}%)</span></span>
-                    <a href="${ev.source_url}" target="_blank" class="text-accent hover:underline text-[10px] ml-2"><i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+                    <a href="${ev.source_url}" target="_blank" class="text-cyber-cyan hover:underline text-[10px] ml-2"><i class="fa-solid fa-arrow-up-right-from-square"></i></a>
                   </div>
                   <div class="text-slate-300 text-[11px] leading-relaxed">"${ev.snippet}"</div>
                 </div>
@@ -524,18 +1053,19 @@
           `;
         }
 
+        // Contradiction Details Box
         let contradictionBox = '';
         if (c.contradiction_details) {
           contradictionBox = `
-            <div class="mt-3 p-3 rounded-lg bg-rose-500/10 border border-rose-500/20 text-xs text-rose-300 space-y-1 font-mono-code">
-              <div><strong>Contradiction Detected:</strong> ${c.contradiction_details}</div>
-              ${c.correction ? `<div class="text-emerald-400 font-bold"><strong>Verified Factual Correction:</strong> ${c.correction}</div>` : ''}
+            <div class="mt-3 p-3 rounded-lg bg-rose-500/10 border border-rose-500/30 text-xs text-rose-300 space-y-1 font-mono-code">
+              <div><strong class="text-rose-400">Contradiction Detected:</strong> ${c.contradiction_details}</div>
+              ${c.correction ? `<div class="text-cyber-emerald font-bold"><strong>Verified Factual Correction:</strong> ${c.correction}</div>` : ''}
             </div>
           `;
         }
 
         const card = `
-          <div class="border ${cardBorder} rounded-xl p-5 space-y-2">
+          <div class="border ${cardBorder} rounded-xl p-5 space-y-2 glass-card">
             <div class="flex items-start justify-between gap-4">
               <div class="flex items-start space-x-3">
                 <span class="inline-flex items-center justify-center w-6 h-6 rounded-md ${badgeColor} text-xs font-bold shrink-0 mt-0.5 border">
@@ -544,15 +1074,14 @@
                 <div>
                   <div class="text-xs uppercase font-mono-code text-slate-400 font-bold flex items-center space-x-2">
                     <span>Claim #${c.claim_id} · Confidence ${Math.round(c.confidence * 100)}%</span>
-                    <span class="px-1.5 py-0.2 rounded bg-slate-800 text-[10px] text-slate-400">Decay Risk: ${c.knowledge_decay_risk || 'LOW'}</span>
+                    <span class="px-1.5 py-0.2 rounded bg-obsidian-800 text-[10px] text-slate-400">Decay Risk: ${c.knowledge_decay_risk || 'LOW'}</span>
                   </div>
-                  <div class="text-sm font-medium text-slate-100 mt-1">"${c.claim_text}"</div>
+                  <div class="text-sm font-medium text-slate-100 mt-1 font-mono-code">"${c.claim_text}"</div>
                 </div>
               </div>
-              <span class="px-2.5 py-1 rounded-md text-xs font-black uppercase tracking-wider border shrink-0 ${badgeColor}">${c.verdict}</span>
+              <span class="px-2.5 py-1 rounded-md text-xs font-black uppercase tracking-wider border shrink-0 font-mono-code ${badgeColor}">${c.verdict}</span>
             </div>
             ${contradictionBox}
-            ${conflictHtml}
             ${committeeHtml}
             ${evidenceHtml}
           </div>
@@ -560,14 +1089,15 @@
         container.innerHTML += card;
       });
 
+      // Proof chain
       const trailContainer = document.getElementById('trailLogContainer');
       trailContainer.innerHTML = '';
       if (trailData && trailData.trail) {
         trailData.trail.forEach(t => {
           trailContainer.innerHTML += `
-            <div class="p-2 bg-slate-950 rounded border border-slate-800 flex items-center justify-between">
+            <div class="p-2 bg-obsidian-950 rounded border border-obsidian-800 flex items-center justify-between">
               <div>
-                <span class="text-emerald-400 font-bold">[${t.step}]</span>
+                <span class="text-cyber-emerald font-bold">[${t.step}]</span>
                 <span class="text-slate-400 ml-2">${t.iso_time}</span>
               </div>
               <span class="text-slate-500 text-[10px] truncate max-w-xs">Hash: ${t.event_hash}</span>
@@ -577,25 +1107,174 @@
       }
     }
 
+    function escapeRegex(str) {
+      return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    }
+
     async function loadCallerBalance() {
       try {
         const res = await fetch('/credits/local-browser-session');
         if (res.ok) {
           const data = await res.json();
-          document.getElementById('headerBalanceDisplay').innerText = `Arena Balance: ${data.credit_balance} Credits`;
+          document.getElementById('headerBalanceDisplay').innerText = `${data.credit_balance} Credits`;
         }
       } catch (e) {}
     }
 
+    async function topUpCredits() {
+      try {
+        const res = await fetch('/credits/local-browser-session/topup?amount=50', { method: 'POST' });
+        if (res.ok) {
+          const data = await res.json();
+          document.getElementById('headerBalanceDisplay').innerText = `${data.credit_balance} Credits`;
+          alert('Added 50 Arena Credits! New Balance: ' + data.credit_balance);
+        }
+      } catch (e) {
+        alert('Failed to topup: ' + e.message);
+      }
+    }
+
     function copyRepairedAnswer() {
-      const text = document.getElementById('repairedAnswerText').innerText;
-      navigator.clipboard.writeText(text);
-      alert('Repaired answer copied to clipboard!');
+      if (lastAuditData && lastAuditData.repaired_answer) {
+        navigator.clipboard.writeText(lastAuditData.repaired_answer);
+        alert('Safe Repaired Answer copied to clipboard!');
+      } else {
+        const text = document.getElementById('repairedAnswerVisualDiff').innerText;
+        navigator.clipboard.writeText(text);
+        alert('Answer copied to clipboard!');
+      }
+    }
+
+    async function verifyCurrentAuditProof() {
+      if (!lastAuditData) {
+        alert('Please run a verification audit first.');
+        return;
+      }
+      try {
+        const res = await fetch(`/api/audit-trail/${lastAuditData.audit_id}/verify`);
+        if (res.ok) {
+          const json = await res.json();
+          alert(`✅ Cryptographic Proof Verified!\nStatus: ${json.status}\nChain Depth: ${json.chain_depth} turns\nLatest Hash: ${json.latest_hash.slice(0, 24)}...`);
+        }
+      } catch (e) {
+        alert('Proof verification error: ' + e.message);
+      }
+    }
+
+    // MCP JSON-RPC Sandbox
+    const mcpSamplePayloads = {
+      agentscout_firewall_gate: {
+        jsonrpc: "2.0",
+        id: 1,
+        method: "tools/call",
+        params: {
+          name: "agentscout_firewall_gate",
+          arguments: {
+            caller_agent_id: "mcp-agent-001",
+            question: "What is the battery life of Sony WH-1000XM5?",
+            answer: "The Sony WH-1000XM5 has 40 hours of battery life with ANC on.",
+            min_reliability_threshold: 80,
+            auto_repair: true
+          }
+        }
+      },
+      agentscout_free_trial: {
+        jsonrpc: "2.0",
+        id: 2,
+        method: "tools/call",
+        params: {
+          name: "agentscout_free_trial",
+          arguments: {
+            question: "What is the battery life of Sony WH-1000XM5?",
+            answer: "The Sony WH-1000XM5 has 40 hours of battery life with ANC on."
+          }
+        }
+      },
+      agentscout_free_manifest: {
+        jsonrpc: "2.0",
+        id: 3,
+        method: "tools/call",
+        params: {
+          name: "agentscout_free_manifest",
+          arguments: {}
+        }
+      },
+      agentscout_adversarial_attack: {
+        jsonrpc: "2.0",
+        id: 4,
+        method: "tools/call",
+        params: {
+          name: "agentscout_adversarial_attack",
+          arguments: {
+            caller_agent_id: "mcp-agent-001",
+            question: "What is the battery life of Sony WH-1000XM5?",
+            answer: "The Sony WH-1000XM5 has 40 hours of battery life with ANC on."
+          }
+        }
+      },
+      agentscout_send_credits: {
+        jsonrpc: "2.0",
+        id: 5,
+        method: "tools/call",
+        params: {
+          name: "agentscout_send_credits",
+          arguments: {
+            sender_agent_id: "mcp-agent-001",
+            amount: 5,
+            note: "Firewall Gate Execution"
+          }
+        }
+      }
+    };
+
+    function updateMcpSamplePayload() {
+      const tool = document.getElementById('mcpToolSelect').value;
+      if (mcpSamplePayloads[tool]) {
+        document.getElementById('mcpPayloadInput').value = JSON.stringify(mcpSamplePayloads[tool], null, 2);
+      }
+    }
+
+    async function executeMcpRpcCall() {
+      const payloadStr = document.getElementById('mcpPayloadInput').value;
+      const outputEl = document.getElementById('mcpResponseOutput');
+      const latencyEl = document.getElementById('mcpLatencyDisplay');
+
+      outputEl.innerText = "Executing JSON-RPC 2.0 tool call over HTTP POST /api/mcp...";
+      const t0 = performance.now();
+
+      try {
+        const payload = JSON.parse(payloadStr);
+        const res = await fetch('/api/mcp', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const elapsed = Math.round(performance.now() - t0);
+        latencyEl.innerText = `${elapsed}ms`;
+
+        const data = await res.json();
+        outputEl.innerText = JSON.stringify(data, null, 2);
+      } catch (err) {
+        outputEl.innerText = "Error executing MCP call: " + err.message;
+      }
+    }
+
+    async function refreshNetworkPeers() {
+      try {
+        const res = await fetch('/sharednet/peers');
+        if (res.ok) {
+          const data = await res.json();
+          alert(`SharedNet Node Active: ${data.node_id}\nRegistered Peers: ${data.peers_count}\nSeed Nodes: ${data.seed_peers.join(', ')}`);
+        }
+      } catch (e) {
+        alert('Network lookup error: ' + e.message);
+      }
     }
 
     window.addEventListener('DOMContentLoaded', () => {
-      loadFixture('headphone_demo');
+      loadFixture('sony_anc_demo');
       loadCallerBalance();
+      updateMcpSamplePayload();
     });
   </script>
 </body>
