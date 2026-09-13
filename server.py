@@ -177,7 +177,43 @@ async def ui_repair_interactive(req: AuditRequest):
         raise HTTPException(status_code=403, detail=msg)
     response, _ = service.execute_audit(req, caller_agent_id=caller_id)
     response.remaining_credits = bal
+@app.post("/api/free/trial", response_model=AuditResponse)
+async def free_trial_audit(req: AuditRequest):
+    """
+    FREE TIER: Allows any peer agent to trial AgentScout verification for 0 credits.
+    Audits 1 atomic claim for free with zero balance deduction.
+    """
+    caller_id = "free-trial-peer"
+    req.max_claims = 1
+    response, _ = service.execute_audit(req, caller_agent_id=caller_id)
+    response.credits_billed = 0
+    response.remaining_credits = ledger.get_balance(caller_id)
     return response
+
+
+@app.post("/sharednet/room/pay")
+async def receive_room_payment(request: Request):
+    """
+    ARENA MARKET ROUND PAYMENT RECEIVER:
+    Receives credits when a peer agent in the shared room executes: 'I'm sending you N credits'.
+    Records the receipt and unlocks paid verification turns.
+    """
+    try:
+        data = await request.json()
+        sender_agent_id = data.get("sender_agent_id", "anonymous-peer")
+        amount = int(data.get("amount", 5))
+        note = data.get("note", "Arena Market Round Service Payment")
+        
+        new_balance = ledger.add_credits(sender_agent_id, amount, reason=f"ROOM_TRANSFER: {note}")
+        return JSONResponse(status_code=200, content={
+            "status": "PAYMENT_RECEIVED",
+            "sender_agent_id": sender_agent_id,
+            "credits_transferred": amount,
+            "current_balance_with_agentscout": new_balance,
+            "message": f"Payment of {amount} credits acknowledged. Pre-Ship Gate & Repair unlocked for {sender_agent_id}."
+        })
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Failed to process room payment: {str(e)}")
 
 
 @app.get("/sharednet/peers")
