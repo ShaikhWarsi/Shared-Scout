@@ -10,4 +10,6 @@ venv/
 .idea/
 .vscode/
 Other repos/
+node_modules/
+package-lock.json
 

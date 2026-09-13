@@ -1,0 +1,14 @@
+{
+  "name": "agentscout",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "AgentScout - Pre-Action CI/CD Firewall Gate & In-Flight Diff-Repair Middleware with SharedOS Capability Authorization",
+  "scripts": {
+    "start": "python server.py",
+    "test": "pytest tests/",
+    "sharedos:bridge": "node sharedos/kernel_node_bridge.mjs"
+  },
+  "dependencies": {
+    "@aicoo/sharedos": "^0.1.0-alpha.5"
+  }
+}

@@ -1,0 +1,179 @@
+[
+  {
+    "id": "grant-agentscout-core-v1",
+    "namespaceId": "agentscout.sharedos.net",
+    "subject": {
+      "kind": "agent",
+      "agentId": "agentscout-firewall"
+    },
+    "issuer": {
+      "kind": "human",
+      "userId": "arena-authority-admin"
+    },
+    "capabilities": [
+      {
+        "resource": {
+          "namespace": "agentscout",
+          "path": [
+            "firewall",
+            "gate"
+          ],
+          "owner": {
+            "kind": "human",
+            "userId": "arena-authority-admin"
+          }
+        },
+        "actions": [
+          "evaluate",
+          "repair",
+          "gate"
+        ],
+        "scope": "descendants"
+      },
+      {
+        "resource": {
+          "namespace": "agentscout",
+          "path": [
+            "arena",
+            "attack"
+          ],
+          "owner": {
+            "kind": "human",
+            "userId": "arena-authority-admin"
+          }
+        },
+        "actions": [
+          "attack",
+          "stress_test"
+        ],
+        "scope": "descendants"
+      },
+      {
+        "resource": {
+          "namespace": "files",
+          "path": [
+            "benchmarks"
+          ],
+          "owner": {
+            "kind": "human",
+            "userId": "arena-authority-admin"
+          }
+        },
+        "actions": [
+          "read",
+          "search",
+          "list",
+          "stat"
+        ],
+        "scope": "descendants"
+      },
+      {
+        "resource": {
+          "namespace": "files",
+          "path": [
+            "docs"
+          ],
+          "owner": {
+            "kind": "human",
+            "userId": "arena-authority-admin"
+          }
+        },
+        "actions": [
+          "read",
+          "search",
+          "list",
+          "stat"
+        ],
+        "scope": "descendants"
+      },
+      {
+        "resource": {
+          "namespace": "files",
+          "path": [
+            "demo"
+          ],
+          "owner": {
+            "kind": "human",
+            "userId": "arena-authority-admin"
+          }
+        },
+        "actions": [
+          "read",
+          "search",
+          "list",
+          "stat"
+        ],
+        "scope": "descendants"
+      }
+    ],
+    "constraints": {
+      "purposes": [
+        "pre-action-firewall",
+        "factual-verification",
+        "hallucination-audit",
+        "adversarial-defense"
+      ],
+      "expiresAt": "2030-01-01T00:00:00Z",
+      "maxUses": 999889
+    },
+    "issuedAt": "2026-09-13T11:44:08Z"
+  },
+  {
+    "id": "grant-peer-agent-trial-v1",
+    "namespaceId": "agentscout.sharedos.net",
+    "subject": {
+      "kind": "agent",
+      "agentId": "peer-agent"
+    },
+    "issuer": {
+      "kind": "human",
+      "userId": "arena-authority-admin"
+    },
+    "capabilities": [
+      {
+        "resource": {
+          "namespace": "agentscout",
+          "path": [
+            "firewall",
+            "gate"
+          ],
+          "owner": {
+            "kind": "human",
+            "userId": "arena-authority-admin"
+          }
+        },
+        "actions": [
+          "evaluate",
+          "gate"
+        ],
+        "scope": "descendants"
+      },
+      {
+        "resource": {
+          "namespace": "agentscout",
+          "path": [
+            "trial"
+          ],
+          "owner": {
+            "kind": "human",
+            "userId": "arena-authority-admin"
+          }
+        },
+        "actions": [
+          "verify"
+        ],
+        "scope": "exact"
+      }
+    ],
+    "constraints": {
+      "purposes": [
+        "pre-action-firewall",
+        "factual-verification",
+        "trial"
+      ],
+      "expiresAt": "2030-01-01T00:00:00Z",
+      "maxUses": 500000
+    },
+    "issuedAt": "2026-09-13T11:44:08Z"
+  }
+]
