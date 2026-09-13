@@ -58,7 +58,7 @@
         </div>
         <div class="flex items-center space-x-2 bg-emerald-500/10 border border-emerald-500/30 px-3 py-1.5 rounded-lg text-xs font-bold text-emerald-400">
           <i class="fa-solid fa-coins"></i>
-          <span>5 Arena Credits / Audit</span>
+          <span id="headerBalanceDisplay">Arena Balance: 100 Credits</span>
         </div>
       </div>
     </div>
@@ -321,6 +321,10 @@
         if (!res.ok) throw new Error('Audit service error: ' + res.statusText);
         const data = await res.json();
 
+        if (data.remaining_credits !== undefined && data.remaining_credits !== null) {
+          document.getElementById('headerBalanceDisplay').innerText = `Arena Balance: ${data.remaining_credits} Credits`;
+        }
+
         let trailData = null;
         try {
           const trailRes = await fetch(`/api/audit-trail/${data.audit_id}`);
@@ -456,7 +460,20 @@
       alert('Repaired answer copied to clipboard!');
     }
 
-    window.addEventListener('DOMContentLoaded', () => loadFixture('headphone_demo'));
+    async function loadCallerBalance() {
+      try {
+        const res = await fetch('/credits/Arena-Autopsy-UI');
+        if (res.ok) {
+          const data = await res.json();
+          document.getElementById('headerBalanceDisplay').innerText = `Arena Balance: ${data.credit_balance} Credits`;
+        }
+      } catch (e) {}
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      loadFixture('headphone_demo');
+      loadCallerBalance();
+    });
   </script>
 </body>
 </html>

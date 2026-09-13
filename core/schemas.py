@@ -59,3 +59,4 @@ class AuditResponse(BaseModel):
     execution_latency_ms: int = Field(..., description="Processing time in milliseconds")
     sharedos_purpose: str = Field(..., description="SharedOS verified purpose string")
     credits_billed: int = Field(5, description="Arena credits billed for this transaction")
+    remaining_credits: Optional[int] = Field(None, description="Current caller Arena credits balance after deduction")

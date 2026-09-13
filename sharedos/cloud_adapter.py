@@ -8,7 +8,9 @@ import hmac
 import hashlib
 import json
 import os
-from typing import Dict, Any, Optional
+import urllib.request
+import urllib.parse
+from typing import Dict, Any, Optional, List
 from sharedos.manifest import SHAREDOS_MANIFEST, SHAREDOS_PURPOSE_STRING
 
 
@@ -20,6 +22,10 @@ class SharedOSCloudAdapter:
         self.enforce_hmac = os.getenv("SHAREDOS_ENFORCE_HMAC", "true").lower() in {"true", "1", "yes"}
         self.connected_since = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
         self.active_turns_synced = 0
+        self.seed_peers = [
+            p.strip() for p in os.getenv("SHAREDOS_SEED_NODES", "http://localhost:8001,http://localhost:8002").split(",") if p.strip()
+        ]
+        self.registered_peers: Dict[str, Dict[str, Any]] = {}
 
     def verify_turn_authorization(self, headers: Dict[str, str], raw_body: bytes = b"") -> Dict[str, Any]:
         caller = headers.get("x-sharedos-agent-id", "arena-peer-agent")
@@ -55,6 +61,37 @@ class SharedOSCloudAdapter:
             "Content-Type": "application/json"
         }
 
+    def dial_peer_node(self, peer_url: str, endpoint: str = "/purpose") -> Dict[str, Any]:
+        """Dials outbound SharedNet peer node with cryptographic HMAC handshake."""
+        target_url = peer_url.rstrip("/") + endpoint
+        dummy_payload = json.dumps({"dialer_node": self.node_id, "timestamp": time.time()}).encode("utf-8")
+        headers = self.get_auth_headers(self.node_id, dummy_payload)
+        
+        try:
+            req = urllib.request.Request(target_url, headers=headers)
+            with urllib.request.urlopen(req, timeout=2.0) as resp:
+                data = json.loads(resp.read().decode("utf-8"))
+                peer_id = data.get("agent_id", peer_url)
+                self.registered_peers[peer_id] = {
+                    "url": peer_url,
+                    "status": "REACHABLE",
+                    "last_seen": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+                    "info": data
+                }
+                return {"status": "SUCCESS", "peer_id": peer_id, "data": data}
+        except Exception as e:
+            return {"status": "UNREACHABLE", "peer_url": peer_url, "error": str(e)}
+
+    def register_peer(self, peer_id: str, peer_url: str, metadata: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+        """Registers a discovered peer node in the local SharedNet topology."""
+        self.registered_peers[peer_id] = {
+            "url": peer_url,
+            "status": "REGISTERED",
+            "last_seen": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+            "metadata": metadata or {}
+        }
+        return self.registered_peers[peer_id]
+
     def get_node_status(self) -> Dict[str, Any]:
         return {
             "node_id": self.node_id,
@@ -67,5 +104,7 @@ class SharedOSCloudAdapter:
             "turns_synced": self.active_turns_synced,
             "hmac_enforced": self.enforce_hmac,
             "sandbox_isolated": True,
-            "kernel_audit_compliant": True
+            "kernel_audit_compliant": True,
+            "peer_nodes_count": len(self.registered_peers),
+            "seed_peers": self.seed_peers
         }

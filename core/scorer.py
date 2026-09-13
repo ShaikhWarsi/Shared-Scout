@@ -64,24 +64,65 @@ class AuditScorer:
             outdated=outdated
         )
 
-        # Build Auto-Repaired Answer
+        # ---------------------------------------------------------
+        # Generalized Multi-Domain Autonomous Repair Engine
+        # ---------------------------------------------------------
         repaired = original_answer
         if original_answer and contradicted > 0:
             for c in claims:
                 if c.verdict == VerdictEnum.CONTRADICTED and c.correction:
-                    # If correction contains "Actual verified price is X"
-                    price_match = re.search(r"(?:price is|is)\s+((?:Rs\.?|INR|₹|\$|USD|EUR|€)\s*[\d,]+(?:\.\d+)?)", c.correction, re.IGNORECASE)
-                    if price_match:
-                        correct_val = price_match.group(1)
-                        # Extract wrong price in claim
-                        wrong_match = re.search(r"((?:Rs\.?|INR|₹|\$|USD|EUR|€)\s*[\d,]+(?:\.\d+)?)", c.claim_text, re.IGNORECASE)
-                        if wrong_match:
-                            repaired = repaired.replace(wrong_match.group(1), correct_val)
-                    elif "with anc active" in c.correction.lower() or "with anc enabled" in c.correction.lower():
-                        # Battery / spec correction
-                        spec_match = re.search(r"(\d+\s*hours?\s*with ANC enabled)", c.correction, re.IGNORECASE)
-                        if spec_match:
-                            repaired = re.sub(r"\b\d+\s*hours\s*(?:of continuous music playback\s*)?with ANC enabled\b", spec_match.group(1), repaired, flags=re.IGNORECASE)
+                    corr_text = c.correction.strip()
+                    claim_str = c.claim_text.strip()
+                    
+                    # 1. Price / Currency replacement
+                    price_pattern = r"((?:Rs\.?|INR|₹|\$|USD|EUR|€|GBP|£)\s*[\d,]+(?:\.\d+)?)"
+                    corr_prices = re.findall(price_pattern, corr_text, re.IGNORECASE)
+                    claim_prices = re.findall(price_pattern, claim_str, re.IGNORECASE)
+                    if corr_prices and claim_prices:
+                        wrong_p = claim_prices[0]
+                        right_p = corr_prices[0]
+                        if wrong_p in repaired and wrong_p.lower() != right_p.lower():
+                            repaired = repaired.replace(wrong_p, right_p)
+                            continue
+
+                    # 2. Numeric + Unit Specification replacement (e.g. 40 hours -> 30 hours, 100W -> 65W, 5000mAh -> 4500mAh)
+                    spec_pattern = r"(\d+(?:\.\d+)?)\s*(hours|hour|hrs|hr|db|mah|watts|watt|w|khz|mhz|ghz|hz|gb|tb|mb|nits|nit|meters|meter|km/s|km|cm|mm|grams|g|kg|lbs|k|tokens|token)\b"
+                    corr_specs = re.findall(spec_pattern, corr_text, re.IGNORECASE)
+                    claim_specs = re.findall(spec_pattern, claim_str, re.IGNORECASE)
+                    
+                    spec_replaced = False
+                    if corr_specs and claim_specs:
+                        for c_val, c_unit in claim_specs:
+                            for r_val, r_unit in corr_specs:
+                                if c_unit.lower() == r_unit.lower() and c_val != r_val:
+                                    # Target wrong spec in text
+                                    target_rx = re.compile(rf"\b{re.escape(c_val)}\s*{re.escape(c_unit)}\b", re.IGNORECASE)
+                                    if target_rx.search(repaired):
+                                        repaired = target_rx.sub(f"{r_val} {c_unit}", repaired)
+                                        spec_replaced = True
+                                        break
+                    if spec_replaced:
+                        continue
+
+                    # 3. Historical Year / Date replacement (e.g. 1995 -> 1991, 1968 -> 1969)
+                    year_pattern = r"\b(19\d\d|20\d\d)\b"
+                    corr_years = re.findall(year_pattern, corr_text)
+                    claim_years = re.findall(year_pattern, claim_str)
+                    if corr_years and claim_years:
+                        for cy in claim_years:
+                            for ry in corr_years:
+                                if cy != ry and cy in repaired:
+                                    repaired = repaired.replace(cy, ry)
+                                    spec_replaced = True
+                    if spec_replaced:
+                        continue
+
+                    # 4. Direct Proposition or Keyword replacement
+                    if "Verified is:" in corr_text or "Verified fact:" in corr_text or "Verified specification is" in corr_text:
+                        clean_corr = re.sub(r"^(?:Verified is:|Verified fact:|Verified specification is|Actual verified price is)\s*", "", corr_text, flags=re.IGNORECASE).strip().rstrip(".")
+                        # If claim exists verbatim in original answer, replace with clean correction
+                        if claim_str in repaired:
+                            repaired = repaired.replace(claim_str, clean_corr)
 
         return AuditResponse(
             audit_id=audit_id,
