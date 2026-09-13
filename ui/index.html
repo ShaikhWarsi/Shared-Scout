@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AgentScout | Neo-Brutalist Pre-Ship CI/CD Firewall Gate for AI Agents</title>
+  <title>AgentScout | Pre-Ship CI/CD Firewall Gate for AI Agents</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700;800;900&family=JetBrains+Mono:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700;800;900&family=JetBrains+Mono:wght@600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800;900&display=swap" rel="stylesheet">
   
   <script>
     tailwind.config = {
@@ -21,29 +21,27 @@
           },
           colors: {
             neo: {
-              bg: '#F8F9FA',
+              bg: '#F4F5F8',
               white: '#FFFFFF',
-              black: '#121212',
+              black: '#0A0A0A',
               red: '#FF2E4C',
               darkred: '#D90429',
-              lightred: '#FFF0F2',
+              lightred: '#FFEAEF',
               yellow: '#FFE600',
               green: '#00E599',
-              lightgreen: '#EDFCF6',
-              cyan: '#00F0FF',
-              lightcyan: '#EBFDFF',
-              gray: '#E9ECEF',
-              border: '#121212'
+              darkgreen: '#00875A',
+              lightgreen: '#E6FCF3',
+              gray: '#E5E7EB',
+              border: '#0A0A0A'
             }
           },
           boxShadow: {
-            'neo-sm': '2px 2px 0px #121212',
-            'neo': '4px 4px 0px #121212',
-            'neo-lg': '6px 6px 0px #121212',
-            'neo-xl': '8px 8px 0px #121212',
-            'neo-red': '4px 4px 0px #FF2E4C',
-            'neo-red-lg': '6px 6px 0px #FF2E4C',
-            'neo-hover': '5px 5px 0px #121212'
+            'neo-sm': '3px 3px 0px #0A0A0A',
+            'neo': '5px 5px 0px #0A0A0A',
+            'neo-lg': '7px 7px 0px #0A0A0A',
+            'neo-xl': '10px 10px 0px #0A0A0A',
+            'neo-red': '5px 5px 0px #FF2E4C',
+            'neo-red-lg': '8px 8px 0px #FF2E4C'
           },
           borderWidth: {
             '3': '3px',
@@ -57,14 +55,9 @@
   <style>
     body {
       font-family: 'Plus Jakarta Sans', sans-serif;
-      background-color: #F4F5F7;
-      background-image: 
-        radial-gradient(#121212 1px, transparent 1px),
-        radial-gradient(#121212 1px, #F4F5F7 1px);
-      background-size: 28px 28px;
-      background-position: 0 0, 14px 14px;
-      background-opacity: 0.04;
-      color: #121212;
+      background-color: #F0F2F6;
+      color: #0A0A0A;
+      font-size: 16px;
     }
     
     .font-display {
@@ -75,31 +68,26 @@
       font-family: 'JetBrains Mono', monospace;
     }
     
-    /* Neo-Brutalist Components */
+    /* Neo-Brutalist Components with High Contrast & Generous Padding */
     .neo-box {
       background: #FFFFFF;
-      border: 3px solid #121212;
-      box-shadow: 5px 5px 0px #121212;
-      border-radius: 12px;
+      border: 3.5px solid #0A0A0A;
+      box-shadow: 6px 6px 0px #0A0A0A;
+      border-radius: 14px;
       transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
     }
     
     .neo-box-sm {
       background: #FFFFFF;
-      border: 2px solid #121212;
-      box-shadow: 3px 3px 0px #121212;
-      border-radius: 8px;
-    }
-    
-    .neo-box-interactive:hover {
-      transform: translate(-2px, -2px);
-      box-shadow: 7px 7px 0px #121212;
+      border: 2.5px solid #0A0A0A;
+      box-shadow: 4px 4px 0px #0A0A0A;
+      border-radius: 10px;
     }
     
     .neo-btn {
-      border: 2px solid #121212;
-      box-shadow: 3px 3px 0px #121212;
-      font-weight: 800;
+      border: 2.5px solid #0A0A0A;
+      box-shadow: 4px 4px 0px #0A0A0A;
+      font-weight: 900;
       transition: all 0.12s ease;
       cursor: pointer;
       user-select: none;
@@ -107,141 +95,130 @@
     
     .neo-btn:hover {
       transform: translate(-2px, -2px);
-      box-shadow: 5px 5px 0px #121212;
+      box-shadow: 6px 6px 0px #0A0A0A;
     }
     
     .neo-btn:active {
       transform: translate(2px, 2px);
-      box-shadow: 1px 1px 0px #121212;
+      box-shadow: 2px 2px 0px #0A0A0A;
     }
     
     .neo-badge {
-      border: 2px solid #121212;
-      box-shadow: 2px 2px 0px #121212;
-      font-weight: 800;
-      font-size: 11px;
-      padding: 2px 8px;
-      border-radius: 6px;
+      border: 2px solid #0A0A0A;
+      box-shadow: 2.5px 2.5px 0px #0A0A0A;
+      font-weight: 900;
+      font-size: 12px;
+      padding: 3px 10px;
+      border-radius: 8px;
       display: inline-flex;
       align-items: center;
-      gap: 4px;
+      gap: 5px;
     }
 
+    /* High-contrast diff tags */
     .diff-deleted {
-      background-color: #FFE0E3;
-      color: #D90429;
+      background-color: #FFD4DB;
+      color: #B91C1C;
       text-decoration: line-through;
-      padding: 1px 5px;
-      border-radius: 4px;
-      border: 1px dashed #FF2E4C;
-      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 6px;
+      border: 2px dashed #EF4444;
+      font-weight: 900;
+      display: inline-block;
+      margin: 2px 0;
     }
 
     .diff-added {
-      background-color: #D7F9EE;
-      color: #00875A;
-      padding: 1px 5px;
-      border-radius: 4px;
-      border: 1px solid #00E599;
-      font-weight: 800;
+      background-color: #D1FAE5;
+      color: #047857;
+      padding: 3px 8px;
+      border-radius: 6px;
+      border: 2px solid #10B981;
+      font-weight: 900;
+      display: inline-block;
+      margin: 2px 0;
     }
 
     /* Custom Scrollbar */
     ::-webkit-scrollbar {
-      width: 8px;
-      height: 8px;
+      width: 10px;
+      height: 10px;
     }
     ::-webkit-scrollbar-track {
       background: #FFFFFF;
-      border-left: 2px solid #121212;
+      border-left: 3px solid #0A0A0A;
     }
     ::-webkit-scrollbar-thumb {
-      background: #121212;
+      background: #0A0A0A;
       border-radius: 0px;
     }
     ::-webkit-scrollbar-thumb:hover {
       background: #FF2E4C;
-    }
-
-    /* Hazard stripes banner */
-    .hazard-stripe {
-      background: repeating-linear-gradient(
-        -45deg,
-        #121212,
-        #121212 12px,
-        #FFE600 12px,
-        #FFE600 24px
-      );
-    }
-    .hazard-stripe-red {
-      background: repeating-linear-gradient(
-        -45deg,
-        #121212,
-        #121212 12px,
-        #FF2E4C 12px,
-        #FF2E4C 24px
-      );
     }
   </style>
 </head>
 
 <body class="min-h-screen flex flex-col antialiased selection:bg-neo-red selection:text-white">
 
-  <!-- Top Hazard / Announcement Bar -->
-  <div class="bg-neo-black text-white py-1.5 px-4 text-center text-xs font-mono-code font-bold tracking-wider uppercase border-b-2 border-neo-black flex items-center justify-center space-x-2">
-    <span class="w-2 h-2 rounded-full bg-neo-red animate-ping"></span>
-    <span>A2A FIREWALL GATE ACTIVE · SHAREDNET PROTOCOL · HMAC-SHA256 SIGNED RECEIPT DOCKETS</span>
-    <span class="w-2 h-2 rounded-full bg-neo-red animate-ping"></span>
+  <!-- Top Announcement Bar -->
+  <div class="bg-neo-black text-white py-2 px-4 text-center text-xs sm:text-sm font-mono-code font-extrabold tracking-wider uppercase border-b-3 border-neo-black flex items-center justify-center space-x-3">
+    <span class="w-2.5 h-2.5 rounded-full bg-neo-red animate-ping"></span>
+    <span>A2A PRE-ACTION FIREWALL GATE ACTIVE · SHAREDNET PROTOCOL · HMAC & ED25519 SIGNED DOCKETS</span>
+    <span class="w-2.5 h-2.5 rounded-full bg-neo-red animate-ping"></span>
   </div>
 
   <!-- Header Navigation -->
-  <header class="border-b-3 border-neo-black bg-white sticky top-0 z-50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+  <header class="border-b-3 border-neo-black bg-white sticky top-0 z-50 shadow-sm">
+    <div class="max-w-[1520px] mx-auto px-4 sm:px-6 lg:px-8 h-20 sm:h-22 flex items-center justify-between">
       
       <!-- Brand & Neo Logo -->
-      <div class="flex items-center space-x-3.5">
-        <div class="h-12 w-12 rounded-xl bg-neo-red border-3 border-neo-black shadow-neo flex items-center justify-center text-white font-black text-xl">
+      <div class="flex items-center space-x-4">
+        <div class="h-12 w-12 sm:h-14 sm:w-14 rounded-xl bg-neo-red border-3 border-neo-black shadow-neo flex items-center justify-center text-white font-black text-2xl">
           <i class="fa-solid fa-shield-halved"></i>
         </div>
         <div>
-          <div class="flex items-center space-x-2.5">
-            <span class="text-2xl sm:text-3xl font-black font-display tracking-tight text-neo-black">AgentScout</span>
-            <span class="neo-badge bg-neo-yellow text-neo-black uppercase tracking-wider">PRE-SHIP FIREWALL</span>
+          <div class="flex items-center space-x-3">
+            <span class="text-2xl sm:text-3xl lg:text-4xl font-black font-display tracking-tight text-neo-black">AgentScout</span>
+            <span class="neo-badge bg-neo-yellow text-neo-black text-xs sm:text-sm uppercase tracking-wider">PRE-SHIP GATE</span>
           </div>
-          <p class="text-xs text-slate-600 font-bold hidden sm:block">Pre-Ship CI/CD Firewall Gate & Adversarial Verification for AI Agents</p>
+          <p class="text-xs sm:text-sm text-slate-800 font-extrabold hidden sm:block">Pre-Action CI/CD Firewall Gate & Adversarial Verification for AI Agents</p>
         </div>
       </div>
 
       <!-- Live Node & Arena Credit Controls -->
-      <div class="flex items-center space-x-3">
+      <div class="flex items-center space-x-3 sm:space-x-4">
         
         <!-- SharedNet Node Pill -->
-        <div class="hidden md:flex items-center space-x-2 text-xs font-mono-code bg-white border-2 border-neo-black shadow-neo-sm px-3 py-1.5 rounded-lg text-neo-black font-bold">
-          <span class="w-2.5 h-2.5 rounded-full bg-neo-green border border-neo-black"></span>
+        <div class="hidden md:flex items-center space-x-2 text-xs sm:text-sm font-mono-code bg-white border-2.5 border-neo-black shadow-neo-sm px-3.5 py-2 rounded-xl text-neo-black font-extrabold">
+          <span class="w-3 h-3 rounded-full bg-neo-green border-2 border-neo-black"></span>
           <span>Node: <strong class="text-neo-red">agentscout.sharedos.net</strong></span>
         </div>
 
         <!-- Quick Links -->
-        <div class="hidden lg:flex items-center space-x-2">
-          <a href="/.well-known/agent.json" target="_blank" class="neo-btn bg-white hover:bg-slate-100 text-neo-black text-xs font-mono-code px-3 py-1.5 rounded-lg flex items-center space-x-1.5" title="A2A Agent Card">
+        <div class="hidden xl:flex items-center space-x-2">
+          <a href="/.well-known/agent.json" target="_blank" class="neo-btn bg-white hover:bg-slate-100 text-neo-black text-xs font-mono-code px-3 py-2 rounded-xl flex items-center space-x-1.5 font-extrabold">
             <i class="fa-solid fa-id-card text-neo-red"></i>
             <span>Agent Card</span>
           </a>
-          <a href="/api/v1/listing" target="_blank" class="neo-btn bg-white hover:bg-slate-100 text-neo-black text-xs font-mono-code px-3 py-1.5 rounded-lg flex items-center space-x-1.5" title="API Catalog">
+          <a href="/api/v1/listing" target="_blank" class="neo-btn bg-white hover:bg-slate-100 text-neo-black text-xs font-mono-code px-3 py-2 rounded-xl flex items-center space-x-1.5 font-extrabold">
             <i class="fa-solid fa-list-check text-neo-black"></i>
             <span>Catalog</span>
           </a>
-          <a href="/ledger/export" target="_blank" class="neo-btn bg-white hover:bg-slate-100 text-neo-black text-xs font-mono-code px-3 py-1.5 rounded-lg flex items-center space-x-1.5" title="CSV Ledger">
-            <i class="fa-solid fa-file-csv text-neo-red"></i>
+          <a href="/api/v1/public-key" target="_blank" class="neo-btn bg-white hover:bg-slate-100 text-neo-black text-xs font-mono-code px-3 py-2 rounded-xl flex items-center space-x-1.5 font-extrabold">
+            <i class="fa-solid fa-key text-neo-red"></i>
+            <span>Public Key</span>
+          </a>
+          <a href="/ledger/export" target="_blank" class="neo-btn bg-white hover:bg-slate-100 text-neo-black text-xs font-mono-code px-3 py-2 rounded-xl flex items-center space-x-1.5 font-extrabold">
+            <i class="fa-solid fa-file-csv text-neo-black"></i>
             <span>Ledger</span>
           </a>
         </div>
 
         <!-- Live Credit Balance Pill -->
-        <div class="flex items-center space-x-2 bg-neo-lightred border-2 border-neo-black shadow-neo px-3.5 py-1.5 rounded-xl text-xs font-mono-code font-extrabold text-neo-black">
-          <i class="fa-solid fa-coins text-neo-red text-sm"></i>
+        <div class="flex items-center space-x-2.5 bg-neo-lightred border-3 border-neo-black shadow-neo px-4 py-2 rounded-xl text-xs sm:text-sm font-mono-code font-black text-neo-black">
+          <i class="fa-solid fa-coins text-neo-red text-base"></i>
           <span id="headerBalanceDisplay">100 Credits</span>
-          <button onclick="topUpCredits()" class="neo-btn bg-neo-red hover:bg-neo-darkred text-white text-[10px] px-2 py-0.5 rounded ml-1" title="Add 50 Arena Credits">+50 Topup</button>
+          <button onclick="topUpCredits()" class="neo-btn bg-neo-red hover:bg-neo-darkred text-white text-xs px-2.5 py-1 rounded-lg ml-1 font-black">+50 Topup</button>
         </div>
 
       </div>
@@ -249,143 +226,143 @@
     </div>
   </header>
 
-  <!-- Neo Navigation Tabs -->
-  <div class="border-b-3 border-neo-black bg-white sticky top-20 z-40">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between overflow-x-auto py-2.5">
-      <div class="flex items-center space-x-2.5 min-w-max">
+  <!-- Navigation Tabs -->
+  <div class="border-b-3 border-neo-black bg-white sticky top-20 sm:top-22 z-40">
+    <div class="max-w-[1520px] mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between overflow-x-auto py-3">
+      <div class="flex items-center space-x-3 min-w-max">
         
-        <button onclick="switchTab('firewall')" id="tabBtn-firewall" class="tab-btn neo-btn bg-neo-red text-white text-xs font-mono-code font-black px-4 py-2 rounded-xl flex items-center space-x-2">
+        <button onclick="switchTab('firewall')" id="tabBtn-firewall" class="tab-btn neo-btn bg-neo-red text-white text-xs sm:text-sm font-mono-code font-black px-4 sm:px-5 py-2.5 rounded-xl flex items-center space-x-2">
           <i class="fa-solid fa-shield-halved"></i>
           <span>1. PRE-SHIP FIREWALL & REPAIR</span>
         </button>
 
-        <button onclick="switchTab('adversarial')" id="tabBtn-adversarial" class="tab-btn neo-btn bg-white hover:bg-slate-100 text-neo-black text-xs font-mono-code font-bold px-4 py-2 rounded-xl flex items-center space-x-2">
+        <button onclick="switchTab('adversarial')" id="tabBtn-adversarial" class="tab-btn neo-btn bg-white hover:bg-slate-100 text-neo-black text-xs sm:text-sm font-mono-code font-extrabold px-4 sm:px-5 py-2.5 rounded-xl flex items-center space-x-2">
           <i class="fa-solid fa-burst text-neo-red"></i>
           <span>2. RED-TEAM ADVERSARIAL</span>
         </button>
 
-        <button onclick="switchTab('mcp')" id="tabBtn-mcp" class="tab-btn neo-btn bg-white hover:bg-slate-100 text-neo-black text-xs font-mono-code font-bold px-4 py-2 rounded-xl flex items-center space-x-2">
+        <button onclick="switchTab('mcp')" id="tabBtn-mcp" class="tab-btn neo-btn bg-white hover:bg-slate-100 text-neo-black text-xs sm:text-sm font-mono-code font-extrabold px-4 sm:px-5 py-2.5 rounded-xl flex items-center space-x-2">
           <i class="fa-solid fa-microchip text-neo-black"></i>
           <span>3. MCP JSON-RPC SANDBOX</span>
         </button>
 
-        <button onclick="switchTab('provenance')" id="tabBtn-provenance" class="tab-btn neo-btn bg-white hover:bg-slate-100 text-neo-black text-xs font-mono-code font-bold px-4 py-2 rounded-xl flex items-center space-x-2">
+        <button onclick="switchTab('provenance')" id="tabBtn-provenance" class="tab-btn neo-btn bg-white hover:bg-slate-100 text-neo-black text-xs sm:text-sm font-mono-code font-extrabold px-4 sm:px-5 py-2.5 rounded-xl flex items-center space-x-2">
           <i class="fa-solid fa-link text-neo-red"></i>
           <span>4. PROOF CHAIN & DOCKETS</span>
         </button>
 
-        <button onclick="switchTab('network')" id="tabBtn-network" class="tab-btn neo-btn bg-white hover:bg-slate-100 text-neo-black text-xs font-mono-code font-bold px-4 py-2 rounded-xl flex items-center space-x-2">
+        <button onclick="switchTab('network')" id="tabBtn-network" class="tab-btn neo-btn bg-white hover:bg-slate-100 text-neo-black text-xs sm:text-sm font-mono-code font-extrabold px-4 sm:px-5 py-2.5 rounded-xl flex items-center space-x-2">
           <i class="fa-solid fa-network-wired text-neo-black"></i>
           <span>5. SHAREDNET TOPOLOGY</span>
         </button>
 
       </div>
 
-      <div class="hidden sm:flex items-center space-x-2 text-xs font-mono-code font-black text-neo-black pl-4">
-        <span class="w-3 h-3 rounded-full bg-neo-red border-2 border-neo-black"></span>
+      <div class="hidden lg:flex items-center space-x-2.5 text-xs sm:text-sm font-mono-code font-black text-neo-black pl-4">
+        <span class="w-3 h-3 rounded-full bg-neo-red border-2 border-neo-black animate-pulse"></span>
         <span>A2A CI/CD PIPELINE</span>
       </div>
     </div>
   </div>
 
   <!-- Main Workspace Container -->
-  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+  <main class="flex-1 max-w-[1520px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 space-y-8 sm:space-y-10">
 
     <!-- ========================================================================= -->
     <!-- TAB 1: PRE-SHIP FIREWALL & IN-FLIGHT DIFF REPAIR                          -->
     <!-- ========================================================================= -->
-    <div id="tabContent-firewall" class="tab-content space-y-8">
+    <div id="tabContent-firewall" class="tab-content space-y-8 sm:space-y-10">
 
       <!-- Hero Banner / Architectural Story Card -->
-      <div class="neo-box p-6 md:p-8 bg-white relative overflow-hidden">
-        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-8">
+      <div class="neo-box p-6 sm:p-8 md:p-10 bg-white">
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-8 lg:gap-12">
           
-          <div class="max-w-2xl space-y-4">
-            <div class="inline-flex items-center space-x-2 neo-badge bg-neo-black text-white">
-              <i class="fa-solid fa-shield-virus text-neo-red"></i>
+          <div class="flex-1 space-y-5">
+            <div class="inline-flex items-center space-x-2 neo-badge bg-neo-black text-white text-xs sm:text-sm py-1.5 px-3.5">
+              <i class="fa-solid fa-shield-virus text-neo-red text-base"></i>
               <span>SAFETY MIDDLEWARE · CI/CD FIREWALL GATE</span>
             </div>
             
-            <h1 class="text-3xl sm:text-4xl md:text-5xl font-black font-display tracking-tight text-neo-black leading-none">
+            <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black font-display tracking-tight text-neo-black leading-[1.08]">
               DON'T TRUST AN AGENT.<br/>
-              <span class="bg-neo-red text-white px-2 py-0.5 inline-block transform -rotate-1 mt-1">Challenge It Before It Acts.</span>
+              <span class="bg-neo-red text-white px-3 py-1 inline-block transform -rotate-1 mt-2">Challenge It Before It Acts.</span>
             </h1>
             
-            <p class="text-slate-700 text-sm md:text-base font-medium leading-relaxed">
-              AgentScout sits between an autonomous agent and the real world. It isolates atomic claims, retrieves live authoritative evidence, detects contradictions, <strong class="text-neo-red underline decoration-2">auto-repairs errors in-flight</strong>, and issues a cryptographically anchored Clearance Docket before permitting egress.
+            <p class="text-slate-900 text-base sm:text-lg md:text-xl font-bold leading-relaxed max-w-3xl">
+              AgentScout sits between an autonomous agent and the real world. It isolates atomic claims, retrieves live authoritative evidence, detects contradictions, <strong class="text-neo-red underline decoration-3">auto-repairs errors in-flight</strong>, and issues a cryptographically anchored Clearance Docket before permitting egress.
             </p>
 
-            <!-- Neo Pipeline Step-by-Step Flow -->
-            <div class="pt-2 flex flex-wrap items-center gap-2 text-xs font-mono-code font-bold">
-              <span class="neo-box-sm px-2.5 py-1 bg-slate-100">AI Output</span>
-              <i class="fa-solid fa-arrow-right text-neo-black"></i>
-              <span class="neo-box-sm px-2.5 py-1 bg-slate-100">Claim Isolation</span>
-              <i class="fa-solid fa-arrow-right text-neo-black"></i>
-              <span class="neo-box-sm px-2.5 py-1 bg-slate-100">Evidence Audit</span>
-              <i class="fa-solid fa-arrow-right text-neo-black"></i>
-              <span class="neo-box-sm px-2.5 py-1 bg-neo-lightred text-neo-red font-black border-neo-red">🔴 Gate Block</span>
-              <i class="fa-solid fa-arrow-right text-neo-black"></i>
-              <span class="neo-box-sm px-2.5 py-1 bg-neo-lightgreen text-emerald-800 font-black">🔧 Auto-Repair</span>
-              <i class="fa-solid fa-arrow-right text-neo-black"></i>
-              <span class="neo-box-sm px-2.5 py-1 bg-neo-black text-white font-black">🟢 Signed Docket</span>
+            <!-- Pipeline Step-by-Step Flow -->
+            <div class="pt-3 flex flex-wrap items-center gap-2.5 text-xs sm:text-sm font-mono-code font-black">
+              <span class="neo-box-sm px-3.5 py-1.5 bg-slate-100">AI Output</span>
+              <i class="fa-solid fa-arrow-right text-neo-black text-base"></i>
+              <span class="neo-box-sm px-3.5 py-1.5 bg-slate-100">Claim Isolation</span>
+              <i class="fa-solid fa-arrow-right text-neo-black text-base"></i>
+              <span class="neo-box-sm px-3.5 py-1.5 bg-slate-100">Evidence Audit</span>
+              <i class="fa-solid fa-arrow-right text-neo-black text-base"></i>
+              <span class="neo-box-sm px-3.5 py-1.5 bg-neo-lightred text-neo-red font-black border-neo-red">🔴 Gate Block</span>
+              <i class="fa-solid fa-arrow-right text-neo-black text-base"></i>
+              <span class="neo-box-sm px-3.5 py-1.5 bg-neo-lightgreen text-emerald-900 font-black">🔧 In-Flight Repair</span>
+              <i class="fa-solid fa-arrow-right text-neo-black text-base"></i>
+              <span class="neo-box-sm px-3.5 py-1.5 bg-neo-black text-white font-black">🟢 Signed Docket</span>
             </div>
 
           </div>
 
           <!-- Scenario Selector Cards Panel -->
-          <div class="lg:w-88 shrink-0 neo-box p-4 bg-neo-bg space-y-3">
-            <div class="flex items-center justify-between pb-2 border-b-2 border-neo-black">
-              <span class="text-xs font-black font-mono-code uppercase tracking-wider text-neo-black flex items-center space-x-1.5">
-                <i class="fa-solid fa-flask-vial text-neo-red"></i>
-                <span>ONE-CLICK TEST SCENARIOS</span>
+          <div class="w-full lg:w-[440px] shrink-0 neo-box p-5 sm:p-6 bg-neo-bg space-y-4">
+            <div class="flex items-center justify-between pb-3 border-b-3 border-neo-black">
+              <span class="text-xs sm:text-sm font-black font-mono-code uppercase tracking-wider text-neo-black flex items-center space-x-2">
+                <i class="fa-solid fa-flask-vial text-neo-red text-base"></i>
+                <span>ONE-CLICK TEST PRESETS</span>
               </span>
-              <span class="neo-badge bg-neo-red text-white text-[10px]">6 READY</span>
+              <span class="neo-badge bg-neo-red text-white text-xs font-black">6 READY</span>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-2">
+            <div class="grid grid-cols-1 gap-2.5">
               
-              <button onclick="loadFixture('sony_anc_demo')" class="neo-btn bg-white hover:bg-neo-lightred p-2.5 rounded-xl text-left flex items-center justify-between w-full group">
+              <button onclick="loadFixture('sony_anc_demo')" class="neo-btn bg-white hover:bg-neo-lightred p-3.5 rounded-xl text-left flex items-center justify-between w-full group">
                 <div>
-                  <div class="text-xs font-black font-display text-neo-black flex items-center space-x-1.5">
+                  <div class="text-sm font-black font-display text-neo-black flex items-center space-x-2">
                     <i class="fa-solid fa-bolt text-neo-red"></i>
-                    <span>Sony XM5 ANC Battery</span>
+                    <span>Sony XM5 ANC Battery Spec</span>
                   </div>
-                  <div class="text-[11px] text-slate-500 font-medium">Detects 40h hallucination &rarr; repairs to 30h</div>
+                  <div class="text-xs text-slate-700 font-bold mt-0.5">Detects 40h hallucination &rarr; auto-repairs to 30h</div>
                 </div>
-                <span class="neo-badge bg-neo-red text-white text-[10px] shrink-0">40h &rarr; 30h</span>
+                <span class="neo-badge bg-neo-red text-white text-xs shrink-0 font-black">40h &rarr; 30h</span>
               </button>
 
-              <button onclick="loadFixture('headphone_demo')" class="neo-btn bg-white hover:bg-neo-lightred p-2.5 rounded-xl text-left flex items-center justify-between w-full group">
+              <button onclick="loadFixture('headphone_demo')" class="neo-btn bg-white hover:bg-neo-lightred p-3.5 rounded-xl text-left flex items-center justify-between w-full group">
                 <div>
-                  <div class="text-xs font-black font-display text-neo-black flex items-center space-x-1.5">
+                  <div class="text-sm font-black font-display text-neo-black flex items-center space-x-2">
                     <i class="fa-solid fa-headphones text-neo-black"></i>
                     <span>E-Commerce Price Clash</span>
                   </div>
-                  <div class="text-[11px] text-slate-500 font-medium">boAt vs Realme fake price check</div>
+                  <div class="text-xs text-slate-700 font-bold mt-0.5">boAt vs Realme fake launch price check</div>
                 </div>
-                <span class="neo-badge bg-neo-black text-white text-[10px] shrink-0">Price Fake</span>
+                <span class="neo-badge bg-neo-black text-white text-xs shrink-0 font-black">Fake Price</span>
               </button>
 
-              <button onclick="loadFixture('medicine_demo')" class="neo-btn bg-white hover:bg-neo-lightgreen p-2.5 rounded-xl text-left flex items-center justify-between w-full group">
+              <button onclick="loadFixture('medicine_demo')" class="neo-btn bg-white hover:bg-neo-lightgreen p-3.5 rounded-xl text-left flex items-center justify-between w-full group">
                 <div>
-                  <div class="text-xs font-black font-display text-neo-black flex items-center space-x-1.5">
-                    <i class="fa-solid fa-capsules text-emerald-600"></i>
-                    <span>Paracetamol Max Dosage</span>
+                  <div class="text-sm font-black font-display text-neo-black flex items-center space-x-2">
+                    <i class="fa-solid fa-capsules text-emerald-700"></i>
+                    <span>Paracetamol Daily Max Dosage</span>
                   </div>
-                  <div class="text-[11px] text-slate-500 font-medium">4,000mg/24h medical safety limit</div>
+                  <div class="text-xs text-slate-700 font-bold mt-0.5">Medical 4,000mg/24h safety limit validation</div>
                 </div>
-                <span class="neo-badge bg-neo-green text-neo-black text-[10px] shrink-0">Clean Pass</span>
+                <span class="neo-badge bg-neo-green text-neo-black text-xs shrink-0 font-black">Clean Pass</span>
               </button>
 
-              <button onclick="loadFixture('law_demo')" class="neo-btn bg-white hover:bg-neo-lightgreen p-2.5 rounded-xl text-left flex items-center justify-between w-full group">
+              <button onclick="loadFixture('law_demo')" class="neo-btn bg-white hover:bg-neo-lightgreen p-3.5 rounded-xl text-left flex items-center justify-between w-full group">
                 <div>
-                  <div class="text-xs font-black font-display text-neo-black flex items-center space-x-1.5">
+                  <div class="text-sm font-black font-display text-neo-black flex items-center space-x-2">
                     <i class="fa-solid fa-scale-balanced text-neo-black"></i>
-                    <span>US Copyright Duration</span>
+                    <span>US Copyright Law Duration</span>
                   </div>
-                  <div class="text-[11px] text-slate-500 font-medium">Life of author + 70 years statutory test</div>
+                  <div class="text-xs text-slate-700 font-bold mt-0.5">Life of author + 70 years statutory test</div>
                 </div>
-                <span class="neo-badge bg-neo-green text-neo-black text-[10px] shrink-0">Clean Pass</span>
+                <span class="neo-badge bg-neo-green text-neo-black text-xs shrink-0 font-black">Clean Pass</span>
               </button>
 
             </div>
@@ -395,21 +372,21 @@
       </div>
 
       <!-- Main Interactive Inspection & Execution Form -->
-      <div id="formContainer" class="neo-box p-6 md:p-8 bg-white">
-        <form id="auditForm" onsubmit="handleAuditSubmit(event)" class="space-y-6">
+      <div id="formContainer" class="neo-box p-6 sm:p-8 md:p-10 bg-white">
+        <form id="auditForm" onsubmit="handleAuditSubmit(event)" class="space-y-6 sm:space-y-8">
           
-          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b-2 border-neo-black">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b-3 border-neo-black">
             <div class="flex items-center space-x-3">
-              <span class="text-sm font-black font-mono-code uppercase tracking-wider text-neo-black">FIREWALL GATE INSPECTOR</span>
-              <span class="neo-badge bg-neo-yellow text-neo-black">SAFETY THRESHOLD: 80/100</span>
+              <span class="text-base sm:text-lg font-black font-mono-code uppercase tracking-wider text-neo-black">FIREWALL GATE INSPECTOR</span>
+              <span class="neo-badge bg-neo-yellow text-neo-black text-xs sm:text-sm font-black">SAFETY THRESHOLD: 80/100</span>
             </div>
 
             <!-- Mode Selector Switch -->
-            <div class="inline-flex rounded-xl bg-slate-100 p-1 border-2 border-neo-black shadow-neo-sm">
-              <button type="button" id="btnModeVerify" onclick="setAuditMode('VERIFY')" class="px-3.5 py-1.5 rounded-lg text-xs font-mono-code font-black bg-neo-red text-white border-2 border-neo-black shadow-neo-sm transition">
+            <div class="inline-flex rounded-xl bg-slate-100 p-1.5 border-3 border-neo-black shadow-neo-sm">
+              <button type="button" id="btnModeVerify" onclick="setAuditMode('VERIFY')" class="px-4 py-2 rounded-lg text-xs sm:text-sm font-mono-code font-black bg-neo-red text-white border-2 border-neo-black shadow-neo-sm transition">
                 <i class="fa-solid fa-check-double mr-1.5"></i> STANDARD VERIFY & REPAIR
               </button>
-              <button type="button" id="btnModeAttack" onclick="setAuditMode('ATTACK')" class="px-3.5 py-1.5 rounded-lg text-xs font-mono-code font-bold text-slate-600 hover:text-neo-red transition">
+              <button type="button" id="btnModeAttack" onclick="setAuditMode('ATTACK')" class="px-4 py-2 rounded-lg text-xs sm:text-sm font-mono-code font-black text-slate-700 hover:text-neo-red transition">
                 <i class="fa-solid fa-burst mr-1.5"></i> ⚔️ RED-TEAM ATTACK
               </button>
             </div>
@@ -417,31 +394,31 @@
 
           <!-- Question Input -->
           <div>
-            <label class="block text-xs font-black font-mono-code uppercase tracking-wider text-neo-black mb-2 flex items-center justify-between">
+            <label class="block text-sm sm:text-base font-black font-mono-code uppercase tracking-wider text-neo-black mb-2 flex items-center justify-between">
               <span>1. ORIGINAL PROMPT / RESEARCH QUERY</span>
-              <span class="text-slate-500 font-semibold lowercase">context to corroborate against</span>
+              <span class="text-slate-700 font-extrabold text-xs lowercase">context to corroborate against</span>
             </label>
-            <input id="inputQuestion" type="text" required class="w-full bg-white border-3 border-neo-black shadow-neo-sm rounded-xl px-4 py-3.5 text-sm text-neo-black placeholder-slate-400 focus:outline-none focus:shadow-neo focus:border-neo-red font-mono-code font-bold transition" placeholder="e.g. What is the continuous music playback battery life of the Sony WH-1000XM5?" />
+            <input id="inputQuestion" type="text" required class="w-full bg-white border-3 border-neo-black shadow-neo rounded-xl px-5 py-4 text-base sm:text-lg text-neo-black placeholder-slate-400 focus:outline-none focus:border-neo-red font-mono-code font-bold transition" placeholder="e.g. What is the continuous music playback battery life of the Sony WH-1000XM5?" />
           </div>
 
           <!-- Answer Input -->
           <div>
-            <label class="block text-xs font-black font-mono-code uppercase tracking-wider text-neo-black mb-2 flex items-center justify-between">
+            <label class="block text-sm sm:text-base font-black font-mono-code uppercase tracking-wider text-neo-black mb-2 flex items-center justify-between">
               <span>2. DRAFT AI RESPONSE TO INTERCEPT & FIREWALL</span>
-              <span class="text-slate-500 font-semibold lowercase">evaluated through 3-perspective deliberation</span>
+              <span class="text-slate-700 font-extrabold text-xs lowercase">evaluated through 3-perspective deliberation</span>
             </label>
-            <textarea id="inputAnswer" rows="3" required class="w-full bg-white border-3 border-neo-black shadow-neo-sm rounded-xl px-4 py-3.5 text-xs sm:text-sm text-neo-black placeholder-slate-400 focus:outline-none focus:shadow-neo focus:border-neo-red font-mono-code font-bold transition leading-relaxed" placeholder="Paste generated response to challenge against live sources and auto-repair..."></textarea>
+            <textarea id="inputAnswer" rows="4" required class="w-full bg-white border-3 border-neo-black shadow-neo rounded-xl px-5 py-4 text-sm sm:text-base md:text-lg text-neo-black placeholder-slate-400 focus:outline-none focus:border-neo-red font-mono-code font-bold transition leading-relaxed" placeholder="Paste generated response to challenge against live sources and auto-repair..."></textarea>
           </div>
 
           <!-- Action Row -->
-          <div class="flex flex-col sm:flex-row items-center justify-between gap-4 pt-2">
-            <div class="text-xs text-slate-600 font-mono-code font-bold flex items-center space-x-2">
-              <i class="fa-solid fa-users-gear text-neo-red text-sm"></i>
-              <span>Deliberation Pipeline: <strong class="text-neo-black">Researcher + Skeptic + SourceJudge</strong></span>
+          <div class="flex flex-col sm:flex-row items-center justify-between gap-5 pt-2">
+            <div class="text-xs sm:text-sm text-slate-800 font-mono-code font-black flex items-center space-x-2.5">
+              <i class="fa-solid fa-users-gear text-neo-red text-lg"></i>
+              <span>Committee Pipeline: <strong class="text-neo-black underline decoration-2">Researcher + Skeptic + SourceJudge</strong></span>
             </div>
             
-            <button id="btnSubmit" type="submit" class="w-full sm:w-auto neo-btn bg-neo-red hover:bg-neo-darkred text-white text-sm sm:text-base font-black font-display px-8 py-4 rounded-xl shadow-neo flex items-center justify-center space-x-3 tracking-wider">
-              <i class="fa-solid fa-shield-halved text-lg"></i>
+            <button id="btnSubmit" type="submit" class="w-full sm:w-auto neo-btn bg-neo-red hover:bg-neo-darkred text-white text-base sm:text-lg font-black font-display px-10 py-4.5 rounded-2xl shadow-neo-lg flex items-center justify-center space-x-3 tracking-wider transform hover:scale-[1.02]">
+              <i class="fa-solid fa-shield-halved text-xl"></i>
               <span id="submitBtnText">EVALUATE PRE-SHIP GATE & REPAIR (5 Credits)</span>
             </button>
           </div>
@@ -449,166 +426,166 @@
         </form>
       </div>
 
-      <!-- Loading / Deliberating State -->
-      <div id="loadingState" class="hidden py-12 text-center space-y-4 neo-box p-8 bg-white">
+      <!-- Loading State -->
+      <div id="loadingState" class="hidden py-14 text-center space-y-4 neo-box p-8 bg-white">
         <div class="inline-block relative">
-          <div class="w-16 h-16 border-4 border-slate-200 border-t-neo-red rounded-full animate-spin"></div>
-          <div class="absolute inset-0 flex items-center justify-center text-xs font-black font-mono-code text-neo-red">A2A</div>
+          <div class="w-20 h-20 border-4 border-slate-200 border-t-neo-red rounded-full animate-spin"></div>
+          <div class="absolute inset-0 flex items-center justify-center text-sm font-black font-mono-code text-neo-red">A2A</div>
         </div>
-        <div class="space-y-1">
-          <p id="loadingTitle" class="text-xl font-black font-display text-neo-black">Challenging Draft Output through Pre-Ship Firewall Gate...</p>
-          <p id="loadingSubtitle" class="text-xs text-slate-600 font-mono-code font-bold">Extracting atomic claims & querying Wikipedia + Web Indexes with Committee Consensus...</p>
+        <div class="space-y-1.5">
+          <p id="loadingTitle" class="text-2xl font-black font-display text-neo-black">Challenging Draft Output through Pre-Ship Firewall Gate...</p>
+          <p id="loadingSubtitle" class="text-sm text-slate-800 font-mono-code font-bold">Extracting atomic claims & querying Wikipedia + Web Indexes with Committee Consensus...</p>
         </div>
       </div>
 
       <!-- ========================================================================= -->
       <!-- RESULTS & AUTOPSY SECTION                                                -->
       <!-- ========================================================================= -->
-      <div id="resultsSection" class="hidden space-y-8">
+      <div id="resultsSection" class="hidden space-y-8 sm:space-y-10">
 
         <!-- 1. PRE-SHIP FIREWALL GATE DECISION BANNER -->
-        <div id="firewallGateBanner" class="p-6 rounded-xl border-3 border-neo-black shadow-neo-lg flex flex-col md:flex-row items-start md:items-center justify-between gap-4 font-mono-code">
-          <div class="flex items-center space-x-4">
-            <div id="gateIcon" class="w-14 h-14 rounded-xl border-2 border-neo-black shadow-neo-sm flex items-center justify-center text-2xl font-black shrink-0"></div>
+        <div id="firewallGateBanner" class="p-6 sm:p-8 rounded-2xl border-3 border-neo-black shadow-neo-lg flex flex-col md:flex-row items-start md:items-center justify-between gap-5 font-mono-code">
+          <div class="flex items-center space-x-5">
+            <div id="gateIcon" class="w-16 h-16 rounded-2xl border-3 border-neo-black shadow-neo-sm flex items-center justify-center text-3xl font-black shrink-0"></div>
             <div>
-              <div class="text-xs uppercase font-black tracking-wider text-slate-600">Pre-Ship CI/CD Firewall Decision</div>
-              <div id="gateStatusText" class="text-xl sm:text-2xl font-black font-display tracking-tight mt-0.5 text-neo-black"></div>
+              <div class="text-xs sm:text-sm uppercase font-black tracking-wider text-slate-800">Pre-Ship CI/CD Firewall Decision</div>
+              <div id="gateStatusText" class="text-2xl sm:text-3xl font-black font-display tracking-tight mt-1 text-neo-black"></div>
             </div>
           </div>
-          <div id="gateDecisionDetails" class="text-xs text-left md:text-right space-y-1 text-neo-black font-mono-code font-bold"></div>
+          <div id="gateDecisionDetails" class="text-xs sm:text-sm text-left md:text-right space-y-1.5 text-neo-black font-mono-code font-black"></div>
         </div>
 
-        <!-- 2. IN-FLIGHT DIFF-REPAIR VISUALIZER (SIDE-BY-SIDE / DELTA VIEW) -->
-        <div id="diffRepairCard" class="neo-box p-6 md:p-8 bg-white space-y-6">
-          <div class="flex items-center justify-between border-b-2 border-neo-black pb-4">
-            <div class="flex items-center space-x-3">
-              <div class="w-9 h-9 rounded-lg bg-neo-black text-white flex items-center justify-center text-sm font-black">
+        <!-- 2. IN-FLIGHT DIFF-REPAIR VISUALIZER -->
+        <div id="diffRepairCard" class="neo-box p-6 sm:p-8 md:p-10 bg-white space-y-6">
+          <div class="flex items-center justify-between border-b-3 border-neo-black pb-4">
+            <div class="flex items-center space-x-3.5">
+              <div class="w-10 h-10 rounded-xl bg-neo-black text-white flex items-center justify-center text-lg font-black">
                 <i class="fa-solid fa-code-compare"></i>
               </div>
               <div>
-                <h3 class="text-base sm:text-lg font-black font-display uppercase tracking-wider text-neo-black">In-Flight Diff-Repair Inspection</h3>
-                <p class="text-xs text-slate-600 font-mono-code font-medium">Automated delta patching replacing unverified statements with authoritative evidence</p>
+                <h3 class="text-lg sm:text-xl font-black font-display uppercase tracking-wider text-neo-black">In-Flight Diff-Repair Inspection</h3>
+                <p class="text-xs sm:text-sm text-slate-800 font-mono-code font-bold">Automated delta patching replacing unverified statements with authoritative evidence</p>
               </div>
             </div>
 
-            <button onclick="copyRepairedAnswer()" class="neo-btn bg-white hover:bg-slate-100 text-neo-black text-xs font-mono-code px-3.5 py-2 rounded-xl flex items-center space-x-2">
+            <button onclick="copyRepairedAnswer()" class="neo-btn bg-white hover:bg-slate-100 text-neo-black text-xs sm:text-sm font-mono-code px-4 py-2.5 rounded-xl flex items-center space-x-2 font-black">
               <i class="fa-regular fa-copy text-neo-red"></i>
               <span>Copy Safe Answer</span>
             </button>
           </div>
 
           <!-- Visual Comparison Columns -->
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 font-mono-code">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 font-mono-code">
             
             <!-- Left: Raw Intercepted Draft -->
-            <div class="space-y-2">
-              <div class="flex items-center justify-between text-xs font-black uppercase tracking-wider text-neo-red">
+            <div class="space-y-2.5">
+              <div class="flex items-center justify-between text-xs sm:text-sm font-black uppercase tracking-wider text-neo-red">
                 <span>🔴 Intercepted Raw Draft (Pre-Firewall):</span>
-                <span id="initialReliabilityBadge" class="neo-badge bg-neo-lightred text-neo-red border-neo-red">0/100</span>
+                <span id="initialReliabilityBadge" class="neo-badge bg-neo-lightred text-neo-red border-neo-red text-xs">0/100</span>
               </div>
-              <div id="rawDraftVisualDiff" class="p-5 rounded-xl bg-neo-lightred border-3 border-neo-red shadow-neo-sm text-xs sm:text-sm text-neo-black font-bold leading-relaxed min-h-[110px]"></div>
+              <div id="rawDraftVisualDiff" class="p-6 rounded-2xl bg-neo-lightred border-3 border-neo-red shadow-neo-sm text-sm sm:text-base text-neo-black font-bold leading-relaxed min-h-[130px]"></div>
             </div>
 
             <!-- Right: Repaired & Cleared Output -->
-            <div class="space-y-2">
-              <div class="flex items-center justify-between text-xs font-black uppercase tracking-wider text-emerald-700">
+            <div class="space-y-2.5">
+              <div class="flex items-center justify-between text-xs sm:text-sm font-black uppercase tracking-wider text-emerald-800">
                 <span>🟢 Cleared For Egress (Post-Repair):</span>
-                <span id="finalReliabilityBadge" class="neo-badge bg-neo-lightgreen text-emerald-800 border-emerald-800">100/100 (APPROVED)</span>
+                <span id="finalReliabilityBadge" class="neo-badge bg-neo-lightgreen text-emerald-900 border-emerald-800 text-xs">100/100 (APPROVED)</span>
               </div>
-              <div id="repairedAnswerVisualDiff" class="p-5 rounded-xl bg-neo-lightgreen border-3 border-emerald-700 shadow-neo-sm text-xs sm:text-sm text-neo-black font-bold leading-relaxed min-h-[110px]"></div>
+              <div id="repairedAnswerVisualDiff" class="p-6 rounded-2xl bg-neo-lightgreen border-3 border-emerald-700 shadow-neo-sm text-sm sm:text-base text-neo-black font-bold leading-relaxed min-h-[130px]"></div>
             </div>
 
           </div>
 
           <!-- Egress Advisory Note -->
-          <div class="text-xs text-neo-black font-mono-code leading-relaxed bg-slate-50 p-4 rounded-xl border-2 border-neo-black flex items-start space-x-3">
-            <i class="fa-solid fa-triangle-exclamation text-neo-red text-base mt-0.5"></i>
+          <div class="text-xs sm:text-sm text-neo-black font-mono-code leading-relaxed bg-slate-50 p-5 rounded-xl border-3 border-neo-black flex items-start space-x-3.5 shadow-neo-sm">
+            <i class="fa-solid fa-triangle-exclamation text-neo-red text-lg mt-0.5"></i>
             <div>
-              <strong class="text-neo-black font-black uppercase">Egress Advisory:</strong>
-              <span id="recommendationText" class="text-slate-700 font-semibold ml-1">Analyzing advisory...</span>
+              <strong class="text-neo-black font-black uppercase text-sm">Egress Advisory:</strong>
+              <span id="recommendationText" class="text-slate-800 font-bold ml-1">Analyzing advisory...</span>
             </div>
           </div>
 
         </div>
 
-        <!-- 3. RESPONSE HEALTH & TELEMETRY GAUGES -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <!-- 3. RESPONSE HEALTH GAUGES -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
           
           <!-- Reliability Score -->
-          <div class="neo-box p-5 bg-white flex items-center space-x-4">
-            <div id="scoreCircle" class="w-16 h-16 rounded-xl bg-neo-yellow border-2 border-neo-black shadow-neo-sm flex flex-col items-center justify-center font-black text-neo-black shrink-0">
-              <span id="scoreVal" class="text-2xl leading-none">50</span>
-              <span class="text-[10px] uppercase font-black tracking-tighter">/ 100</span>
+          <div class="neo-box p-6 bg-white flex items-center space-x-5">
+            <div id="scoreCircle" class="w-18 h-18 rounded-2xl bg-neo-yellow border-3 border-neo-black shadow-neo-sm flex flex-col items-center justify-center font-black text-neo-black shrink-0 p-3">
+              <span id="scoreVal" class="text-3xl leading-none font-black">50</span>
+              <span class="text-xs uppercase font-black tracking-tighter mt-0.5">/ 100</span>
             </div>
             <div>
-              <div class="text-[11px] uppercase font-black font-mono-code text-slate-500">Reliability Score</div>
-              <div id="verdictSummaryBadge" class="text-sm font-black font-mono-code text-neo-black uppercase mt-0.5">CONTRADICTED</div>
+              <div class="text-xs uppercase font-black font-mono-code text-slate-600">Reliability Score</div>
+              <div id="verdictSummaryBadge" class="text-base font-black font-mono-code text-neo-black uppercase mt-1">CONTRADICTED</div>
             </div>
           </div>
 
           <!-- Claims Breakdown -->
-          <div class="neo-box p-5 bg-white flex items-center justify-between">
+          <div class="neo-box p-6 bg-white flex items-center justify-between">
             <div>
-              <div class="text-[11px] uppercase font-black font-mono-code text-slate-500">Claims Examined</div>
-              <div class="text-2xl font-black font-display text-neo-black mt-0.5"><span id="statTotal">0</span> <span class="text-xs font-bold text-slate-500">atomic</span></div>
+              <div class="text-xs uppercase font-black font-mono-code text-slate-600">Claims Examined</div>
+              <div class="text-3xl font-black font-display text-neo-black mt-1"><span id="statTotal">0</span> <span class="text-sm font-bold text-slate-600">atomic</span></div>
             </div>
-            <div class="text-right space-y-1 font-mono-code text-xs font-extrabold">
-              <div class="text-emerald-700">✓ <span id="statSupported">0</span> Supported</div>
+            <div class="text-right space-y-1 font-mono-code text-xs sm:text-sm font-black">
+              <div class="text-emerald-800">✓ <span id="statSupported">0</span> Supported</div>
               <div class="text-neo-red">✕ <span id="statContradicted">0</span> Contradicted</div>
             </div>
           </div>
 
           <!-- Latency -->
-          <div class="neo-box p-5 bg-white flex items-center justify-between">
+          <div class="neo-box p-6 bg-white flex items-center justify-between">
             <div>
-              <div class="text-[11px] uppercase font-black font-mono-code text-slate-500">Execution Latency</div>
-              <div id="statLatency" class="text-2xl font-black font-mono-code text-neo-black mt-0.5">0ms</div>
+              <div class="text-xs uppercase font-black font-mono-code text-slate-600">Execution Latency</div>
+              <div id="statLatency" class="text-3xl font-black font-mono-code text-neo-black mt-1">0ms</div>
             </div>
             <div class="text-right">
-              <span id="modeDisplayBadge" class="neo-badge bg-neo-black text-white uppercase">VERIFY</span>
+              <span id="modeDisplayBadge" class="neo-badge bg-neo-black text-white uppercase text-xs">VERIFY</span>
             </div>
           </div>
 
           <!-- Docket Clearance -->
-          <div class="neo-box p-5 bg-white flex items-center justify-between">
+          <div class="neo-box p-6 bg-white flex items-center justify-between">
             <div>
-              <div class="text-[11px] uppercase font-black font-mono-code text-slate-500">Clearance Docket</div>
-              <div id="docketBadgeDisplay" class="text-xs font-black font-mono-code text-emerald-800 mt-1 truncate max-w-[120px]">Active</div>
+              <div class="text-xs uppercase font-black font-mono-code text-slate-600">Clearance Docket</div>
+              <div id="docketBadgeDisplay" class="text-xs sm:text-sm font-black font-mono-code text-emerald-800 mt-1 truncate max-w-[140px]">Active</div>
             </div>
             <div class="text-right">
-              <span class="neo-badge bg-neo-yellow text-neo-black font-black">5 Credits</span>
+              <span class="neo-badge bg-neo-yellow text-neo-black font-black text-xs">5 Credits</span>
             </div>
           </div>
 
         </div>
 
-        <!-- 4. FORENSIC CLAIMS EVIDENCE GRAPH & 3-AGENT COMMITTEE -->
-        <div class="space-y-4">
+        <!-- 4. FORENSIC CLAIMS EVIDENCE GRAPH -->
+        <div class="space-y-5">
           <div class="flex items-center justify-between">
-            <h3 class="text-base font-black font-display uppercase tracking-wider text-neo-black flex items-center space-x-2">
+            <h3 class="text-lg sm:text-xl font-black font-display uppercase tracking-wider text-neo-black flex items-center space-x-2.5">
               <i class="fa-solid fa-magnifying-glass-chart text-neo-red"></i>
               <span>Forensic Claims Autopsy & 3-Agent Deliberation</span>
             </h3>
-            <span class="text-xs text-slate-600 font-mono-code font-bold hidden sm:block">Researcher + Skeptic + SourceJudge Heuristic Committee</span>
+            <span class="text-xs sm:text-sm text-slate-800 font-mono-code font-black hidden sm:block">Researcher + Skeptic + SourceJudge Heuristic Committee</span>
           </div>
 
-          <div id="claimsContainer" class="space-y-4"></div>
+          <div id="claimsContainer" class="space-y-5"></div>
         </div>
 
-        <!-- 5. CRYPTOGRAPHIC PROOF CHAIN & RECEIPT INSPECTOR -->
-        <div class="neo-box p-6 bg-white space-y-4">
-          <div class="flex items-center justify-between border-b-2 border-neo-black pb-3">
-            <div class="flex items-center space-x-2">
-              <i class="fa-solid fa-link text-neo-red"></i>
-              <h3 class="text-xs font-black font-mono-code uppercase tracking-wider text-neo-black">5-Turn Linked SHA-256 Provenance Chain</h3>
+        <!-- 5. CRYPTOGRAPHIC PROOF CHAIN INSPECTOR -->
+        <div class="neo-box p-6 sm:p-8 bg-white space-y-5">
+          <div class="flex items-center justify-between border-b-3 border-neo-black pb-4">
+            <div class="flex items-center space-x-2.5">
+              <i class="fa-solid fa-link text-neo-red text-lg"></i>
+              <h3 class="text-sm sm:text-base font-black font-mono-code uppercase tracking-wider text-neo-black">5-Turn Linked SHA-256 Provenance Chain</h3>
             </div>
-            <button onclick="verifyCurrentAuditProof()" class="neo-btn bg-white hover:bg-slate-100 text-xs font-mono-code px-3 py-1.5 rounded-lg flex items-center space-x-1.5">
-              <i class="fa-solid fa-circle-check text-emerald-600"></i>
+            <button onclick="verifyCurrentAuditProof()" class="neo-btn bg-white hover:bg-slate-100 text-xs sm:text-sm font-mono-code px-4 py-2 rounded-xl flex items-center space-x-2 font-black">
+              <i class="fa-solid fa-circle-check text-emerald-700"></i>
               <span>Verify Hash Links</span>
             </button>
           </div>
 
-          <div id="trailLogContainer" class="space-y-2 font-mono-code text-xs text-neo-black"></div>
+          <div id="trailLogContainer" class="space-y-2.5 font-mono-code text-xs sm:text-sm text-neo-black"></div>
         </div>
 
       </div>
@@ -620,27 +597,27 @@
     <!-- ========================================================================= -->
     <div id="tabContent-adversarial" class="tab-content hidden space-y-6">
       
-      <div class="neo-box p-8 bg-white border-4 border-neo-red space-y-6">
+      <div class="neo-box p-8 sm:p-10 bg-white border-4 border-neo-red space-y-6">
         <div class="flex items-center space-x-4">
-          <div class="w-12 h-12 rounded-xl bg-neo-red text-white flex items-center justify-center text-2xl font-black border-2 border-neo-black shadow-neo-sm">
+          <div class="w-14 h-14 rounded-2xl bg-neo-red text-white flex items-center justify-center text-3xl font-black border-3 border-neo-black shadow-neo">
             <i class="fa-solid fa-burst"></i>
           </div>
           <div>
-            <h2 class="text-2xl font-black font-display text-neo-black uppercase">Red-Team Adversarial Contradiction Hunting</h2>
-            <p class="text-xs text-slate-600 font-mono-code font-bold">Actively stress-tests propositions for subtle numerical drift, superseded specs, and temporal obsolescence.</p>
+            <h2 class="text-2xl sm:text-3xl font-black font-display text-neo-black uppercase">Red-Team Adversarial Contradiction Hunting</h2>
+            <p class="text-xs sm:text-sm text-slate-800 font-mono-code font-bold">Actively stress-tests propositions for subtle numerical drift, superseded specs, and temporal obsolescence.</p>
           </div>
         </div>
 
-        <div class="p-6 rounded-xl bg-neo-lightred border-3 border-neo-black space-y-4 text-xs font-mono-code font-bold">
-          <div class="text-slate-800 leading-relaxed text-sm">
+        <div class="p-6 sm:p-8 rounded-2xl bg-neo-lightred border-3 border-neo-black space-y-4 text-sm font-mono-code font-bold shadow-neo-sm">
+          <div class="text-slate-900 leading-relaxed text-base">
             In Adversarial Mode, AgentScout switches into offensive stress-testing: it deliberately queries for counter-evidence, expired pricing, superseded product generations, and regulatory revisions to break hallucinated claims.
           </div>
-          <div class="flex flex-wrap items-center gap-3 pt-2">
-            <button onclick="setAuditMode('ATTACK'); switchTab('firewall'); loadFixture('sony_anc_demo');" class="neo-btn bg-neo-red hover:bg-neo-darkred text-white px-5 py-3 rounded-xl font-black flex items-center space-x-2">
+          <div class="flex flex-wrap items-center gap-4 pt-3">
+            <button onclick="setAuditMode('ATTACK'); switchTab('firewall'); loadFixture('sony_anc_demo');" class="neo-btn bg-neo-red hover:bg-neo-darkred text-white px-6 py-3.5 rounded-xl font-black flex items-center space-x-2.5 text-sm sm:text-base">
               <i class="fa-solid fa-crosshairs"></i>
               <span>Launch Adversarial Attack on Sony XM5 Specs</span>
             </button>
-            <button onclick="setAuditMode('ATTACK'); switchTab('firewall'); loadFixture('headphone_demo');" class="neo-btn bg-white hover:bg-slate-100 text-neo-black px-5 py-3 rounded-xl font-black flex items-center space-x-2">
+            <button onclick="setAuditMode('ATTACK'); switchTab('firewall'); loadFixture('headphone_demo');" class="neo-btn bg-white hover:bg-slate-100 text-neo-black px-6 py-3.5 rounded-xl font-black flex items-center space-x-2.5 text-sm sm:text-base">
               <i class="fa-solid fa-tag text-neo-red"></i>
               <span>Attack E-Commerce Pricing Claim</span>
             </button>
@@ -655,26 +632,26 @@
     <!-- ========================================================================= -->
     <div id="tabContent-mcp" class="tab-content hidden space-y-6">
       
-      <div class="neo-box p-8 bg-white space-y-6">
-        <div class="flex items-center justify-between border-b-2 border-neo-black pb-4">
-          <div class="flex items-center space-x-3">
-            <div class="w-12 h-12 rounded-xl bg-neo-black text-white flex items-center justify-center text-xl font-black border-2 border-neo-black shadow-neo-sm">
+      <div class="neo-box p-8 sm:p-10 bg-white space-y-6">
+        <div class="flex items-center justify-between border-b-3 border-neo-black pb-4">
+          <div class="flex items-center space-x-3.5">
+            <div class="w-14 h-14 rounded-2xl bg-neo-black text-white flex items-center justify-center text-2xl font-black border-3 border-neo-black shadow-neo">
               <i class="fa-solid fa-microchip"></i>
             </div>
             <div>
-              <h2 class="text-2xl font-black font-display text-neo-black uppercase">Model Context Protocol (MCP) & A2A JSON-RPC</h2>
-              <p class="text-xs text-slate-600 font-mono-code font-bold">Autonomous agents consume AgentScout as live infrastructure over stdio & remote HTTP JSON-RPC 2.0.</p>
+              <h2 class="text-2xl sm:text-3xl font-black font-display text-neo-black uppercase">Model Context Protocol (MCP) & A2A JSON-RPC</h2>
+              <p class="text-xs sm:text-sm text-slate-800 font-mono-code font-bold">Autonomous agents consume AgentScout as live infrastructure over stdio & remote HTTP JSON-RPC 2.0.</p>
             </div>
           </div>
-          <span class="neo-badge bg-neo-yellow text-neo-black text-xs">POST /api/mcp</span>
+          <span class="neo-badge bg-neo-yellow text-neo-black text-xs sm:text-sm font-black">POST /api/mcp</span>
         </div>
 
         <!-- Interactive MCP Tool Tester -->
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
           
-          <div class="lg:col-span-5 space-y-3 font-mono-code text-xs">
-            <label class="block font-black text-neo-black uppercase tracking-wider">Select MCP Tool Function:</label>
-            <select id="mcpToolSelect" onchange="updateMcpSamplePayload()" class="w-full bg-white border-3 border-neo-black rounded-xl p-3 text-neo-black font-bold focus:outline-none focus:border-neo-red shadow-neo-sm">
+          <div class="lg:col-span-5 space-y-4 font-mono-code text-xs sm:text-sm">
+            <label class="block font-black text-neo-black uppercase tracking-wider text-sm">Select MCP Tool Function:</label>
+            <select id="mcpToolSelect" onchange="updateMcpSamplePayload()" class="w-full bg-white border-3 border-neo-black rounded-xl p-3.5 text-neo-black font-black focus:outline-none focus:border-neo-red shadow-neo-sm text-sm">
               <option value="agentscout_firewall_gate">agentscout_firewall_gate (5 Credits)</option>
               <option value="agentscout_free_trial">agentscout_free_trial (0 Credits)</option>
               <option value="agentscout_free_manifest">agentscout_free_manifest (0 Credits)</option>
@@ -682,21 +659,21 @@
               <option value="agentscout_send_credits">agentscout_send_credits (Arena Payment)</option>
             </select>
 
-            <label class="block font-black text-neo-black uppercase tracking-wider pt-2">JSON-RPC 2.0 Request Payload:</label>
-            <textarea id="mcpPayloadInput" rows="9" class="w-full bg-slate-50 border-3 border-neo-black rounded-xl p-3 text-neo-black text-xs focus:outline-none focus:border-neo-red font-mono-code font-bold shadow-neo-sm"></textarea>
+            <label class="block font-black text-neo-black uppercase tracking-wider pt-2 text-sm">JSON-RPC 2.0 Request Payload:</label>
+            <textarea id="mcpPayloadInput" rows="10" class="w-full bg-slate-50 border-3 border-neo-black rounded-xl p-4 text-neo-black text-xs sm:text-sm focus:outline-none focus:border-neo-red font-mono-code font-bold shadow-neo-sm"></textarea>
             
-            <button onclick="executeMcpRpcCall()" class="w-full neo-btn bg-neo-black hover:bg-slate-800 text-white font-black py-3.5 rounded-xl transition flex items-center justify-center space-x-2">
+            <button onclick="executeMcpRpcCall()" class="w-full neo-btn bg-neo-black hover:bg-slate-800 text-white font-black py-4 rounded-xl transition flex items-center justify-center space-x-3 text-sm sm:text-base">
               <i class="fa-solid fa-play text-neo-red"></i>
               <span>SEND JSON-RPC 2.0 TOOL CALL</span>
             </button>
           </div>
 
-          <div class="lg:col-span-7 space-y-3 font-mono-code text-xs">
+          <div class="lg:col-span-7 space-y-4 font-mono-code text-xs sm:text-sm">
             <div class="flex items-center justify-between">
-              <label class="font-black text-neo-black uppercase tracking-wider">Remote MCP Execution Response:</label>
-              <span id="mcpLatencyDisplay" class="neo-badge bg-slate-100 text-neo-black">Ready</span>
+              <label class="font-black text-neo-black uppercase tracking-wider text-sm">Remote MCP Execution Response:</label>
+              <span id="mcpLatencyDisplay" class="neo-badge bg-slate-100 text-neo-black text-xs">Ready</span>
             </div>
-            <pre id="mcpResponseOutput" class="w-full h-80 bg-slate-900 text-emerald-400 border-3 border-neo-black rounded-xl p-4 text-xs overflow-auto font-mono-code font-bold leading-relaxed shadow-neo">// Click 'Send JSON-RPC 2.0 Tool Call' to test remote MCP execution...</pre>
+            <pre id="mcpResponseOutput" class="w-full h-96 bg-slate-900 text-emerald-400 border-3 border-neo-black rounded-xl p-5 text-xs sm:text-sm overflow-auto font-mono-code font-bold leading-relaxed shadow-neo">// Click 'Send JSON-RPC 2.0 Tool Call' to test remote MCP execution...</pre>
           </div>
 
         </div>
@@ -710,46 +687,46 @@
     <!-- ========================================================================= -->
     <div id="tabContent-provenance" class="tab-content hidden space-y-6">
       
-      <div class="neo-box p-8 bg-white space-y-6">
-        <div class="flex items-center justify-between border-b-2 border-neo-black pb-4">
-          <div class="flex items-center space-x-3">
-            <div class="w-12 h-12 rounded-xl bg-neo-red text-white flex items-center justify-center text-xl font-black border-2 border-neo-black shadow-neo-sm">
+      <div class="neo-box p-8 sm:p-10 bg-white space-y-6">
+        <div class="flex items-center justify-between border-b-3 border-neo-black pb-4">
+          <div class="flex items-center space-x-3.5">
+            <div class="w-14 h-14 rounded-2xl bg-neo-red text-white flex items-center justify-center text-2xl font-black border-3 border-neo-black shadow-neo">
               <i class="fa-solid fa-link"></i>
             </div>
             <div>
-              <h2 class="text-2xl font-black font-display text-neo-black uppercase">Cryptographic Clearance Docket & Provenance Chain</h2>
-              <p class="text-xs text-slate-600 font-mono-code font-bold">Every verification turn is cryptographically anchored in an immutable SHA-256 hash chain with HMAC signatures.</p>
+              <h2 class="text-2xl sm:text-3xl font-black font-display text-neo-black uppercase">Cryptographic Clearance Docket & Provenance Chain</h2>
+              <p class="text-xs sm:text-sm text-slate-800 font-mono-code font-bold">Every verification turn is cryptographically anchored in an immutable SHA-256 hash chain with Ed25519 signatures.</p>
             </div>
           </div>
-          <a href="/ledger/export" target="_blank" class="neo-btn bg-white hover:bg-slate-100 text-xs font-mono-code px-4 py-2 rounded-xl flex items-center space-x-2">
+          <a href="/ledger/export" target="_blank" class="neo-btn bg-white hover:bg-slate-100 text-xs sm:text-sm font-mono-code px-4 py-2.5 rounded-xl flex items-center space-x-2 font-black">
             <i class="fa-solid fa-download text-neo-red"></i>
             <span>Export CSV Audit Trail</span>
           </a>
         </div>
 
-        <div class="space-y-4 font-mono-code text-xs">
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div class="p-5 rounded-xl bg-slate-50 border-2 border-neo-black shadow-neo-sm space-y-1">
-              <div class="text-[10px] uppercase font-black text-slate-500">Signature Algorithm</div>
-              <div class="text-base font-black text-neo-red">HMAC-SHA256</div>
-              <div class="text-[11px] text-slate-600 font-bold">x-sharedos-signature header validation</div>
+        <div class="space-y-5 font-mono-code text-xs sm:text-sm">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+            <div class="p-6 rounded-2xl bg-slate-50 border-3 border-neo-black shadow-neo-sm space-y-1.5">
+              <div class="text-xs uppercase font-black text-slate-600">Signature Algorithm</div>
+              <div class="text-lg font-black text-neo-red">Ed25519 & HMAC-SHA256</div>
+              <div class="text-xs text-slate-800 font-bold">Verifiable via GET /api/v1/public-key</div>
             </div>
-            <div class="p-5 rounded-xl bg-slate-50 border-2 border-neo-black shadow-neo-sm space-y-1">
-              <div class="text-[10px] uppercase font-black text-slate-500">Chain Structure</div>
-              <div class="text-base font-black text-neo-black">5-Turn Linked SHA-256</div>
-              <div class="text-[11px] text-slate-600 font-bold">Ingest &rarr; Deconstruct &rarr; Search &rarr; Vote &rarr; Repair</div>
+            <div class="p-6 rounded-2xl bg-slate-50 border-3 border-neo-black shadow-neo-sm space-y-1.5">
+              <div class="text-xs uppercase font-black text-slate-600">Chain Structure</div>
+              <div class="text-lg font-black text-neo-black">5-Turn Linked SHA-256</div>
+              <div class="text-xs text-slate-800 font-bold">Ingest &rarr; Deconstruct &rarr; Search &rarr; Vote &rarr; Repair</div>
             </div>
-            <div class="p-5 rounded-xl bg-slate-50 border-2 border-neo-black shadow-neo-sm space-y-1">
-              <div class="text-[10px] uppercase font-black text-slate-500">Persistence Target</div>
-              <div class="text-base font-black text-emerald-800">.sharedos/audit_log.jsonl</div>
-              <div class="text-[11px] text-slate-600 font-bold">Appended on every verified transaction</div>
+            <div class="p-6 rounded-2xl bg-slate-50 border-3 border-neo-black shadow-neo-sm space-y-1.5">
+              <div class="text-xs uppercase font-black text-slate-600">Persistence Target</div>
+              <div class="text-lg font-black text-emerald-800">.sharedos/audit_log.jsonl</div>
+              <div class="text-xs text-slate-800 font-bold">Appended on every verified transaction</div>
             </div>
           </div>
 
-          <div class="p-5 rounded-xl bg-slate-50 border-2 border-neo-black space-y-3">
-            <div class="font-black text-neo-black uppercase tracking-wider">Example Clearance Docket Payload:</div>
-            <pre class="text-slate-800 text-xs font-bold overflow-x-auto p-4 bg-white rounded-xl border-2 border-neo-black shadow-neo-sm">{
-  "docket_id": "agentscout-docket-7cdbc781eb",
+          <div class="p-6 sm:p-8 rounded-2xl bg-slate-50 border-3 border-neo-black space-y-4">
+            <div class="font-black text-neo-black uppercase tracking-wider text-sm">Example Clearance Docket Payload:</div>
+            <pre class="text-slate-900 text-xs sm:text-sm font-black overflow-x-auto p-5 bg-white rounded-xl border-3 border-neo-black shadow-neo-sm leading-relaxed">{
+  "docket_id": "agentscout-docket-c54099053b",
   "protocol": "SharedNet A2A Pre-Ship CI/CD Firewall",
   "gate_status": "REPAIRED_AND_APPROVED",
   "initial_reliability": "0/100",
@@ -757,8 +734,9 @@
   "in_flight_repair_applied": true,
   "claims_evaluated": 1,
   "contradictions_intercepted": 1,
-  "sha256_chain_root": "a1db1a3fe3120e9eae7ddea525620ccd3105b30d20f0fd1204b46ec8cbdeeb57",
-  "hmac_turn_authorized": true,
+  "sha256_chain_root": "e6a28ce505d22f21039c95dd54ed9f6b3d6c3c567e7511257edcc6620d605792",
+  "ed25519_signature": "2cc22861692f423406e0076301334cd7...",
+  "public_key_url": "/api/v1/public-key",
   "credits_settled": 5,
   "egress_clearance": "CLEARED_FOR_DEPLOYMENT"
 }</pre>
@@ -774,43 +752,44 @@
     <!-- ========================================================================= -->
     <div id="tabContent-network" class="tab-content hidden space-y-6">
       
-      <div class="neo-box p-8 bg-white space-y-6">
-        <div class="flex items-center justify-between border-b-2 border-neo-black pb-4">
-          <div class="flex items-center space-x-3">
-            <div class="w-12 h-12 rounded-xl bg-neo-black text-white flex items-center justify-center text-xl font-black border-2 border-neo-black shadow-neo-sm">
+      <div class="neo-box p-8 sm:p-10 bg-white space-y-6">
+        <div class="flex items-center justify-between border-b-3 border-neo-black pb-4">
+          <div class="flex items-center space-x-3.5">
+            <div class="w-14 h-14 rounded-2xl bg-neo-black text-white flex items-center justify-center text-2xl font-black border-3 border-neo-black shadow-neo">
               <i class="fa-solid fa-network-wired"></i>
             </div>
             <div>
-              <h2 class="text-2xl font-black font-display text-neo-black uppercase">SharedNet Routing Table & Peer Nodes</h2>
-              <p class="text-xs text-slate-600 font-mono-code font-bold">Live network peers, seed node handshakes, and cryptographic dialer.</p>
+              <h2 class="text-2xl sm:text-3xl font-black font-display text-neo-black uppercase">SharedNet Routing Table & Peer Nodes</h2>
+              <p class="text-xs sm:text-sm text-slate-800 font-mono-code font-bold">Live network peers, seed node handshakes, and cryptographic dialer.</p>
             </div>
           </div>
-          <button onclick="refreshNetworkPeers()" class="neo-btn bg-white hover:bg-slate-100 text-xs font-mono-code px-4 py-2 rounded-xl flex items-center space-x-2">
+          <button onclick="refreshNetworkPeers()" class="neo-btn bg-white hover:bg-slate-100 text-xs sm:text-sm font-mono-code px-4 py-2.5 rounded-xl flex items-center space-x-2 font-black">
             <i class="fa-solid fa-rotate text-neo-red"></i>
             <span>Refresh Peers</span>
           </button>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 font-mono-code text-xs">
-          <div class="p-6 rounded-xl bg-slate-50 border-3 border-neo-black shadow-neo-sm space-y-3">
-            <div class="font-black text-neo-black uppercase tracking-wider flex items-center space-x-2">
-              <span class="w-3 h-3 rounded-full bg-neo-green border border-neo-black"></span>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 font-mono-code text-xs sm:text-sm">
+          <div class="p-6 sm:p-8 rounded-2xl bg-slate-50 border-3 border-neo-black shadow-neo-sm space-y-3">
+            <div class="font-black text-neo-black uppercase tracking-wider flex items-center space-x-2.5 text-sm sm:text-base">
+              <span class="w-3.5 h-3.5 rounded-full bg-neo-green border-2 border-neo-black"></span>
               <span>Local Node Telemetry</span>
             </div>
-            <div class="space-y-1.5 text-slate-700 font-bold pt-1">
-              <div>Node ID: <strong class="text-neo-red">agentscout.sharedos.net</strong></div>
-              <div>Status: <strong class="text-emerald-700">ACTIVE_VERIFIED</strong></div>
-              <div>Turn Index: <strong id="netTurnIndex" class="text-neo-black">1</strong></div>
-              <div>Enforce HMAC: <strong class="text-neo-black">True</strong></div>
+            <div class="space-y-2 text-slate-900 font-bold pt-2 text-sm">
+              <div>Node ID: <strong class="text-neo-red font-black">agentscout.sharedos.net</strong></div>
+              <div>Status: <strong class="text-emerald-800 font-black">ACTIVE_VERIFIED</strong></div>
+              <div>Turn Index: <strong id="netTurnIndex" class="text-neo-black font-black">1</strong></div>
+              <div>Enforce HMAC: <strong class="text-neo-black font-black">True</strong></div>
+              <div>Public Key Endpoint: <a href="/api/v1/public-key" target="_blank" class="text-neo-red underline">/api/v1/public-key</a></div>
             </div>
           </div>
 
-          <div class="p-6 rounded-xl bg-slate-50 border-3 border-neo-black shadow-neo-sm space-y-3">
-            <div class="font-black text-neo-black uppercase tracking-wider flex items-center space-x-2">
+          <div class="p-6 sm:p-8 rounded-2xl bg-slate-50 border-3 border-neo-black shadow-neo-sm space-y-3">
+            <div class="font-black text-neo-black uppercase tracking-wider flex items-center space-x-2.5 text-sm sm:text-base">
               <i class="fa-solid fa-server text-neo-red"></i>
               <span>Seed Nodes</span>
             </div>
-            <div id="seedNodesList" class="space-y-1.5 text-slate-700 font-bold pt-1">
+            <div id="seedNodesList" class="space-y-2 text-slate-900 font-bold pt-2 text-sm">
               <div>• http://localhost:8001 (Seed Node Alpha)</div>
               <div>• http://localhost:8002 (Seed Node Beta)</div>
             </div>
@@ -824,21 +803,23 @@
   </main>
 
   <!-- Neo-Brutalist Footer -->
-  <footer class="border-t-3 border-neo-black bg-white py-8 mt-16 text-xs font-mono-code font-bold text-neo-black">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-      <div class="flex items-center space-x-2.5">
-        <span class="neo-badge bg-neo-red text-white font-black">AGENTSCOUT</span>
+  <footer class="border-t-3 border-neo-black bg-white py-8 sm:py-10 mt-16 text-xs sm:text-sm font-mono-code font-black text-neo-black">
+    <div class="max-w-[1520px] mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-5">
+      <div class="flex items-center space-x-3">
+        <span class="neo-badge bg-neo-red text-white font-black text-xs sm:text-sm">AGENTSCOUT</span>
         <span>·</span>
         <span>SharedOS Hackathon Submission</span>
         <span>·</span>
-        <span class="text-slate-600">Pre-Ship CI/CD Safety Middleware</span>
+        <span class="text-slate-800">Pre-Ship CI/CD Safety Middleware</span>
       </div>
-      <div class="flex items-center space-x-4">
+      <div class="flex items-center space-x-5">
         <a href="https://github.com/ShaikhWarsi/Shared-Scout" target="_blank" class="hover:text-neo-red transition underline decoration-2">GitHub Repo</a>
         <span>·</span>
         <a href="/.well-known/agent.json" target="_blank" class="hover:text-neo-red transition underline decoration-2">Agent Card</a>
         <span>·</span>
         <a href="/api/v1/listing" target="_blank" class="hover:text-neo-red transition underline decoration-2">API Listing</a>
+        <span>·</span>
+        <a href="/api/v1/public-key" target="_blank" class="hover:text-neo-red transition underline decoration-2">Public Key</a>
       </div>
     </div>
   </footer>
@@ -880,18 +861,18 @@
     function switchTab(tabId) {
       document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
       document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.className = 'tab-btn neo-btn bg-white hover:bg-slate-100 text-neo-black text-xs font-mono-code font-bold px-4 py-2 rounded-xl flex items-center space-x-2';
+        btn.className = 'tab-btn neo-btn bg-white hover:bg-slate-100 text-neo-black text-xs sm:text-sm font-mono-code font-black px-4 sm:px-5 py-2.5 rounded-xl flex items-center space-x-2';
       });
 
       const activeContent = document.getElementById('tabContent-' + tabId);
       const activeBtn = document.getElementById('tabBtn-' + tabId);
       if (activeContent) activeContent.classList.remove('hidden');
       if (activeBtn) {
-        if (tabId === 'firewall') activeBtn.className = 'tab-btn neo-btn bg-neo-red text-white text-xs font-mono-code font-black px-4 py-2 rounded-xl flex items-center space-x-2';
-        else if (tabId === 'adversarial') activeBtn.className = 'tab-btn neo-btn bg-neo-red text-white text-xs font-mono-code font-black px-4 py-2 rounded-xl flex items-center space-x-2';
-        else if (tabId === 'mcp') activeBtn.className = 'tab-btn neo-btn bg-neo-black text-white text-xs font-mono-code font-black px-4 py-2 rounded-xl flex items-center space-x-2';
-        else if (tabId === 'provenance') activeBtn.className = 'tab-btn neo-btn bg-neo-red text-white text-xs font-mono-code font-black px-4 py-2 rounded-xl flex items-center space-x-2';
-        else if (tabId === 'network') activeBtn.className = 'tab-btn neo-btn bg-neo-black text-white text-xs font-mono-code font-black px-4 py-2 rounded-xl flex items-center space-x-2';
+        if (tabId === 'firewall') activeBtn.className = 'tab-btn neo-btn bg-neo-red text-white text-xs sm:text-sm font-mono-code font-black px-4 sm:px-5 py-2.5 rounded-xl flex items-center space-x-2';
+        else if (tabId === 'adversarial') activeBtn.className = 'tab-btn neo-btn bg-neo-red text-white text-xs sm:text-sm font-mono-code font-black px-4 sm:px-5 py-2.5 rounded-xl flex items-center space-x-2';
+        else if (tabId === 'mcp') activeBtn.className = 'tab-btn neo-btn bg-neo-black text-white text-xs sm:text-sm font-mono-code font-black px-4 sm:px-5 py-2.5 rounded-xl flex items-center space-x-2';
+        else if (tabId === 'provenance') activeBtn.className = 'tab-btn neo-btn bg-neo-red text-white text-xs sm:text-sm font-mono-code font-black px-4 sm:px-5 py-2.5 rounded-xl flex items-center space-x-2';
+        else if (tabId === 'network') activeBtn.className = 'tab-btn neo-btn bg-neo-black text-white text-xs sm:text-sm font-mono-code font-black px-4 sm:px-5 py-2.5 rounded-xl flex items-center space-x-2';
       }
     }
 
@@ -903,14 +884,14 @@
       const submitText = document.getElementById('submitBtnText');
 
       if (mode === 'ATTACK') {
-        btnAttack.className = 'px-3.5 py-1.5 rounded-lg text-xs font-mono-code font-black bg-neo-red text-white border-2 border-neo-black shadow-neo-sm transition';
-        btnVerify.className = 'px-3.5 py-1.5 rounded-lg text-xs font-mono-code font-bold text-slate-600 hover:text-neo-red transition';
-        submitBtn.className = 'w-full sm:w-auto neo-btn bg-neo-black hover:bg-slate-900 text-neo-red text-sm sm:text-base font-black font-display px-8 py-4 rounded-xl shadow-neo flex items-center justify-center space-x-3 tracking-wider';
+        btnAttack.className = 'px-4 py-2 rounded-lg text-xs sm:text-sm font-mono-code font-black bg-neo-red text-white border-2 border-neo-black shadow-neo-sm transition';
+        btnVerify.className = 'px-4 py-2 rounded-lg text-xs sm:text-sm font-mono-code font-black text-slate-700 hover:text-neo-red transition';
+        submitBtn.className = 'w-full sm:w-auto neo-btn bg-neo-black hover:bg-slate-900 text-neo-red text-base sm:text-lg font-black font-display px-10 py-4.5 rounded-2xl shadow-neo-lg flex items-center justify-center space-x-3 tracking-wider';
         submitText.innerText = '⚔️ ATTACK & BREAK THIS ANSWER (5 Credits)';
       } else {
-        btnVerify.className = 'px-3.5 py-1.5 rounded-lg text-xs font-mono-code font-black bg-neo-red text-white border-2 border-neo-black shadow-neo-sm transition';
-        btnAttack.className = 'px-3.5 py-1.5 rounded-lg text-xs font-mono-code font-bold text-slate-600 hover:text-neo-red transition';
-        submitBtn.className = 'w-full sm:w-auto neo-btn bg-neo-red hover:bg-neo-darkred text-white text-sm sm:text-base font-black font-display px-8 py-4 rounded-xl shadow-neo flex items-center justify-center space-x-3 tracking-wider';
+        btnVerify.className = 'px-4 py-2 rounded-lg text-xs sm:text-sm font-mono-code font-black bg-neo-red text-white border-2 border-neo-black shadow-neo-sm transition';
+        btnAttack.className = 'px-4 py-2 rounded-lg text-xs sm:text-sm font-mono-code font-black text-slate-700 hover:text-neo-red transition';
+        submitBtn.className = 'w-full sm:w-auto neo-btn bg-neo-red hover:bg-neo-darkred text-white text-base sm:text-lg font-black font-display px-10 py-4.5 rounded-2xl shadow-neo-lg flex items-center justify-center space-x-3 tracking-wider';
         submitText.innerText = 'EVALUATE PRE-SHIP GATE & REPAIR (5 Credits)';
       }
     }
@@ -1013,22 +994,22 @@
       const gateDetails = document.getElementById('gateDecisionDetails');
 
       if (data.stats.contradicted > 0) {
-        banner.className = 'p-6 rounded-xl border-3 border-neo-black bg-neo-lightred shadow-neo-lg flex flex-col md:flex-row items-start md:items-center justify-between gap-4 font-mono-code';
-        gateIcon.className = 'w-14 h-14 rounded-xl bg-neo-red text-white border-2 border-neo-black shadow-neo-sm flex items-center justify-center text-2xl font-black shrink-0';
+        banner.className = 'p-6 sm:p-8 rounded-2xl border-3 border-neo-black bg-neo-lightred shadow-neo-lg flex flex-col md:flex-row items-start md:items-center justify-between gap-5 font-mono-code';
+        gateIcon.className = 'w-16 h-16 rounded-2xl bg-neo-red text-white border-3 border-neo-black shadow-neo-sm flex items-center justify-center text-3xl font-black shrink-0';
         gateIcon.innerHTML = '<i class="fa-solid fa-shield-halved"></i>';
         gateStatus.innerHTML = '<span class="text-neo-red font-black">🚫 BLOCKED &rarr; 🔧 AUTO-REPAIRED & APPROVED</span>';
         gateDetails.innerHTML = `
-          <div><strong class="text-neo-red font-black">Draft Status:</strong> Intercepted (${score}/100 - ${data.stats.contradicted} Contradiction)</div>
-          <div><strong class="text-emerald-800 font-black">Egress Status:</strong> Repaired & Signed Clearance Docket Issued</div>
+          <div><strong class="text-neo-red font-black text-sm">Draft Status:</strong> Intercepted (${score}/100 - ${data.stats.contradicted} Contradiction)</div>
+          <div><strong class="text-emerald-900 font-black text-sm">Egress Status:</strong> Repaired & Signed Clearance Docket Issued</div>
         `;
       } else {
-        banner.className = 'p-6 rounded-xl border-3 border-neo-black bg-neo-lightgreen shadow-neo-lg flex flex-col md:flex-row items-start md:items-center justify-between gap-4 font-mono-code';
-        gateIcon.className = 'w-14 h-14 rounded-xl bg-neo-green text-neo-black border-2 border-neo-black shadow-neo-sm flex items-center justify-center text-2xl font-black shrink-0';
+        banner.className = 'p-6 sm:p-8 rounded-2xl border-3 border-neo-black bg-neo-lightgreen shadow-neo-lg flex flex-col md:flex-row items-start md:items-center justify-between gap-5 font-mono-code';
+        gateIcon.className = 'w-16 h-16 rounded-2xl bg-neo-green text-neo-black border-3 border-neo-black shadow-neo-sm flex items-center justify-center text-3xl font-black shrink-0';
         gateIcon.innerHTML = '<i class="fa-solid fa-circle-check"></i>';
-        gateStatus.innerHTML = '<span class="text-emerald-800 font-black">✅ APPROVED: SAFE TO SHIP TO WORLD</span>';
+        gateStatus.innerHTML = '<span class="text-emerald-900 font-black">✅ APPROVED: SAFE TO SHIP TO WORLD</span>';
         gateDetails.innerHTML = `
-          <div><strong class="text-emerald-800 font-black">Status:</strong> All claims verified with zero contradictions</div>
-          <div><strong class="text-slate-600 font-bold">Firewall Decision:</strong> Cleared for immediate egress</div>
+          <div><strong class="text-emerald-900 font-black text-sm">Status:</strong> All claims verified with zero contradictions</div>
+          <div><strong class="text-slate-800 font-bold text-sm">Firewall Decision:</strong> Cleared for immediate egress</div>
         `;
       }
 
@@ -1038,11 +1019,11 @@
       badge.innerText = data.verdict_summary.replace(/_/g, ' ');
 
       if (score >= 80) {
-        scoreCircle.className = 'w-16 h-16 rounded-xl bg-neo-green border-2 border-neo-black shadow-neo-sm flex flex-col items-center justify-center font-black text-neo-black shrink-0';
+        scoreCircle.className = 'w-18 h-18 rounded-2xl bg-neo-green border-3 border-neo-black shadow-neo-sm flex flex-col items-center justify-center font-black text-neo-black shrink-0 p-3';
       } else if (score >= 50) {
-        scoreCircle.className = 'w-16 h-16 rounded-xl bg-neo-yellow border-2 border-neo-black shadow-neo-sm flex flex-col items-center justify-center font-black text-neo-black shrink-0';
+        scoreCircle.className = 'w-18 h-18 rounded-2xl bg-neo-yellow border-3 border-neo-black shadow-neo-sm flex flex-col items-center justify-center font-black text-neo-black shrink-0 p-3';
       } else {
-        scoreCircle.className = 'w-16 h-16 rounded-xl bg-neo-red border-2 border-neo-black shadow-neo-sm flex flex-col items-center justify-center font-black text-white shrink-0';
+        scoreCircle.className = 'w-18 h-18 rounded-2xl bg-neo-red border-3 border-neo-black shadow-neo-sm flex flex-col items-center justify-center font-black text-white shrink-0 p-3';
       }
 
       // Forensic Claims Autopsy
@@ -1060,19 +1041,19 @@
         let committeeHtml = '';
         if (c.committee_votes && c.committee_votes.length > 0) {
           committeeHtml = `
-            <div class="mt-4 pt-3 border-t-2 border-neo-black space-y-2 font-mono-code text-xs">
-              <div class="text-[11px] font-black uppercase tracking-wider text-neo-black flex items-center space-x-1.5">
-                <i class="fa-solid fa-users text-neo-red"></i>
+            <div class="mt-4 pt-3 border-t-2 border-neo-black space-y-2 font-mono-code text-xs sm:text-sm">
+              <div class="text-xs font-black uppercase tracking-wider text-neo-black flex items-center space-x-2">
+                <i class="fa-solid fa-users text-neo-red text-sm"></i>
                 <span>3-Perspective Committee Consensus:</span>
               </div>
-              <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 ${c.committee_votes.map(v => `
-                  <div class="p-3 rounded-lg bg-white border-2 border-neo-black shadow-neo-sm space-y-1">
+                  <div class="p-3.5 rounded-xl bg-white border-2.5 border-neo-black shadow-neo-sm space-y-1.5">
                     <div class="flex items-center justify-between">
-                      <span class="font-black text-neo-black text-[11px]">${v.agent_name}</span>
-                      <span class="neo-badge text-[10px] ${v.verdict === 'SUPPORTED' ? 'bg-neo-green text-neo-black' : v.verdict === 'CONTRADICTED' ? 'bg-neo-red text-white' : 'bg-slate-100 text-neo-black'}">${v.verdict}</span>
+                      <span class="font-black text-neo-black text-xs sm:text-sm">${v.agent_name}</span>
+                      <span class="neo-badge text-xs ${v.verdict === 'SUPPORTED' ? 'bg-neo-green text-neo-black' : v.verdict === 'CONTRADICTED' ? 'bg-neo-red text-white' : 'bg-slate-100 text-neo-black'} font-black">${v.verdict}</span>
                     </div>
-                    <div class="text-[11px] text-slate-700 font-semibold leading-tight">${v.argument}</div>
+                    <div class="text-xs sm:text-sm text-slate-800 font-bold leading-tight">${v.argument}</div>
                   </div>
                 `).join('')}
               </div>
@@ -1084,15 +1065,15 @@
         let evidenceHtml = '';
         if (c.evidence && c.evidence.length > 0) {
           evidenceHtml = `
-            <div class="mt-4 pt-3 border-t-2 border-neo-black space-y-2">
-              <div class="text-[11px] font-black uppercase tracking-wider text-neo-black">Live External Citations (Authority &times; Freshness):</div>
+            <div class="mt-4 pt-3 border-t-2 border-neo-black space-y-2.5">
+              <div class="text-xs font-black uppercase tracking-wider text-neo-black">Live External Citations (Authority &times; Freshness):</div>
               ${c.evidence.map(ev => `
-                <div class="text-xs bg-white border-2 border-neo-black shadow-neo-sm p-3 rounded-xl space-y-1 font-mono-code">
+                <div class="text-xs sm:text-sm bg-white border-2.5 border-neo-black shadow-neo-sm p-4 rounded-xl space-y-1.5 font-mono-code">
                   <div class="text-neo-black font-black truncate flex items-center justify-between">
-                    <span>${ev.source_title || 'Web Citation'} <span class="text-slate-500 text-[10px] ml-1">(Authority: ${(ev.reliability_weight * 100).toFixed(0)}%)</span></span>
-                    <a href="${ev.source_url}" target="_blank" class="text-neo-red hover:underline text-[11px] ml-2 font-bold"><i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+                    <span>${ev.source_title || 'Web Citation'} <span class="text-slate-600 text-xs ml-1">(Authority: ${(ev.reliability_weight * 100).toFixed(0)}%)</span></span>
+                    <a href="${ev.source_url}" target="_blank" class="text-neo-red hover:underline text-xs ml-2 font-black"><i class="fa-solid fa-arrow-up-right-from-square"></i></a>
                   </div>
-                  <div class="text-slate-700 font-semibold text-[11px] leading-relaxed">"${ev.snippet}"</div>
+                  <div class="text-slate-900 font-bold text-xs sm:text-sm leading-relaxed">"${ev.snippet}"</div>
                 </div>
               `).join('')}
             </div>
@@ -1103,29 +1084,29 @@
         let contradictionBox = '';
         if (c.contradiction_details) {
           contradictionBox = `
-            <div class="mt-3 p-3.5 rounded-xl bg-white border-2 border-neo-red shadow-neo-sm text-xs text-neo-black space-y-1 font-mono-code">
-              <div><strong class="text-neo-red font-black">Contradiction Detected:</strong> ${c.contradiction_details}</div>
-              ${c.correction ? `<div class="text-emerald-800 font-black"><strong>Verified Factual Correction:</strong> ${c.correction}</div>` : ''}
+            <div class="mt-3 p-4 rounded-xl bg-white border-2.5 border-neo-red shadow-neo-sm text-xs sm:text-sm text-neo-black space-y-1.5 font-mono-code">
+              <div><strong class="text-neo-red font-black text-sm">Contradiction Detected:</strong> ${c.contradiction_details}</div>
+              ${c.correction ? `<div class="text-emerald-900 font-black text-sm"><strong>Verified Factual Correction:</strong> ${c.correction}</div>` : ''}
             </div>
           `;
         }
 
         const card = `
-          <div class="border-3 ${cardBg} shadow-neo rounded-xl p-5 space-y-3">
+          <div class="border-3.5 ${cardBg} shadow-neo rounded-2xl p-6 sm:p-7 space-y-4">
             <div class="flex items-start justify-between gap-4">
-              <div class="flex items-start space-x-3">
-                <span class="inline-flex items-center justify-center w-7 h-7 rounded-lg ${badgeColor} border-2 border-neo-black text-xs font-black shrink-0 mt-0.5 shadow-neo-sm">
+              <div class="flex items-start space-x-3.5">
+                <span class="inline-flex items-center justify-center w-8 h-8 rounded-xl ${badgeColor} border-2 border-neo-black text-sm font-black shrink-0 mt-0.5 shadow-neo-sm">
                   <i class="fa-solid ${icon}"></i>
                 </span>
                 <div>
-                  <div class="text-xs uppercase font-mono-code text-slate-600 font-black flex items-center space-x-2">
+                  <div class="text-xs sm:text-sm uppercase font-mono-code text-slate-800 font-black flex items-center space-x-2">
                     <span>Claim #${c.claim_id} · Confidence ${Math.round(c.confidence * 100)}%</span>
-                    <span class="neo-badge bg-white text-[10px] text-neo-black">Decay Risk: ${c.knowledge_decay_risk || 'LOW'}</span>
+                    <span class="neo-badge bg-white text-xs text-neo-black font-black">Decay Risk: ${c.knowledge_decay_risk || 'LOW'}</span>
                   </div>
-                  <div class="text-sm sm:text-base font-black text-neo-black mt-1 font-mono-code">"${c.claim_text}"</div>
+                  <div class="text-base sm:text-lg md:text-xl font-black text-neo-black mt-1 font-mono-code leading-snug">"${c.claim_text}"</div>
                 </div>
               </div>
-              <span class="neo-badge ${badgeColor} text-xs uppercase tracking-wider shrink-0 font-mono-code">${c.verdict}</span>
+              <span class="neo-badge ${badgeColor} text-xs sm:text-sm uppercase tracking-wider shrink-0 font-mono-code font-black">${c.verdict}</span>
             </div>
             ${contradictionBox}
             ${committeeHtml}
@@ -1141,12 +1122,12 @@
       if (trailData && trailData.trail) {
         trailData.trail.forEach(t => {
           trailContainer.innerHTML += `
-            <div class="p-3 bg-slate-50 rounded-xl border-2 border-neo-black shadow-neo-sm flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div class="p-4 bg-slate-50 rounded-xl border-2.5 border-neo-black shadow-neo-sm flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
               <div>
-                <span class="neo-badge bg-neo-red text-white text-[10px] font-black">[${t.step}]</span>
-                <span class="text-slate-700 font-bold ml-2 text-xs">${t.iso_time}</span>
+                <span class="neo-badge bg-neo-red text-white text-xs font-black">[${t.step}]</span>
+                <span class="text-slate-900 font-extrabold ml-2 text-xs sm:text-sm">${t.iso_time}</span>
               </div>
-              <span class="text-slate-600 font-bold text-[11px] truncate max-w-sm">Hash: ${t.event_hash}</span>
+              <span class="text-slate-700 font-bold text-xs truncate max-w-sm">Hash: ${t.event_hash}</span>
             </div>
           `;
         });
@@ -1217,8 +1198,8 @@
           name: "agentscout_firewall_gate",
           arguments: {
             caller_agent_id: "mcp-agent-001",
-            question: "What is the battery life of Sony WH-1000XM5?",
-            answer: "The Sony WH-1000XM5 has 40 hours of battery life with ANC on.",
+            question: "What is the continuous music playback battery life of the Sony WH-1000XM5?",
+            answer: "The Sony WH-1000XM5 headphones offer up to 40 hours of continuous music playback with ANC enabled.",
             min_reliability_threshold: 80,
             auto_repair: true
           }
@@ -1231,8 +1212,8 @@
         params: {
           name: "agentscout_free_trial",
           arguments: {
-            question: "What is the battery life of Sony WH-1000XM5?",
-            answer: "The Sony WH-1000XM5 has 40 hours of battery life with ANC on."
+            question: "What is the continuous music playback battery life of the Sony WH-1000XM5?",
+            answer: "The Sony WH-1000XM5 headphones offer up to 40 hours of continuous music playback with ANC enabled."
           }
         }
       },
@@ -1253,8 +1234,8 @@
           name: "agentscout_adversarial_attack",
           arguments: {
             caller_agent_id: "mcp-agent-001",
-            question: "What is the battery life of Sony WH-1000XM5?",
-            answer: "The Sony WH-1000XM5 has 40 hours of battery life with ANC on."
+            question: "What is the continuous music playback battery life of the Sony WH-1000XM5?",
+            answer: "The Sony WH-1000XM5 headphones offer up to 40 hours of continuous music playback with ANC enabled."
           }
         }
       },
