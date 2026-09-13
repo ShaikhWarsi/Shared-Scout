@@ -166,7 +166,7 @@ class ClaimVerifier:
                 if any(k in c_lower for k in ["anc", "nc on", "nc enabled", "noise cancel"]):
                     for snippet in [e.snippet for e in evidence]:
                         s_lower = snippet.lower()
-                        nc_on_match = re.search(r"(?:max\.?\s*)?(\d+)\s*(?:hours|hrs|hr)?\s*\((?:nc on|with anc|anc on)\)", s_lower)
+                        nc_on_match = re.search(r"(\d+)\s*(?:hours|hrs|hr)?(?:\s*of\s*battery(?:\s*life)?)?\s*(?:with|\()?\s*(?:noise\s*cancell?ation\s*(?:on|enabled)|nc\s*on|with\s*anc|anc\s*on|anc\s*enabled)", s_lower)
                         if nc_on_match:
                             true_nc_val = nc_on_match.group(1)
                             if c_val != true_nc_val:
@@ -176,6 +176,7 @@ class ClaimVerifier:
                                     f"Claim asserts {c_val} {norm_c_unit} with ANC enabled, but official specifications confirm {true_nc_val} {norm_c_unit} with ANC ({c_val} {norm_c_unit} only with ANC disabled).",
                                     f"Battery life is {true_nc_val} {norm_c_unit} with ANC enabled ({c_val} {norm_c_unit} without ANC)."
                                 )
+
 
                 if norm_c_unit in ev_unit_map:
                     matching_ev_vals = ev_unit_map[norm_c_unit]
