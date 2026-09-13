@@ -116,6 +116,14 @@ class AgentScoutService:
             context,
             {"status": "succeeded", "grantId": auth_decision.get("grantId"), "reliability": res.reliability}
         )
+
+        # Trigger background non-blocking flush to SharedOS Cloud
+        try:
+            import threading
+            threading.Thread(target=self.kernel.audit_sink.flush_outbox, daemon=True).start()
+        except Exception:
+            pass
+
         return res, data
 
     def _run_audit_pipeline(self, request: AuditRequest, caller_agent_id: str = "agent-peer") -> Tuple[AuditResponse, Dict[str, Any]]:
