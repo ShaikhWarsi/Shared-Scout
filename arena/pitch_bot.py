@@ -1,4 +1,4 @@
-﻿"""
+"""
 Arena Pitch Agent & Economic Strategy Engine
 Manages autonomous agent pitch delivery, objection handling, barter negotiation, and competitor ranking.
 """
@@ -36,7 +36,7 @@ class ArenaPitchAgent:
             )
         elif "latency" in obj or "slow" in obj:
             return (
-                "AgentScout executes parallel multi-source extraction in 3 to 8 seconds — well inside the 5-minute SharedNet timeout."
+                "AgentScout executes parallel multi-source extraction in under 2 seconds — well inside the 5-minute SharedNet timeout."
             )
         else:
             return (
