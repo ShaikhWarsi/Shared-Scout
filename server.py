@@ -1,7 +1,11 @@
-"""AgentScout FastAPI Server, SharedNet Gateway & Rate-Limiting Router"""
+"""
+AgentScout FastAPI Server, SharedNet Gateway, Autonomous Repair Router & Rate Limiter
+"""
+
 import os
 import json
 import time
+from typing import List
 from collections import defaultdict
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import HTMLResponse, JSONResponse
@@ -15,8 +19,8 @@ from arena.pitch_bot import ArenaPitchAgent
 
 app = FastAPI(
     title="AgentScout - SharedOS Verification Layer",
-    version="1.0.0",
-    description="Independent verification layer for AI agents on SharedOS."
+    version="1.1.0",
+    description="Independent verification and autonomous hallucination repair layer for AI agents on SharedOS."
 )
 
 app.add_middleware(
@@ -35,6 +39,7 @@ pitch_agent = ArenaPitchAgent()
 RATE_LIMIT = 60
 request_timestamps = defaultdict(list)
 
+
 def check_rate_limit(caller_id: str):
     now = time.time()
     timestamps = [t for t in request_timestamps[caller_id] if now - t < 60.0]
@@ -43,9 +48,11 @@ def check_rate_limit(caller_id: str):
     timestamps.append(now)
     request_timestamps[caller_id] = timestamps
 
+
 @app.get("/manifest")
 def get_manifest():
     return JSONResponse(content=SHAREDOS_MANIFEST)
+
 
 @app.get("/purpose")
 def get_purpose():
@@ -55,9 +62,11 @@ def get_purpose():
         "status": "ACTIVE_VERIFIED"
     })
 
+
 @app.get("/node-info")
 def get_node_info():
     return JSONResponse(content=cloud_adapter.get_node_status())
+
 
 @app.post("/audit", response_model=AuditResponse)
 def audit_answer(req: AuditRequest, request: Request):
@@ -69,11 +78,37 @@ def audit_answer(req: AuditRequest, request: Request):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Audit execution error: {str(e)}")
 
+
+@app.post("/repair", response_model=AuditResponse)
+def repair_answer(req: AuditRequest, request: Request):
+    """Executes audit and returns verified auto-repaired answer text."""
+    caller_id = request.headers.get("x-sharedos-agent-id", "peer-agent-repair")
+    check_rate_limit(caller_id)
+    try:
+        response, _ = service.execute_audit(req, caller_agent_id=caller_id)
+        return response
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Repair execution error: {str(e)}")
+
+
+@app.post("/batch-audit", response_model=List[AuditResponse])
+def batch_audit_answers(requests: List[AuditRequest], request: Request):
+    """Audits multiple agent answers in a single batch call."""
+    caller_id = request.headers.get("x-sharedos-agent-id", "peer-batch-node")
+    check_rate_limit(caller_id)
+    results = []
+    for req in requests[:5]:  # Cap at 5 per batch for safety
+        res, _ = service.execute_audit(req, caller_agent_id=caller_id)
+        results.append(res)
+    return results
+
+
 @app.get("/api/audit-trail/{audit_id}")
 def get_audit_trail(audit_id: str):
     if audit_id not in service.audit_history:
         raise HTTPException(status_code=404, detail="Audit ID not found in local SharedOS trail cache")
     return JSONResponse(content=service.audit_history[audit_id].export_trail())
+
 
 @app.get("/api/fixtures")
 def get_demo_fixtures():
@@ -83,6 +118,7 @@ def get_demo_fixtures():
             return json.load(f)
     return {}
 
+
 @app.get("/api/pitch")
 def get_pitch_info():
     return {
@@ -91,6 +127,7 @@ def get_pitch_info():
         "node_id": pitch_agent.node_id
     }
 
+
 @app.get("/", response_class=HTMLResponse)
 def serve_ui():
     ui_path = os.path.join(os.path.dirname(__file__), "ui", "index.html")
@@ -98,6 +135,7 @@ def serve_ui():
         with open(ui_path, "r", encoding="utf-8") as f:
             return f.read()
     return "<h1>AgentScout UI file not found</h1>"
+
 
 if __name__ == "__main__":
     import uvicorn

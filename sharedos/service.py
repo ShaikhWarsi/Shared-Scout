@@ -1,4 +1,4 @@
-﻿"""
+"""
 AgentScout SharedOS Service Engine
 Executes full A2A audit requests, enforces SharedOS permissions, and logs turns to the cryptographic audit trail.
 """
@@ -83,12 +83,13 @@ class AgentScoutService:
             ]
         })
 
-        # Turn 5: Scoring, Advisory Synthesis & Egress
+        # Turn 5: Scoring, Advisory Synthesis, Autonomous Repair & Egress
         latency_ms = int((time.time() - start_time) * 1000)
         response = self.scorer.compute_audit(
             audit_id=audit_id,
             claims=audited_claims,
-            latency_ms=latency_ms
+            latency_ms=latency_ms,
+            original_answer=request.answer
         )
 
         trail.log_turn("TURN_5_EGRESS", {

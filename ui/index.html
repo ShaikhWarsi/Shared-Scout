@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AgentScout | The Verification Layer for AI Agents</title>
+  <title>AgentScout | The Verification & Hallucination Repair Layer for AI Agents</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <script>
@@ -33,14 +33,14 @@
       font-family: 'JetBrains Mono', monospace;
     }
     .glow-border {
-      box-shadow: 0 0 25px -5px rgba(34, 197, 94, 0.15);
+      box-shadow: 0 0 30px -5px rgba(34, 197, 94, 0.18);
     }
   </style>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col antialiased selection:bg-brand-500 selection:text-slate-950">
 
   <!-- Header / Navigation -->
-  <header class="border-b border-slate-800/80 bg-slate-900/60 backdrop-blur-md sticky top-0 z-50">
+  <header class="border-b border-slate-800/80 bg-slate-900/70 backdrop-blur-md sticky top-0 z-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
       <div class="flex items-center space-x-3">
         <div class="h-9 w-9 rounded-xl bg-gradient-to-tr from-brand-600 to-emerald-400 flex items-center justify-center text-slate-950 font-bold shadow-lg shadow-brand-500/20">
@@ -48,17 +48,17 @@
         </div>
         <div>
           <span class="text-xl font-extrabold tracking-tight bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent">AgentScout</span>
-          <span class="ml-2 text-xs uppercase px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-mono-code font-semibold">SharedOS A2A</span>
+          <span class="ml-2 text-xs uppercase px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-mono-code font-semibold">SharedOS A2A Node</span>
         </div>
       </div>
       <div class="flex items-center space-x-4">
         <div class="hidden sm:flex items-center space-x-2 text-xs font-mono-code bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-lg text-slate-300">
           <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-          <span>SharedNet Node: <strong class="text-emerald-400">agentscout.sharedos.net</strong></span>
+          <span>SharedNet Gateway: <strong class="text-emerald-400">agentscout.sharedos.net</strong></span>
         </div>
         <div class="flex items-center space-x-2 bg-emerald-500/10 border border-emerald-500/30 px-3 py-1.5 rounded-lg text-xs font-bold text-emerald-400">
           <i class="fa-solid fa-coins"></i>
-          <span>5 Credits / Audit</span>
+          <span>5 Arena Credits / Audit</span>
         </div>
       </div>
     </div>
@@ -73,22 +73,33 @@
         <div class="max-w-2xl space-y-2">
           <div class="inline-flex items-center space-x-2 text-xs font-semibold uppercase tracking-wider text-emerald-400 mb-1">
             <i class="fa-solid fa-microscope"></i>
-            <span>Independent Verification Layer</span>
+            <span>Independent Verification & Repair Infrastructure</span>
           </div>
           <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight text-white">Challenge an Answer</h1>
           <p class="text-slate-400 text-sm md:text-base leading-relaxed">
-            Don't ask an agent to trust itself. Send AgentScout any answer: we extract atomic factual claims, independently cross-check live multi-source web evidence, and deliver an auditable reliability autopsy.
+            Don't ask an agent to trust itself. AgentScout extracts atomic factual claims, independently queries live multi-source web evidence & Wikipedia, detects contradictions, and delivers an auditable reliability autopsy with auto-repaired text in milliseconds.
           </p>
         </div>
-        <div class="flex flex-col sm:flex-row gap-2">
-          <button onclick="loadFixture('headphone_demo')" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-3 py-2 rounded-lg font-medium transition flex items-center space-x-2">
-            <i class="fa-solid fa-headphones text-accent"></i>
-            <span>₹3K Headphone Price Discrepancy</span>
-          </button>
-          <button onclick="loadFixture('sony_anc_demo')" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-3 py-2 rounded-lg font-medium transition flex items-center space-x-2">
-            <i class="fa-solid fa-bolt text-amber-400"></i>
-            <span>Sony XM5 Battery ANC Spec</span>
-          </button>
+        <div class="flex flex-col gap-2">
+          <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Instant Test Presets:</div>
+          <div class="grid grid-cols-2 gap-2">
+            <button onclick="loadFixture('headphone_demo')" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-3 py-2 rounded-lg font-medium transition flex items-center space-x-2 truncate">
+              <i class="fa-solid fa-headphones text-accent"></i>
+              <span class="truncate">₹3K Headphone Price</span>
+            </button>
+            <button onclick="loadFixture('sony_anc_demo')" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-3 py-2 rounded-lg font-medium transition flex items-center space-x-2 truncate">
+              <i class="fa-solid fa-bolt text-amber-400"></i>
+              <span class="truncate">Sony XM5 ANC Spec</span>
+            </button>
+            <button onclick="loadFixture('nasa_demo')" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-3 py-2 rounded-lg font-medium transition flex items-center space-x-2 truncate">
+              <i class="fa-solid fa-shuttle-space text-rose-400"></i>
+              <span class="truncate">NASA Perseverance</span>
+            </button>
+            <button onclick="loadFixture('python_demo')" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-3 py-2 rounded-lg font-medium transition flex items-center space-x-2 truncate">
+              <i class="fa-brands fa-python text-emerald-400"></i>
+              <span class="truncate">Python History</span>
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -107,12 +118,12 @@
           </div>
           <div class="flex items-center justify-between pt-2">
             <div class="text-xs text-slate-500 font-mono-code flex items-center space-x-2">
-              <i class="fa-solid fa-cloud-arrow-up text-emerald-500"></i>
-              <span>Live Multi-Source Scraper (DuckDuckGo + Direct Extract)</span>
+              <i class="fa-solid fa-circle-nodes text-emerald-500"></i>
+              <span>Multi-Engine Research: Wikipedia REST API + DuckDuckGo Lite + Domain Scoring</span>
             </div>
             <button id="btnSubmit" type="submit" class="bg-brand-500 hover:bg-brand-600 text-slate-950 font-bold px-6 py-3 rounded-xl transition shadow-lg shadow-brand-500/25 flex items-center space-x-2">
               <i class="fa-solid fa-bolt"></i>
-              <span>Run Independent Audit (5 Credits)</span>
+              <span>Run Independent Audit & Auto-Repair (5 Credits)</span>
             </button>
           </div>
         </form>
@@ -127,7 +138,7 @@
       </div>
       <div class="space-y-1">
         <p class="text-base font-bold text-white">Challenging Answer on SharedOS Cloud...</p>
-        <p class="text-xs text-slate-400 font-mono-code">Extracting atomic claims & cross-referencing multi-source web index...</p>
+        <p class="text-xs text-slate-400 font-mono-code">Extracting atomic claims & querying Wikipedia + Web Indexes...</p>
       </div>
     </div>
 
@@ -182,6 +193,21 @@
         </div>
       </div>
 
+      <!-- Autonomous Repaired Output Box (The Killer Feature) -->
+      <div id="repairedAnswerBox" class="border border-emerald-500/40 bg-emerald-500/5 rounded-2xl p-6 space-y-3">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-2">
+            <span class="h-2 w-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span class="text-xs font-bold uppercase tracking-wider text-emerald-400">Autonomous Hallucination Repair (Ready to Ship)</span>
+          </div>
+          <button onclick="copyRepairedAnswer()" class="text-xs bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/30 px-3 py-1 rounded-lg transition font-mono-code flex items-center space-x-1">
+            <i class="fa-solid fa-copy"></i>
+            <span>Copy Repaired Text</span>
+          </button>
+        </div>
+        <p id="repairedAnswerText" class="text-sm font-mono-code text-slate-100 bg-slate-950/80 p-4 rounded-xl border border-slate-800 leading-relaxed"></p>
+      </div>
+
       <!-- Actionable Advisory Recommendation Box -->
       <div id="recommendationBox" class="p-4 rounded-xl border border-amber-500/30 bg-amber-500/10 flex items-start space-x-3">
         <i class="fa-solid fa-triangle-exclamation text-amber-400 text-lg mt-0.5"></i>
@@ -205,7 +231,7 @@
         <div class="p-4 bg-slate-900/90 border-b border-slate-800 flex items-center justify-between">
           <div class="flex items-center space-x-2">
             <i class="fa-solid fa-fingerprint text-emerald-400"></i>
-            <span class="text-xs font-bold uppercase tracking-wider text-slate-200">SharedOS Cryptographic Turn Audit Trail</span>
+            <span class="text-xs font-bold uppercase tracking-wider text-slate-200">SharedOS Cryptographic Turn Audit Trail (Persisted to Disk)</span>
           </div>
           <span id="auditIdLabel" class="text-xs font-mono-code text-slate-400">ID: as-audit-XXXX</span>
         </div>
@@ -217,7 +243,7 @@
   </main>
 
   <footer class="border-t border-slate-800/80 bg-slate-950 py-6 text-center text-xs text-slate-500">
-    <p>AgentScout · Built natively on SharedOS for the Shared OS Hackathon · 5 Credits / Audit</p>
+    <p>AgentScout · The Verification Layer for AI Agents · Built on SharedOS · 5 Credits / Audit</p>
   </footer>
 
   <script>
@@ -229,6 +255,14 @@
       sony_anc_demo: {
         question: "What is the battery life of Sony WH-1000XM5?",
         answer: "The Sony WH-1000XM5 features 40 hours of continuous music playback with ANC enabled."
+      },
+      nasa_demo: {
+        question: "When did NASA Perseverance rover land on Mars?",
+        answer: "NASA Perseverance rover landed on Mars inside Jezero Crater in February 2021."
+      },
+      python_demo: {
+        question: "Who created Python and in what year was it released?",
+        answer: "Python programming language was created by Guido van Rossum and released in 1991."
       }
     };
 
@@ -250,7 +284,7 @@
       document.getElementById('btnSubmit').disabled = true;
 
       try {
-        const res = await fetch('/audit', {
+        const res = await fetch('/repair', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -291,6 +325,7 @@
       document.getElementById('statLatency').innerText = `${data.execution_latency_ms}ms`;
       document.getElementById('auditIdLabel').innerText = `ID: ${data.audit_id}`;
       document.getElementById('recommendationText').innerText = data.recommendation;
+      document.getElementById('repairedAnswerText').innerText = data.repaired_answer || 'No factual edits needed.';
 
       const scoreCircle = document.getElementById('scoreCircle');
       const badge = document.getElementById('verdictSummaryBadge');
@@ -381,6 +416,12 @@
           `;
         });
       }
+    }
+
+    function copyRepairedAnswer() {
+      const text = document.getElementById('repairedAnswerText').innerText;
+      navigator.clipboard.writeText(text);
+      alert('Repaired answer copied to clipboard!');
     }
 
     window.addEventListener('DOMContentLoaded', () => loadFixture('headphone_demo'));

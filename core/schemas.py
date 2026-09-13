@@ -1,6 +1,6 @@
-﻿"""
+"""
 AgentScout Data Schemas & Protocols
-Strict Pydantic models for A2A requests, claim extraction, evidence retrieval, and audit outputs.
+Strict Pydantic models for A2A requests, claim extraction, evidence retrieval, audit outputs, and repair.
 """
 
 from enum import Enum
@@ -55,6 +55,7 @@ class AuditResponse(BaseModel):
     stats: AuditStats = Field(..., description="Aggregate breakdown of claim verdicts")
     claims: List[ClaimAudit] = Field(default_factory=list, description="Individual audited claims with evidence")
     recommendation: str = Field(..., description="Actionable advisory for calling agent before showing to user")
+    repaired_answer: Optional[str] = Field(None, description="Automatically repaired answer text with factual corrections applied")
     execution_latency_ms: int = Field(..., description="Processing time in milliseconds")
     sharedos_purpose: str = Field(..., description="SharedOS verified purpose string")
     credits_billed: int = Field(5, description="Arena credits billed for this transaction")

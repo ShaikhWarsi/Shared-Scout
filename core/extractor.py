@@ -1,6 +1,7 @@
-﻿"""
+"""
 Claim Extractor Module
-Deconstructs complex AI agent output into atomic, falsifiable factual propositions without breaking on abbreviations.
+Deconstructs complex AI agent output into atomic, falsifiable factual propositions
+without breaking on currency symbols, abbreviations, or decimal numbers.
 """
 
 import re
@@ -18,12 +19,17 @@ class ClaimExtractor:
             (r'\bi\.e\.\s*', 'TOKEN_IE_ABBR_'),
             (r'\be\.g\.\s*', 'TOKEN_EG_ABBR_'),
             (r'\bvs\.\s*', 'TOKEN_VS_ABBR_'),
-            (r'\bNo\.\s*', 'TOKEN_NO_ABBR_')
+            (r'\bNo\.\s*', 'TOKEN_NO_ABBR_'),
+            (r'\bDr\.\s*', 'TOKEN_DR_ABBR_'),
+            (r'\bMr\.\s*', 'TOKEN_MR_ABBR_'),
+            (r'\bMs\.\s*', 'TOKEN_MS_ABBR_'),
+            (r'(\d+)\.(\d+)', r'\1TOKEN_DOT_NUM_\2')
         ]
         for pattern, token in replacements:
             text = re.sub(pattern, token, text, flags=re.IGNORECASE)
 
-        raw_sentences = [s.strip() for s in re.split(r'[.!?]+\s+|\n+', text) if s.strip()]
+        # Split on sentence terminals, linebreaks, or semicolons
+        raw_sentences = [s.strip() for s in re.split(r'[.!?]+\s+|\n+|;\s+', text) if s.strip()]
         
         claims = []
         for s in raw_sentences:
@@ -32,6 +38,10 @@ class ClaimExtractor:
             s = s.replace('TOKEN_EG_ABBR_', 'e.g. ')
             s = s.replace('TOKEN_VS_ABBR_', 'vs. ')
             s = s.replace('TOKEN_NO_ABBR_', 'No. ')
+            s = s.replace('TOKEN_DR_ABBR_', 'Dr. ')
+            s = s.replace('TOKEN_MR_ABBR_', 'Mr. ')
+            s = s.replace('TOKEN_MS_ABBR_', 'Ms. ')
+            s = s.replace('TOKEN_DOT_NUM_', '.')
             
             # Normalize whitespace
             s = re.sub(r'\s+', ' ', s).strip()
@@ -40,7 +50,7 @@ class ClaimExtractor:
             
             if len(s) < 12:
                 continue
-            if re.match(r'^(sure|here is|in summary|overall|hope this helps|i think|as an ai)', s, re.IGNORECASE):
+            if re.match(r'^(sure|here is|in summary|overall|hope this helps|i think|as an ai|note that)', s, re.IGNORECASE):
                 continue
             
             if s not in claims:
