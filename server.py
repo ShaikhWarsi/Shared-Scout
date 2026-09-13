@@ -11,17 +11,24 @@ from fastapi import FastAPI, HTTPException, Request, Depends
 from fastapi.responses import HTMLResponse, JSONResponse, PlainTextResponse
 from fastapi.middleware.cors import CORSMiddleware
 
-from core.schemas import AuditRequest, AuditResponse
+from core.schemas import (
+    AuditRequest,
+    AuditResponse,
+    AuditMode,
+    FirewallGateRequest,
+    FirewallGateResponse
+)
 from sharedos.service import AgentScoutService
 from sharedos.manifest import SHAREDOS_MANIFEST, SHAREDOS_PURPOSE_STRING
 from sharedos.cloud_adapter import SharedOSCloudAdapter
 from arena.pitch_bot import ArenaPitchAgent
 from arena.ledger import ArenaLedger
+from core.firewall import AgentFirewallGate
 
 app = FastAPI(
     title="AgentScout - SharedOS Verification Layer",
-    version="1.2.0",
-    description="Independent verification and autonomous hallucination repair layer for AI agents on SharedOS."
+    version="1.3.0",
+    description="Independent verification, adversarial attack testing, and Pre-Ship CI/CD Firewall Gate for AI agents on SharedOS."
 )
 
 app.add_middleware(
@@ -36,6 +43,7 @@ service = AgentScoutService()
 cloud_adapter = SharedOSCloudAdapter()
 pitch_agent = ArenaPitchAgent()
 ledger = ArenaLedger()
+firewall_gate = AgentFirewallGate(service=service)
 
 # In-Memory Rate Limiter (Max 60 requests/minute per caller agent)
 RATE_LIMIT = 60
@@ -117,11 +125,50 @@ def topup_caller_credits(caller_id: str, amount: int = 50):
     })
 
 
+@app.post("/firewall/gate", response_model=FirewallGateResponse)
+async def evaluate_firewall_gate(req: FirewallGateRequest, request: Request, caller_id: str = Depends(authenticate_caller)):
+    """
+    Pre-Ship CI/CD Firewall Gate for Autonomous Agents.
+    Blocks hallucinated responses below safety threshold from reaching users,
+    auto-repairs contradictions, and re-evaluates before granting shipment clearance.
+    """
+    try:
+        success, bal, msg = ledger.deduct_credits(caller_id, amount=5, service_name="POST /firewall/gate")
+        if not success:
+            raise HTTPException(status_code=403, detail=msg)
+        gate_res = firewall_gate.evaluate_gate(req, caller_agent_id=caller_id)
+        return gate_res
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Firewall Gate execution error: {str(e)}")
+
+
+@app.post("/attack", response_model=AuditResponse)
+async def attack_answer(req: AuditRequest, request: Request, caller_id: str = Depends(authenticate_caller)):
+    """
+    Adversarial Attack Mode: Actively hunts for conflicting specifications,
+    superseded facts, and counter-evidence to stress-test an agent's answer.
+    """
+    req.mode = AuditMode.ATTACK
+    try:
+        success, bal, msg = ledger.deduct_credits(caller_id, amount=5, service_name="POST /attack")
+        if not success:
+            raise HTTPException(status_code=403, detail=msg)
+        response, _ = service.execute_audit(req, caller_agent_id=caller_id)
+        response.remaining_credits = bal
+        return response
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Attack execution error: {str(e)}")
+
+
 @app.post("/api/ui/repair", response_model=AuditResponse)
 async def ui_repair_interactive(req: AuditRequest):
     """
     Dedicated local interactive playground route for browser UI demonstration.
-    Strictly separates local UI calls from external A2A endpoints to maintain zero HMAC backdoors.
+    Supports both standard VERIFY mode and adversarial ATTACK mode with Pre-Ship Firewall Gate tagging.
     """
     caller_id = "local-browser-session"
     check_rate_limit(caller_id)

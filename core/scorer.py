@@ -5,7 +5,7 @@ Computes overall reliability metrics, aggregation stats, actionable recommendati
 
 import re
 from typing import List, Optional
-from core.schemas import ClaimAudit, AuditStats, VerdictEnum, AuditResponse
+from core.schemas import ClaimAudit, AuditStats, VerdictEnum, AuditResponse, AuditMode
 from sharedos.manifest import SHAREDOS_PURPOSE_STRING
 
 
@@ -13,13 +13,14 @@ class AuditScorer:
     def __init__(self):
         pass
 
-    def compute_audit(self, audit_id: str, claims: List[ClaimAudit], latency_ms: int, original_answer: str = "") -> AuditResponse:
+    def compute_audit(self, audit_id: str, claims: List[ClaimAudit], latency_ms: int, original_answer: str = "", mode: AuditMode = AuditMode.VERIFY) -> AuditResponse:
         total = len(claims)
         if total == 0:
             return AuditResponse(
                 audit_id=audit_id,
                 reliability=100,
                 verdict_summary="NO_CLAIMS_TO_EVALUATE",
+                mode=mode,
                 stats=AuditStats(),
                 claims=[],
                 recommendation="Input answer contains no falsifiable factual assertions.",
@@ -128,6 +129,7 @@ class AuditScorer:
             audit_id=audit_id,
             reliability=reliability,
             verdict_summary=summary,
+            mode=mode,
             stats=stats,
             claims=claims,
             recommendation=recommendation,

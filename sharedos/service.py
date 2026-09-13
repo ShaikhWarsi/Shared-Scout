@@ -64,7 +64,8 @@ class AgentScoutService:
             claim_audit = self.verifier.verify_claim(
                 claim_id=idx,
                 claim_text=claim_text,
-                evidence=evidence
+                evidence=evidence,
+                mode=request.mode
             )
             audited_claims.append(claim_audit)
 
@@ -73,6 +74,7 @@ class AgentScoutService:
         })
 
         trail.log_turn("TURN_4_NLI_VERIFICATION", {
+            "mode": request.mode.value,
             "evaluated_claims": [
                 {
                     "claim_id": c.claim_id,
@@ -89,7 +91,8 @@ class AgentScoutService:
             audit_id=audit_id,
             claims=audited_claims,
             latency_ms=latency_ms,
-            original_answer=request.answer
+            original_answer=request.answer,
+            mode=request.mode
         )
 
         trail.log_turn("TURN_5_EGRESS", {

@@ -186,7 +186,7 @@ def test_ui_endpoint():
     response = client.get("/")
     assert response.status_code == 200
     assert "AgentScout" in response.text
-    assert "Challenge an Answer" in response.text
+    assert "Challenge" in response.text
 
 
 def test_ui_repair_interactive_endpoint():
@@ -199,6 +199,46 @@ def test_ui_repair_interactive_endpoint():
     data = response.json()
     assert data["audit_id"].startswith("as-audit-")
     assert "remaining_credits" in data
+
+
+def test_firewall_gate_api_endpoint(monkeypatch):
+    def mock_search(claim, question=""):
+        return [
+            EvidenceItem(
+                source_url="https://buy.realme.com/in/goods/realme-buds-air-5-pro",
+                source_title="Realme Official Store",
+                snippet="Realme Buds Air 5 Pro launch price is Rs. 4,999 with 50dB ANC.",
+                reliability_weight=1.0
+            )
+        ]
+    monkeypatch.setattr(service.search_engine, "search_claim", mock_search)
+
+    payload = {
+        "question": "Find headphones under 3000",
+        "answer": "The Realme Buds Air 5 Pro costs Rs. 2,499 with 50dB ANC.",
+        "min_reliability_threshold": 80,
+        "auto_repair": True
+    }
+    caller = "FirewallAgent-01"
+    headers = get_signed_headers(caller, payload)
+    response = client.post("/firewall/gate", json=payload, headers=headers)
+    assert response.status_code == 200
+    data = response.json()
+    assert data["status"] == "REPAIRED_AND_APPROVED"
+    assert "Rs. 4,999" in data["safe_to_ship_answer"]
+
+
+def test_attack_api_endpoint():
+    payload = {
+        "question": "Python 1.0 release date",
+        "answer": "Python was created by Guido van Rossum and released in 1991."
+    }
+    caller = "AttackTestAgent"
+    headers = get_signed_headers(caller, payload)
+    response = client.post("/attack", json=payload, headers=headers)
+    assert response.status_code == 200
+    data = response.json()
+    assert data["mode"] == "ATTACK"
 
 
 def test_ledger_export_csv_endpoint():
@@ -221,4 +261,5 @@ def test_sharednet_peers_endpoints():
     data = res.json()
     assert "peers_count" in data
     assert "seed_peers" in data
+
 

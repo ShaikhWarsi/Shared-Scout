@@ -9,42 +9,48 @@ import os
 import urllib.request
 import urllib.parse
 from typing import List, Tuple, Optional, Dict, Any
-from core.schemas import VerdictEnum, EvidenceItem, ClaimAudit
+from core.schemas import VerdictEnum, EvidenceItem, ClaimAudit, AuditMode
+from core.committee import VerificationCommittee
 
 
 class ClaimVerifier:
     def __init__(self):
         self.openai_key = os.getenv("OPENAI_API_KEY", "")
         self.gemini_key = os.getenv("GEMINI_API_KEY", "")
+        self.committee = VerificationCommittee()
 
-    def verify_claim(self, claim_id: int, claim_text: str, evidence: List[EvidenceItem]) -> ClaimAudit:
+    def verify_claim(self, claim_id: int, claim_text: str, evidence: List[EvidenceItem], mode: AuditMode = AuditMode.VERIFY) -> ClaimAudit:
         if not evidence:
+            votes, conflict, decay_risk = self.committee.deliberate(claim_text, [], VerdictEnum.UNVERIFIED, None)
             return ClaimAudit(
                 claim_id=claim_id,
                 claim_text=claim_text,
                 verdict=VerdictEnum.UNVERIFIED,
                 confidence=0.50,
                 evidence=[],
-                contradiction_details="No authoritative third-party source corroboration found across inspected web sources."
+                contradiction_details="No authoritative third-party source corroboration found across inspected web sources.",
+                source_conflict=conflict,
+                committee_votes=votes,
+                knowledge_decay_risk="HIGH" if mode == AuditMode.ATTACK else "MEDIUM"
             )
 
         # 1. Attempt LLM reasoning if API key configured
-        if self.openai_key:
-            llm_res = self._evaluate_with_llm(claim_text, evidence)
-            if llm_res:
-                verdict, conf, details, corr = llm_res
-                return ClaimAudit(
-                    claim_id=claim_id,
-                    claim_text=claim_text,
-                    verdict=verdict,
-                    confidence=conf,
-                    evidence=evidence,
-                    contradiction_details=details,
-                    correction=corr
-                )
+        verdict = None
+        confidence = 0.85
+        details = None
+        correction = None
 
-        # 2. Generalized Deterministic Entailment Engine
-        verdict, confidence, details, correction = self._evaluate_deterministic_entailment(claim_text, evidence)
+        if self.openai_key:
+            llm_res = self._evaluate_with_llm(claim_text, evidence, mode=mode)
+            if llm_res:
+                verdict, confidence, details, correction = llm_res
+
+        # 2. Generalized Deterministic Entailment Engine (if LLM not used or fallback)
+        if verdict is None:
+            verdict, confidence, details, correction = self._evaluate_deterministic_entailment(claim_text, evidence, mode=mode)
+
+        # 3. Deliberate with Multi-Agent Verification Committee
+        votes, conflict, decay_risk = self.committee.deliberate(claim_text, evidence, verdict, correction)
 
         return ClaimAudit(
             claim_id=claim_id,
@@ -53,12 +59,21 @@ class ClaimVerifier:
             confidence=confidence,
             evidence=evidence,
             contradiction_details=details,
-            correction=correction
+            correction=correction,
+            source_conflict=conflict,
+            committee_votes=votes,
+            knowledge_decay_risk=decay_risk
         )
 
-    def _evaluate_with_llm(self, claim: str, evidence: List[EvidenceItem]) -> Optional[Tuple[VerdictEnum, float, Optional[str], Optional[str]]]:
+    def _evaluate_with_llm(self, claim: str, evidence: List[EvidenceItem], mode: AuditMode = AuditMode.VERIFY) -> Optional[Tuple[VerdictEnum, float, Optional[str], Optional[str]]]:
         try:
+            mode_instruction = (
+                "ADVERSARIAL ATTACK MODE: Actively look for inconsistencies, superseded facts, or specification mismatches."
+                if mode == AuditMode.ATTACK else
+                "STANDARD VERIFICATION MODE: Impartially evaluate claim against evidence."
+            )
             prompt = (
+                f"{mode_instruction}\n"
                 "Evaluate this factual claim strictly against the provided evidence snippets:\n"
                 f"Claim: {claim}\n"
                 f"Evidence: {[e.snippet for e in evidence]}\n"
@@ -94,7 +109,7 @@ class ClaimVerifier:
             pass
         return None
 
-    def _evaluate_deterministic_entailment(self, claim: str, evidence: List[EvidenceItem]) -> Tuple[VerdictEnum, float, Optional[str], Optional[str]]:
+    def _evaluate_deterministic_entailment(self, claim: str, evidence: List[EvidenceItem], mode: AuditMode = AuditMode.VERIFY) -> Tuple[VerdictEnum, float, Optional[str], Optional[str]]:
         c_lower = claim.lower()
         combined_snippets = " ".join([e.snippet.lower() for e in evidence])
         top_weight = max([e.reliability_weight for e in evidence]) if evidence else 0.5
