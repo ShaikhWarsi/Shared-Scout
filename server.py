@@ -426,10 +426,18 @@ def verify_audit_trail_chain(audit_id: str):
 
 @app.get("/api/fixtures")
 def get_demo_fixtures():
-    fixtures_path = os.path.join(os.path.dirname(__file__), "demo", "demo_fixtures.json")
-    if os.path.exists(fixtures_path):
-        with open(fixtures_path, "r", encoding="utf-8") as f:
-            return json.load(f)
+    candidates = [
+        os.path.join(os.path.dirname(os.path.abspath(__file__)), "demo", "demo_fixtures.json"),
+        os.path.join(os.getcwd(), "demo", "demo_fixtures.json"),
+        os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "demo", "demo_fixtures.json"),
+    ]
+    for p in candidates:
+        if os.path.exists(p):
+            try:
+                with open(p, "r", encoding="utf-8") as f:
+                    return json.load(f)
+            except Exception:
+                pass
     return {}
 
 
@@ -444,11 +452,20 @@ def get_pitch_info():
 
 @app.get("/", response_class=HTMLResponse)
 def serve_ui():
-    ui_path = os.path.join(os.path.dirname(__file__), "ui", "index.html")
-    if os.path.exists(ui_path):
-        with open(ui_path, "r", encoding="utf-8") as f:
-            return f.read()
-    return "<h1>AgentScout UI file not found</h1>"
+    candidates = [
+        os.path.join(os.path.dirname(os.path.abspath(__file__)), "ui", "index.html"),
+        os.path.join(os.getcwd(), "ui", "index.html"),
+        os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "ui", "index.html"),
+        "/var/task/ui/index.html",
+    ]
+    for p in candidates:
+        if os.path.exists(p):
+            try:
+                with open(p, "r", encoding="utf-8") as f:
+                    return f.read()
+            except Exception:
+                pass
+    return "<h1>AgentScout - Pre-Action CI/CD Firewall Gate & In-Flight Diff-Repair for Autonomous Agents</h1><p>API is active and operational.</p>"
 
 
 if __name__ == "__main__":

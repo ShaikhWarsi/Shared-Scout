@@ -20,8 +20,16 @@ class ArenaLedger:
         else:
             base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
             storage_dir = os.path.join(base_dir, ".sharedos")
-            os.makedirs(storage_dir, exist_ok=True)
-            self.ledger_file = os.path.join(storage_dir, "ledger.json")
+            try:
+                os.makedirs(storage_dir, exist_ok=True)
+                self.ledger_file = os.path.join(storage_dir, "ledger.json")
+            except Exception:
+                storage_dir = os.path.join("/tmp", ".sharedos")
+                try:
+                    os.makedirs(storage_dir, exist_ok=True)
+                except Exception:
+                    pass
+                self.ledger_file = os.path.join(storage_dir, "ledger.json")
 
         self.accounts: Dict[str, int] = {}
         self.transactions: List[Dict[str, Any]] = []

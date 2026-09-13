@@ -61,13 +61,16 @@ class DocketSigner:
             format=serialization.PublicFormat.SubjectPublicKeyInfo
         )
 
-        KEYS_FILE.parent.mkdir(parents=True, exist_ok=True)
-        with open(KEYS_FILE, "w", encoding="utf-8") as f:
-            json.dump({
-                "key_id": key_id,
-                "private_key_der": base64.b64encode(priv_der).decode("ascii"),
-                "public_key_der": base64.b64encode(pub_der).decode("ascii")
-            }, f, indent=2)
+        try:
+            KEYS_FILE.parent.mkdir(parents=True, exist_ok=True)
+            with open(KEYS_FILE, "w", encoding="utf-8") as f:
+                json.dump({
+                    "key_id": key_id,
+                    "private_key_der": base64.b64encode(priv_der).decode("ascii"),
+                    "public_key_der": base64.b64encode(pub_der).decode("ascii")
+                }, f, indent=2)
+        except Exception:
+            pass
 
         return priv, pub, key_id
 

@@ -31,7 +31,14 @@ class DurableSharedOSAuditSink:
         max_retries: int = 3
     ):
         self.persist_dir = persist_dir or os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), ".sharedos")
-        os.makedirs(self.persist_dir, exist_ok=True)
+        try:
+            os.makedirs(self.persist_dir, exist_ok=True)
+        except Exception:
+            self.persist_dir = "/tmp/.sharedos"
+            try:
+                os.makedirs(self.persist_dir, exist_ok=True)
+            except Exception:
+                pass
         self.log_file = os.path.join(self.persist_dir, "audit_log.jsonl")
         self.outbox_file = os.path.join(self.persist_dir, "audit_outbox.jsonl")
         self.cloud_url = cloud_url

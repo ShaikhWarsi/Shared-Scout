@@ -24,14 +24,25 @@ class CapabilityGrantStore:
 
     def __init__(self, store_path: Optional[str] = None):
         self.store_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), ".sharedos")
+        try:
+            os.makedirs(self.store_dir, exist_ok=True)
+        except Exception:
+            self.store_dir = "/tmp/.sharedos"
+            try:
+                os.makedirs(self.store_dir, exist_ok=True)
+            except Exception:
+                pass
         self.store_path = store_path or os.path.join(self.store_dir, "grants.json")
         self._ensure_store()
 
     def _ensure_store(self):
-        os.makedirs(os.path.dirname(self.store_path), exist_ok=True)
-        if not os.path.exists(self.store_path):
-            initial_grants = self._get_default_seed_grants()
-            self._write_grants(initial_grants)
+        try:
+            os.makedirs(os.path.dirname(self.store_path), exist_ok=True)
+            if not os.path.exists(self.store_path):
+                initial_grants = self._get_default_seed_grants()
+                self._write_grants(initial_grants)
+        except Exception:
+            pass
 
     def _get_default_seed_grants(self) -> List[Dict[str, Any]]:
         now_iso = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
