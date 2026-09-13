@@ -1,8 +1,8 @@
-# AgentScout: The Independent Verification & Autonomous Repair Layer for AI Agents
+# AgentScout: Pre-Ship CI/CD Firewall Gate & Adversarial Attack Engine for AI Agents
 
-> **"Don't ask an agent to trust itself. Ask another agent."**
+> **"Don't ask an agent to trust itself. Challenge it with independent adversarial verification."**
 
-Built as a high-performance, SharedNet-compliant verification node for the SharedOS A2A agent economy.
+**The Standard CI/CD Safety Primitive for Autonomous Agents on SharedOS** (`Agent -> AgentScout Firewall -> World`)
 
 ---
 
@@ -10,13 +10,17 @@ Built as a high-performance, SharedNet-compliant verification node for the Share
 
 Any AI agent can research and reason, but neither guarantees that its answer is correct. When an agent attempts to self-verify its conclusions, it suffers from **circular confirmation bias**—affirming the very hallucinations it generated.
 
-**AgentScout** is an independent, evidence-backed verification and autonomous hallucination-repair service. Calling agents send their generated responses to AgentScout (`POST /audit` or `POST /repair`):
+**AgentScout** is an independent, evidence-backed Pre-Ship CI/CD Firewall Gate and Adversarial Attack Engine. Calling agents route draft outputs through AgentScout before shipping to human users or external systems (`POST /firewall/gate` or `POST /attack`):
 
-1. **Atomic Proposition Extraction:** Breaks multi-sentence responses into isolated, falsifiable claims.
-2. **Multi-Engine Live Research:** Independently queries the **Wikipedia REST API** and **DuckDuckGo Live Search** (with domain credibility weighting: official/gov/edu = 1.0, Wikipedia = 0.90, review portals = 0.85). *Zero hardcoded catalog shortcuts: uncorroborated claims return `UNVERIFIED`.*
-3. **Deterministic & LLM Natural Language Inference (NLI):** Performs generalized numeric/spec mismatch detection (`hours`, `mAh`, `dB`, `W`, prices, years) with optional `gpt-4o-mini` evaluation when API keys are configured.
-4. **Autonomous Hallucination Repair:** Automatically generates a corrected response (`repaired_answer`) ready for immediate delivery to human users.
-5. **Cryptographic Proof Chain:** Logs a 5-turn SHA-256 chained transaction persisted to `.sharedos/audit_log.jsonl`.
+1. **⚔️ Adversarial Attack Probes (`POST /attack`):** Actively attacks candidate propositions, hunting for numeric discrepancies, outdated claims, and ungrounded marketing superlatives.
+2. **👥 Multi-Agent Deliberation Committee:** Convenes 3 independent agent personas:
+   - **Researcher-Node:** Evaluates primary evidence coverage, named entity overlap, and citation availability.
+   - **Skeptic-Node:** Runs adversarial stress-tests for temporal obsolescence, spec boundaries, and price volatility.
+   - **SourceJudge-Node:** Classifies domain trust tiers (Gov/Edu = 1.0, Official = 0.95, Wikipedia = 0.90) and resolves conflicting citations.
+3. **🚨 Pre-Ship CI/CD Firewall Gate (`POST /firewall/gate`):** Evaluates reliability against safety thresholds (e.g. $\ge 80$). Drafts with contradictions are flagged `BLOCKED_UNSAFE`.
+4. **🔧 Surgical Autonomous Diff-Repair:** Applies in-flight token diff patches to prices, specifications (`hours`, `dB`, `mAh`, `W`, `meters`), and dates $\rightarrow$ re-evaluates $\rightarrow$ outputs `REPAIRED_AND_APPROVED`.
+5. **🔏 Cryptographic Proof Chain & Settlement:** Persists a 5-turn SHA-256 chained transaction to `.sharedos/audit_log.jsonl`, verified via `GET /api/audit-trail/{audit_id}/verify`. Deducts 5 Arena Credits with CSV ledger export.
+
 
 ---
 
@@ -154,14 +158,15 @@ To ensure complete transparency and credibility during judging:
 
 ## 🚀 Quickstart & Reproduction
 
-### 1. Run Automated Test Suite (20 Tests)
+### 1. 🎬 Run the 90-Second Cinematic Mega-Demo (Single Command)
+Demonstrates the full autonomous lifecycle: Upstream Draft $\rightarrow$ ⚔️ Adversarial Attack $\rightarrow$ 3-Agent Committee $\rightarrow$ 🚨 Pre-Ship Gate Interception $\rightarrow$ 🔧 Surgical Diff-Repair $\rightarrow$ 🔏 SHA-256 Provenance & Arena Settlement.
 ```bash
-python -m pytest tests/
+python demo/run_megademo.py
 ```
 
-### 2. Run Closed-Loop Live A2A Simulation
+### 2. Run Automated Test Suite (26 Tests)
 ```bash
-python demo/run_live_a2a.py
+python -m pytest tests/
 ```
 
 ### 3. Run 2-Node Peer Federation & Dial Handshake
@@ -169,13 +174,14 @@ python demo/run_live_a2a.py
 python demo/run_2node_federation.py
 ```
 
-### 4. Run Hackathon Judge Simulator
+### 4. Run Live Performance & Hallucination Benchmark
 ```bash
-python review/judge_simulator.py
+python benchmarks/benchmark_live.py
 ```
 
-### 5. Launch Server & Web UI
+### 5. Launch Node Server & Web Mission Control
 ```bash
 python server.py --port 8000
 ```
-Open `http://localhost:8000` to test with multi-domain presets (E-Commerce, Medicine, Law, Finance, History). Inspect the live transaction ledger anytime at `http://localhost:8000/ledger/export`.
+Open [http://localhost:8000](http://localhost:8000) in your browser to interactively challenge, attack, and repair agent responses with multi-domain presets (E-Commerce, Medicine, Law, Finance, History). Inspect the live transaction ledger anytime at [http://localhost:8000/ledger/export](http://localhost:8000/ledger/export).
+

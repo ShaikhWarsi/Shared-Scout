@@ -68,3 +68,35 @@ class SharedOSAuditTrail:
                 f.write(json.dumps(data) + "\n")
         except Exception:
             pass
+
+    def verify_integrity(self) -> Dict[str, Any]:
+        """Recomputes SHA-256 links turn-by-turn to verify cryptographic chain integrity."""
+        current_hash = "0" * 64
+        for idx, event in enumerate(self.events):
+            if event.previous_hash != current_hash:
+                return {
+                    "valid": False,
+                    "failed_at_turn": idx + 1,
+                    "reason": f"Broken chain link at turn {idx+1}: expected previous_hash {current_hash}, found {event.previous_hash}"
+                }
+            # Recompute event hash
+            payload = f"{event.timestamp}|{event.step}|{json.dumps(event.details, sort_keys=True)}|{event.previous_hash}"
+            expected_event_hash = hashlib.sha256(payload.encode("utf-8")).hexdigest()
+            if expected_event_hash != event.event_hash:
+                return {
+                    "valid": False,
+                    "failed_at_turn": idx + 1,
+                    "reason": f"Tampered event payload at turn {idx+1}: expected {expected_event_hash}, found {event.event_hash}"
+                }
+            current_hash = event.event_hash
+
+        return {
+            "valid": True,
+            "audit_id": self.audit_id,
+            "chain_depth": len(self.events),
+            "root_hash": self.events[0].event_hash if self.events else None,
+            "latest_hash": self.last_hash,
+            "tamper_proof": True,
+            "message": f"Cryptographic integrity verified: All {len(self.events)} turns form an unbroken SHA-256 hash chain."
+        }
+

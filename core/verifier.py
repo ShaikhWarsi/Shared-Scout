@@ -117,15 +117,22 @@ class ClaimVerifier:
         # ---------------------------------------------------------
         # 1. Generalized Price / Currency Contradiction Detection
         # ---------------------------------------------------------
-        price_pattern = r"(?:rs\.?|inr|₹|\$|usd|eur|€|gbp|£)\s*(\d[\d,]*(?:\.\d+)?)"
+        price_pattern = r"(?:rs\.?|inr|₹|\$|usd|eur|€|gbp|£)\s*([\d,]+(?:\.\d+)?)"
         claim_prices = re.findall(price_pattern, c_lower)
         if claim_prices:
             for cp in claim_prices:
-                clean_cp = cp.replace(",", "")
+                clean_cp = cp.replace(",", "").strip()
                 ev_prices = re.findall(price_pattern, combined_snippets)
-                ev_clean = [p.replace(",", "") for p in ev_prices]
-                if ev_clean and clean_cp not in ev_clean:
-                    correct_price = ev_prices[0]
+                ev_clean = [p.replace(",", "").strip() for p in ev_prices]
+                
+                # If clean claim price is present in evidence prices, it's supported!
+                if clean_cp in ev_clean:
+                    continue
+
+                if ev_clean:
+                    # Filter out tiny artifacts (< 100) if the claim price is large (> 500)
+                    valid_ev_prices = [p for p in ev_prices if float(p.replace(",", "")) >= 100] or ev_prices
+                    correct_price = valid_ev_prices[0]
                     curr_match = re.search(r"(rs\.?|inr|₹|\$|usd|eur|€|gbp|£)", c_lower)
                     curr_sym = "Rs." if curr_match and curr_match.group(1).lower().startswith("rs") else (curr_match.group(1) if curr_match else "Rs.")
                     conf = min(0.99, 0.90 + (top_weight * 0.08))
@@ -135,6 +142,7 @@ class ClaimVerifier:
                         f"Claim states price {curr_sym} {cp}, but verified manufacturer/retailer catalog confirms {curr_sym} {correct_price}.",
                         f"Actual verified price is {curr_sym} {correct_price}"
                     )
+
 
         # ---------------------------------------------------------
         # 2. Generalized Numeric & Specification Contradiction

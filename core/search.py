@@ -72,34 +72,47 @@ class WebSearchEngine:
         return " ".join(words) if words else claim[:40]
 
     def _fetch_wikipedia_evidence(self, query: str) -> List[EvidenceItem]:
-        """Queries Wikipedia OpenSearch & Summary API for verified factual extracts."""
+        """Queries Wikipedia Search API & REST Summary API for verified factual extracts."""
         results: List[EvidenceItem] = []
         try:
-            search_url = f"https://en.wikipedia.org/w/api.php?action=opensearch&search={urllib.parse.quote(query)}&limit=2&namespace=0&format=json"
+            # 1. Full-text search on Wikipedia
+            search_url = f"https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch={urllib.parse.quote(query)}&format=json"
             req = urllib.request.Request(search_url, headers={"User-Agent": self.user_agent})
-            with urllib.request.urlopen(req, timeout=3) as resp:
+            with urllib.request.urlopen(req, timeout=4) as resp:
                 if resp.status == 200:
                     data = json.loads(resp.read().decode("utf-8"))
-                    titles = data[1] if len(data) > 1 else []
-                    urls = data[3] if len(data) > 3 else []
-                    
-                    for title, url in zip(titles[:2], urls[:2]):
-                        summary_url = f"https://en.wikipedia.org/api/rest_v1/page/summary/{urllib.parse.quote(title)}"
-                        sum_req = urllib.request.Request(summary_url, headers={"User-Agent": self.user_agent})
-                        with urllib.request.urlopen(sum_req, timeout=3) as sum_resp:
-                            if sum_resp.status == 200:
-                                sum_data = json.loads(sum_resp.read().decode("utf-8"))
-                                extract = sum_data.get("extract", "")
-                                if extract:
-                                    results.append(EvidenceItem(
-                                        source_url=url,
-                                        source_title=f"Wikipedia: {title}",
-                                        snippet=extract[:450],
-                                        reliability_weight=0.90
-                                    ))
+                    search_items = data.get("query", {}).get("search", [])
+                    for item in search_items[:3]:
+                        title = item.get("title", "")
+                        raw_snippet = item.get("snippet", "")
+                        clean_snippet = BeautifulSoup(raw_snippet, "html.parser").get_text()
+                        page_url = f"https://en.wikipedia.org/wiki/{urllib.parse.quote(title.replace(' ', '_'))}"
+                        
+                        # Optionally fetch high-density summary for top match
+                        if title and len(results) == 0:
+                            try:
+                                sum_url = f"https://en.wikipedia.org/api/rest_v1/page/summary/{urllib.parse.quote(title)}"
+                                sum_req = urllib.request.Request(sum_url, headers={"User-Agent": self.user_agent})
+                                with urllib.request.urlopen(sum_req, timeout=3) as sum_resp:
+                                    if sum_resp.status == 200:
+                                        sum_data = json.loads(sum_resp.read().decode("utf-8"))
+                                        extract = sum_data.get("extract", "")
+                                        if extract:
+                                            clean_snippet = f"{extract[:350]} ... {clean_snippet}"
+                            except Exception:
+                                pass
+
+                        if clean_snippet:
+                            results.append(EvidenceItem(
+                                source_url=page_url,
+                                source_title=f"Wikipedia: {title}",
+                                snippet=clean_snippet[:500],
+                                reliability_weight=0.90
+                            ))
         except Exception:
             pass
         return results
+
 
     def _fetch_live_web_evidence(self, query: str) -> List[EvidenceItem]:
         """Queries DuckDuckGo Lite for live web snippets and product citations."""

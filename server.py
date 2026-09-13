@@ -267,6 +267,15 @@ def get_audit_trail(audit_id: str):
     return JSONResponse(content=service.audit_history[audit_id].export_trail())
 
 
+@app.get("/api/audit-trail/{audit_id}/verify")
+def verify_audit_trail_chain(audit_id: str):
+    """Recomputes SHA-256 links turn-by-turn to verify cryptographic chain integrity."""
+    if audit_id not in service.audit_history:
+        raise HTTPException(status_code=404, detail="Audit ID not found in local SharedOS trail cache")
+    return JSONResponse(content=service.audit_history[audit_id].verify_integrity())
+
+
+
 @app.get("/api/fixtures")
 def get_demo_fixtures():
     fixtures_path = os.path.join(os.path.dirname(__file__), "demo", "demo_fixtures.json")
