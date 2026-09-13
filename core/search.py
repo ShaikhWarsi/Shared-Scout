@@ -9,8 +9,10 @@ import urllib.parse
 import json
 import re
 import time
-from typing import List, Dict, Any, Optional, Tuple
-from bs4 import BeautifulSoup
+try:
+    from bs4 import BeautifulSoup
+except ImportError:
+    BeautifulSoup = None
 from core.schemas import EvidenceItem
 
 
@@ -224,22 +226,36 @@ class WebSearchEngine:
             )
             with urllib.request.urlopen(req, timeout=3.5) as response:
                 if response.status == 200:
-                    soup = BeautifulSoup(response.read().decode("utf-8", errors="ignore"), "html.parser")
-                    links = soup.find_all("a", class_="result__url") or soup.find_all("a", class_="result-link")
-                    snippets = soup.find_all("a", class_="result__snippet") or soup.find_all("td", class_="result-snippet")
-                    for i in range(min(len(links), len(snippets), 4)):
-                        raw_url = links[i].get("href", "")
-                        title = links[i].text.strip()
-                        snippet = snippets[i].text.strip()
-                        url = self._clean_ddg_url(raw_url)
-                        if snippet:
-                            weight = self._evaluate_domain_credibility(url or "https://web.archive.org")
-                            results.append(EvidenceItem(
-                                source_url=url or f"https://duckduckgo.com/?q={urllib.parse.quote(query)}",
-                                source_title=title or "Verified Web Citation",
-                                snippet=snippet,
-                                reliability_weight=weight
-                            ))
+                    html_content = response.read().decode("utf-8", errors="ignore")
+                    if BeautifulSoup is not None:
+                        soup = BeautifulSoup(html_content, "html.parser")
+                        links = soup.find_all("a", class_="result__url") or soup.find_all("a", class_="result-link")
+                        snippets = soup.find_all("a", class_="result__snippet") or soup.find_all("td", class_="result-snippet")
+                        for i in range(min(len(links), len(snippets), 4)):
+                            raw_url = links[i].get("href", "")
+                            title = links[i].text.strip()
+                            snippet = snippets[i].text.strip()
+                            url = self._clean_ddg_url(raw_url)
+                            if snippet:
+                                weight = self._evaluate_domain_credibility(url or "https://web.archive.org")
+                                results.append(EvidenceItem(
+                                    source_url=url or f"https://duckduckgo.com/?q={urllib.parse.quote(query)}",
+                                    source_title=title or "Verified Web Citation",
+                                    snippet=snippet,
+                                    reliability_weight=weight
+                                ))
+                    else:
+                        # Fallback simple regex extraction if bs4 not installed
+                        raw_snippets = re.findall(r'class="result__snippet"[^>]*>(.*?)</a>', html_content, re.DOTALL)
+                        for snip in raw_snippets[:4]:
+                            clean_s = re.sub(r'<[^>]+>', '', snip).strip()
+                            if clean_s:
+                                results.append(EvidenceItem(
+                                    source_url=f"https://duckduckgo.com/?q={urllib.parse.quote(query)}",
+                                    source_title="Verified Web Citation",
+                                    snippet=clean_s,
+                                    reliability_weight=0.85
+                                ))
         except Exception:
             pass
         return results
