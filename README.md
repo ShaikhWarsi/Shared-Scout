@@ -77,9 +77,10 @@ Any AI agent can research and reason, but neither guarantees that its answer is 
 To ensure complete transparency and credibility during judging:
 
 - **Verification Engine:** Uses deterministic regex pattern matching, numeric unit normalization, and semantic keyword overlap for fast, reproducible evaluation ($<1$s latency); optional GPT-4o-mini reasoning is invoked when `OPENAI_API_KEY` is provided.
-- **SharedOS Compliance:** Operates as a SharedNet-compliant HTTP server enforcing HMAC-SHA256 turn authorization and logging 5 distinct turns (`TURN_1_INGRESS` to `TURN_5_EGRESS`) with linked SHA-256 event hashes permanently saved to `.sharedos/audit_log.jsonl`.
+- **SharedOS Compliance & Peer Federation:** Operates as a SharedNet-compliant HTTP server enforcing HMAC-SHA256 turn authorization by default. Dials SharedNet peers via signed HMAC-SHA256 handshakes (`POST /sharednet/peers/dial`) and maintains active peer routing tables (`GET /sharednet/peers`).
+- **Cryptographic Audit Trail:** Logs 5 distinct turns (`TURN_1_INGRESS` to `TURN_5_EGRESS`) with linked SHA-256 event hashes permanently saved to `.sharedos/audit_log.jsonl`.
 - **Search Engine:** All searches query live public REST APIs (Wikipedia Summary/OpenSearch) and DuckDuckGo Lite. Zero static fallback catalogs are used; if live networks return no evidence, claims are marked `UNVERIFIED`.
-- **Micro-Billing:** Structured for the SharedOS Arena economy at 5 Arena Credits per audit transaction.
+- **Arena Credits Ledger:** Enforces real balance tracking in `.sharedos/ledger.json` (100 credits initial grant, 5 credits billed per audit/repair, HTTP 403 on insufficient balance, and full CSV export at `GET /ledger/export`).
 
 ---
 
@@ -144,7 +145,8 @@ To ensure complete transparency and credibility during judging:
   "repaired_answer": "The boAt Rockerz 450 is a top choice at Rs. 1,499. For ANC, the Realme Buds Air 5 Pro provides 50dB ANC and costs Rs. 4,999 with quick charging.",
   "execution_latency_ms": 412,
   "sharedos_purpose": "Independent multi-source factual verification and hallucination auditing for AI agent responses.",
-  "credits_billed": 5
+  "credits_billed": 5,
+  "remaining_credits": 95
 }
 ```
 
@@ -152,7 +154,7 @@ To ensure complete transparency and credibility during judging:
 
 ## 🚀 Quickstart & Reproduction
 
-### 1. Run Automated Test Suite (12 Tests)
+### 1. Run Automated Test Suite (20 Tests)
 ```bash
 python -m pytest tests/
 ```
@@ -162,19 +164,18 @@ python -m pytest tests/
 python demo/run_live_a2a.py
 ```
 
-### 3. Run Hackathon Judge Simulator
+### 3. Run 2-Node Peer Federation & Dial Handshake
+```bash
+python demo/run_2node_federation.py
+```
+
+### 4. Run Hackathon Judge Simulator
 ```bash
 python review/judge_simulator.py
 ```
 
-### 4. Launch Server & Web UI
+### 5. Launch Server & Web UI
 ```bash
-python server.py
+python server.py --port 8000
 ```
-Open `http://localhost:8000` to test with multi-domain presets (E-Commerce, Medicine, Law, Finance, History).
-
-### 5. Launch Public Tunnel Gateway
-```bash
-python scripts/tunnel.py
-```
-*(Auto-detects `localtunnel`, `ngrok`, or `cloudflared`)*
+Open `http://localhost:8000` to test with multi-domain presets (E-Commerce, Medicine, Law, Finance, History). Inspect the live transaction ledger anytime at `http://localhost:8000/ledger/export`.

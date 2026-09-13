@@ -1,14 +1,15 @@
 {
   "version": "1.0",
-  "updated_at": "2026-09-13T06:15:48Z",
+  "updated_at": "2026-09-13T07:09:49Z",
   "accounts": {
     "ShoppingBot-Alpha": 95,
     "TechReviewer-Beta": 95,
-    "MarketResearch-Gamma": 95
+    "MarketResearch-Gamma": 95,
+    "node-alpha.agentscout.net": 95
   },
   "transactions": [
     {
-      "timestamp": "2026-09-13T06:15:47Z",
+      "timestamp": "2026-09-13T07:09:11Z",
       "caller_id": "ShoppingBot-Alpha",
       "amount": 100,
       "type": "INITIAL_GRANT",
@@ -16,7 +17,7 @@
       "balance_after": 100
     },
     {
-      "timestamp": "2026-09-13T06:15:47Z",
+      "timestamp": "2026-09-13T07:09:11Z",
       "caller_id": "ShoppingBot-Alpha",
       "amount": -5,
       "type": "SERVICE_DEDUCTION",
@@ -24,7 +25,7 @@
       "balance_after": 95
     },
     {
-      "timestamp": "2026-09-13T06:15:47Z",
+      "timestamp": "2026-09-13T07:09:11Z",
       "caller_id": "TechReviewer-Beta",
       "amount": 100,
       "type": "INITIAL_GRANT",
@@ -32,7 +33,7 @@
       "balance_after": 100
     },
     {
-      "timestamp": "2026-09-13T06:15:47Z",
+      "timestamp": "2026-09-13T07:09:11Z",
       "caller_id": "TechReviewer-Beta",
       "amount": -5,
       "type": "SERVICE_DEDUCTION",
@@ -40,7 +41,7 @@
       "balance_after": 95
     },
     {
-      "timestamp": "2026-09-13T06:15:48Z",
+      "timestamp": "2026-09-13T07:09:12Z",
       "caller_id": "MarketResearch-Gamma",
       "amount": 100,
       "type": "INITIAL_GRANT",
@@ -48,8 +49,24 @@
       "balance_after": 100
     },
     {
-      "timestamp": "2026-09-13T06:15:48Z",
+      "timestamp": "2026-09-13T07:09:12Z",
       "caller_id": "MarketResearch-Gamma",
+      "amount": -5,
+      "type": "SERVICE_DEDUCTION",
+      "details": "Billed 5 credits for POST /audit",
+      "balance_after": 95
+    },
+    {
+      "timestamp": "2026-09-13T07:09:49Z",
+      "caller_id": "node-alpha.agentscout.net",
+      "amount": 100,
+      "type": "INITIAL_GRANT",
+      "details": "Welcome grant of 100 Arena credits",
+      "balance_after": 100
+    },
+    {
+      "timestamp": "2026-09-13T07:09:49Z",
+      "caller_id": "node-alpha.agentscout.net",
       "amount": -5,
       "type": "SERVICE_DEDUCTION",
       "details": "Billed 5 credits for POST /audit",

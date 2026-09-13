@@ -144,84 +144,85 @@ class JudgeSimulator:
 
     def evaluate_scorecard(self) -> Dict[str, Any]:
         """
-        Calculates 12 rubric dimension scores (0-10) objectively from inspected code flags.
+        Calculates 12 rubric dimension scores (0-10) objectively from inspected code flags,
+        enforcing strict, honest caps for regex verifiers, localhost peers, and local JSON ledgers.
         """
         flags = self.auditor.stats["flags"]
 
         # 1. Problem / Need (Weight: 10%)
         p_need = 8.5
         if flags["has_autonomous_repair"]:
-            p_need += 0.8
-        p_need = min(9.5, p_need)
+            p_need += 0.5
+        p_need = min(9.0, p_need)
 
         # 2. Originality (Weight: 10%)
-        orig = 8.5
+        orig = 8.2
 
-        # 3. Technical Depth (Weight: 15%)
-        # Base: Regex entailment ~6.5. With LLM reasoning: +1.0. With live REST APIs: +0.5.
-        tech_depth = 5.0
+        # 3. Technical Depth (Weight: 15%) - STRICT CAP: Regex-based entailment <= 7.0 (max 7.2 with LLM API)
         if flags["has_hardcoded_verifier_rule"]:
-            tech_depth = 4.5
+            tech_depth = 4.0
         else:
-            tech_depth += 1.8  # Generalized regex / pattern entailment
-            if flags["has_llm_support"]:
-                tech_depth += 0.8  # Dual LLM support (GPT-4o-mini)
+            tech_depth = 6.2  # Generalized deterministic regex/spec parser
             if flags["has_wikipedia_api"] and flags["has_live_search_scraping"]:
-                tech_depth += 0.6  # Live multi-engine research
-        tech_depth = round(min(8.8, tech_depth), 1)
+                tech_depth += 0.5  # Live multi-source web research
+            if flags["has_llm_support"]:
+                tech_depth += 0.5  # Optional OpenAI API fallback
+            tech_depth = min(7.0, tech_depth)  # HARD CAP: Without local transformer fine-tuning, cannot exceed 7.0
+        tech_depth = round(tech_depth, 1)
 
-        # 4. Platform Integration (Weight: 20%)
+        # 4. Platform Integration (Weight: 20%) - STRICT CAP: Localhost peer dialing / HTTP SharedNet <= 7.5
         plat = 4.0
         if flags["has_persisted_audit_trail"]:
-            plat += 1.5
+            plat += 1.2
         if flags["has_hmac_default_enforced"]:
             plat += 1.0
         if flags["has_real_credit_ledger"]:
-            plat += 1.2
+            plat += 0.8
         if flags["has_peer_federation"]:
-            plat += 0.6
-        plat = round(min(9.0, plat), 1)
+            plat += 0.5
+        plat = min(7.5, plat)  # HARD CAP: Localhost peer network & simulated environment cannot exceed 7.5
+        plat = round(plat, 1)
 
         # 5. Product Quality (Weight: 10%)
         prod = 6.5
         if flags["has_autonomous_repair"]:
-            prod += 1.2
+            prod += 1.0
         if flags["has_batch_audit"]:
-            prod += 0.5
+            prod += 0.4
         if not flags["has_hardcoded_search_catalog"]:
-            prod += 0.6
-        prod = round(min(9.2, prod), 1)
+            prod += 0.5
+        prod = round(min(8.4, prod), 1)
 
         # 6. Demo (Weight: 15%)
         demo = 6.0
         if flags["has_ui"]:
-            demo += 1.2
+            demo += 1.0
         if flags["has_live_a2a_demo"]:
-            demo += 1.6
-        demo = round(min(9.2, demo), 1)
+            demo += 1.4
+        demo = round(min(8.5, demo), 1)
 
         # 7. Reliability / Trust (Weight: 5%)
         rel = 4.0
         if not flags["has_hardcoded_search_catalog"]:
-            rel += 2.5
+            rel += 2.0
         if self.auditor.stats["test_files"] >= 3:
             rel += 2.0
-        rel = round(min(9.0, rel), 1)
+        rel = round(min(8.5, rel), 1)
 
         # 8. User Value (Weight: 5%)
-        val = 8.8
+        val = 8.2
 
         # 9. Differentiation (Weight: 5%)
-        diff = 8.8
+        diff = 8.2
 
         # 10. Polish (Weight: 2%)
-        polish = 8.6 if flags["has_ui"] else 7.0
+        polish = 8.0 if flags["has_ui"] else 6.5
 
-        # 11. Completeness (Weight: 2%)
-        comp = 8.5 if (flags["has_batch_audit"] and flags["has_real_credit_ledger"]) else 7.0
+        # 11. Completeness (Weight: 2%) - STRICT CAP: Local JSON ledger & standalone service <= 7.0
+        comp = 7.0 if (flags["has_batch_audit"] and flags["has_real_credit_ledger"]) else 5.5
 
         # 12. Wow Factor (Weight: 1%)
-        wow = 8.2 if flags["has_autonomous_repair"] else 7.0
+        wow = 7.5 if flags["has_autonomous_repair"] else 6.0
 
         scores = {
             "Problem / Need": p_need,
@@ -321,7 +322,7 @@ class JudgeSimulator:
 > **"If I were a judge reviewing 300 submissions, would AgentScout make my shortlist, and what are the highest-ROI changes we can make before submission?"**
 
 ### Direct Answer:
-**YES. AgentScout makes the judge shortlist and is in strong contention for Top 10 finalist ({score_data['rank_range']}).**
+**YES. AgentScout makes the judge shortlist and is competitively placed ({score_data['rank_range']} out of ~300 submissions).**
 
 ### Actual Codebase Audit Findings:
 - **Autonomous Hallucination Repair (`POST /repair`):** {"[FOUND] Functional generalized repair engine replacing numbers, specs, currencies, dates" if flags["has_autonomous_repair"] else "[MISSING]"}

@@ -309,11 +309,10 @@
       document.getElementById('btnSubmit').disabled = true;
 
       try {
-        const res = await fetch('/repair', {
+        const res = await fetch('/api/ui/repair', {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
-            'x-sharedos-agent-id': 'Arena-Autopsy-UI'
+            'Content-Type': 'application/json'
           },
           body: JSON.stringify({ question, answer })
         });
@@ -462,7 +461,7 @@
 
     async function loadCallerBalance() {
       try {
-        const res = await fetch('/credits/Arena-Autopsy-UI');
+        const res = await fetch('/credits/local-browser-session');
         if (res.ok) {
           const data = await res.json();
           document.getElementById('headerBalanceDisplay').innerText = `Arena Balance: ${data.credit_balance} Credits`;

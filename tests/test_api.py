@@ -187,3 +187,38 @@ def test_ui_endpoint():
     assert response.status_code == 200
     assert "AgentScout" in response.text
     assert "Challenge an Answer" in response.text
+
+
+def test_ui_repair_interactive_endpoint():
+    payload = {
+        "question": "boAt price query",
+        "answer": "boAt Rockerz 450 is Rs. 1,499."
+    }
+    response = client.post("/api/ui/repair", json=payload)
+    assert response.status_code == 200
+    data = response.json()
+    assert data["audit_id"].startswith("as-audit-")
+    assert "remaining_credits" in data
+
+
+def test_ledger_export_csv_endpoint():
+    # Make a call to generate ledger activity
+    caller = "ExportTestAgent"
+    payload = {"question": "test", "answer": "test statement"}
+    headers = get_signed_headers(caller, payload)
+    client.post("/audit", json=payload, headers=headers)
+
+    response = client.get("/ledger/export")
+    assert response.status_code == 200
+    assert "timestamp,caller_id,amount,type,details,balance_after" in response.text
+    assert "ExportTestAgent" in response.text
+
+
+def test_sharednet_peers_endpoints():
+    # Test GET peers
+    res = client.get("/sharednet/peers")
+    assert res.status_code == 200
+    data = res.json()
+    assert "peers_count" in data
+    assert "seed_peers" in data
+
