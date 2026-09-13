@@ -1,0 +1,17 @@
+{
+  "headphone_demo": {
+    "question": "Find the best noise cancelling headphones under Rs 3,000 in India with high battery life.",
+    "answer": "The boAt Rockerz 450 is a top choice with 15 hours battery life at Rs. 1,499. For active noise cancellation, the Realme Buds Air 5 Pro provides 50dB ANC and costs Rs. 2,499 with quick charging.",
+    "expected_contradiction": "Realme Buds Air 5 Pro is Rs. 4,999, not Rs. 2,499."
+  },
+  "sony_anc_demo": {
+    "question": "What is the battery life of Sony WH-1000XM5?",
+    "answer": "The Sony WH-1000XM5 features 40 hours of continuous music playback with ANC enabled.",
+    "expected_contradiction": "Sony XM5 battery life is 30 hours with ANC ON (40 hours only when ANC is OFF)."
+  },
+  "accurate_demo": {
+    "question": "What are the specs and price of boAt Rockerz 450?",
+    "answer": "The boAt Rockerz 450 wireless on-ear headphones feature up to 15 hours battery backup and 40mm dynamic drivers, priced at Rs. 1,499.",
+    "expected_contradiction": null
+  }
+}

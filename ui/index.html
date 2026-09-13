@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AgentScout | The Verification Layer for AI Agents</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#f0fdf4',
+              500: '#22c55e',
+              600: '#16a34a',
+              900: '#14532d'
+            },
+            accent: '#38bdf8'
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    .font-mono-code {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .glow-border {
+      box-shadow: 0 0 25px -5px rgba(34, 197, 94, 0.15);
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col antialiased selection:bg-brand-500 selection:text-slate-950">
+
+  <!-- Header / Navigation -->
+  <header class="border-b border-slate-800/80 bg-slate-900/60 backdrop-blur-md sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="h-9 w-9 rounded-xl bg-gradient-to-tr from-brand-600 to-emerald-400 flex items-center justify-center text-slate-950 font-bold shadow-lg shadow-brand-500/20">
+          <i class="fa-solid fa-shield-halved text-lg"></i>
+        </div>
+        <div>
+          <span class="text-xl font-extrabold tracking-tight bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent">AgentScout</span>
+          <span class="ml-2 text-xs uppercase px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-mono-code font-semibold">SharedOS A2A</span>
+        </div>
+      </div>
+      <div class="flex items-center space-x-4">
+        <div class="hidden sm:flex items-center space-x-2 text-xs font-mono-code bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-lg text-slate-300">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span>SharedNet Node: <strong class="text-emerald-400">agentscout.sharedos.net</strong></span>
+        </div>
+        <div class="flex items-center space-x-2 bg-emerald-500/10 border border-emerald-500/30 px-3 py-1.5 rounded-lg text-xs font-bold text-emerald-400">
+          <i class="fa-solid fa-coins"></i>
+          <span>5 Credits / Audit</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Workspace -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+
+    <!-- Value Proposition Banner -->
+    <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-slate-900 via-slate-900 to-slate-950 border border-slate-800 p-6 md:p-8">
+      <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div class="max-w-2xl space-y-2">
+          <div class="inline-flex items-center space-x-2 text-xs font-semibold uppercase tracking-wider text-emerald-400 mb-1">
+            <i class="fa-solid fa-microscope"></i>
+            <span>Independent Verification Layer</span>
+          </div>
+          <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight text-white">Challenge an Answer</h1>
+          <p class="text-slate-400 text-sm md:text-base leading-relaxed">
+            Don't ask an agent to trust itself. Send AgentScout any answer: we extract atomic factual claims, independently cross-check live multi-source web evidence, and deliver an auditable reliability autopsy.
+          </p>
+        </div>
+        <div class="flex flex-col sm:flex-row gap-2">
+          <button onclick="loadFixture('headphone_demo')" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-3 py-2 rounded-lg font-medium transition flex items-center space-x-2">
+            <i class="fa-solid fa-headphones text-accent"></i>
+            <span>₹3K Headphone Price Discrepancy</span>
+          </button>
+          <button onclick="loadFixture('sony_anc_demo')" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-3 py-2 rounded-lg font-medium transition flex items-center space-x-2">
+            <i class="fa-solid fa-bolt text-amber-400"></i>
+            <span>Sony XM5 Battery ANC Spec</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Input Form -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div class="lg:col-span-12 bg-slate-900/80 border border-slate-800 rounded-2xl p-6 glow-border">
+        <form id="auditForm" onsubmit="handleAuditSubmit(event)" class="space-y-4">
+          <div>
+            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Original Prompt / Research Question</label>
+            <input id="inputQuestion" type="text" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition" placeholder="e.g. Find the best noise cancelling headphones under Rs 3,000 in India..." />
+          </div>
+          <div>
+            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Agent's Output to Challenge</label>
+            <textarea id="inputAnswer" rows="3" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition font-mono-code text-xs md:text-sm" placeholder="Paste generated output here to verify against live sources..."></textarea>
+          </div>
+          <div class="flex items-center justify-between pt-2">
+            <div class="text-xs text-slate-500 font-mono-code flex items-center space-x-2">
+              <i class="fa-solid fa-cloud-arrow-up text-emerald-500"></i>
+              <span>Live Multi-Source Scraper (DuckDuckGo + Direct Extract)</span>
+            </div>
+            <button id="btnSubmit" type="submit" class="bg-brand-500 hover:bg-brand-600 text-slate-950 font-bold px-6 py-3 rounded-xl transition shadow-lg shadow-brand-500/25 flex items-center space-x-2">
+              <i class="fa-solid fa-bolt"></i>
+              <span>Run Independent Audit (5 Credits)</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Processing State Indicator -->
+    <div id="loadingState" class="hidden py-12 text-center space-y-4">
+      <div class="inline-block relative">
+        <div class="w-14 h-14 border-4 border-slate-800 border-t-brand-500 rounded-full animate-spin"></div>
+        <div class="absolute inset-0 flex items-center justify-center text-xs font-bold font-mono-code text-emerald-400">A2A</div>
+      </div>
+      <div class="space-y-1">
+        <p class="text-base font-bold text-white">Challenging Answer on SharedOS Cloud...</p>
+        <p class="text-xs text-slate-400 font-mono-code">Extracting atomic claims & cross-referencing multi-source web index...</p>
+      </div>
+    </div>
+
+    <!-- Autopsy Results Section -->
+    <div id="resultsSection" class="hidden space-y-6">
+
+      <!-- Reliability Banner Header -->
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 flex items-center space-x-4">
+          <div id="scoreCircle" class="w-16 h-16 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex flex-col items-center justify-center font-black text-amber-400">
+            <span id="scoreVal" class="text-2xl leading-none">50</span>
+            <span class="text-[10px] uppercase font-bold tracking-tighter">/ 100</span>
+          </div>
+          <div>
+            <div class="text-xs uppercase font-semibold text-slate-400">Reliability Score</div>
+            <div id="verdictSummaryBadge" class="text-sm font-black text-amber-400 uppercase mt-0.5">CONTRADICTED</div>
+          </div>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 flex items-center justify-between">
+          <div>
+            <div class="text-xs uppercase font-semibold text-slate-400">Claims Analyzed</div>
+            <div id="statTotal" class="text-2xl font-black text-white mt-1">2</div>
+          </div>
+          <div class="h-10 w-10 rounded-xl bg-slate-800 flex items-center justify-center text-slate-400">
+            <i class="fa-solid fa-list-check"></i>
+          </div>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 flex items-center justify-between">
+          <div>
+            <div class="text-xs uppercase font-semibold text-slate-400">Breakdown</div>
+            <div class="flex items-center space-x-2 mt-1 text-sm font-bold font-mono-code">
+              <span class="text-emerald-400"><i class="fa-solid fa-check"></i> <span id="statSupported">1</span></span>
+              <span class="text-rose-400"><i class="fa-solid fa-xmark"></i> <span id="statContradicted">1</span></span>
+              <span class="text-slate-400"><i class="fa-solid fa-question"></i> <span id="statUnverified">0</span></span>
+            </div>
+          </div>
+          <div class="h-10 w-10 rounded-xl bg-slate-800 flex items-center justify-center text-slate-400">
+            <i class="fa-solid fa-chart-pie"></i>
+          </div>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 flex items-center justify-between">
+          <div>
+            <div class="text-xs uppercase font-semibold text-slate-400">A2A Latency</div>
+            <div id="statLatency" class="text-2xl font-black text-accent mt-1 font-mono-code">294ms</div>
+          </div>
+          <div class="h-10 w-10 rounded-xl bg-accent/10 border border-accent/20 flex items-center justify-center text-accent">
+            <i class="fa-solid fa-stopwatch"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Actionable Advisory Recommendation Box -->
+      <div id="recommendationBox" class="p-4 rounded-xl border border-amber-500/30 bg-amber-500/10 flex items-start space-x-3">
+        <i class="fa-solid fa-triangle-exclamation text-amber-400 text-lg mt-0.5"></i>
+        <div>
+          <div class="text-xs font-bold uppercase tracking-wider text-amber-400">Agent Advisory Recommendation</div>
+          <p id="recommendationText" class="text-sm text-slate-200 mt-1"></p>
+        </div>
+      </div>
+
+      <!-- Detailed Autopsy Cards -->
+      <div class="space-y-4">
+        <h3 class="text-sm font-bold uppercase tracking-wider text-slate-400 flex items-center space-x-2">
+          <i class="fa-solid fa-clipboard-check text-emerald-400"></i>
+          <span>Factual Claim Decomposition & Evidence Corroboration</span>
+        </h3>
+        <div id="claimsContainer" class="space-y-4"></div>
+      </div>
+
+      <!-- SharedOS Cryptographic Trail Drawer -->
+      <div class="border border-slate-800 rounded-2xl bg-slate-900/60 overflow-hidden">
+        <div class="p-4 bg-slate-900/90 border-b border-slate-800 flex items-center justify-between">
+          <div class="flex items-center space-x-2">
+            <i class="fa-solid fa-fingerprint text-emerald-400"></i>
+            <span class="text-xs font-bold uppercase tracking-wider text-slate-200">SharedOS Cryptographic Turn Audit Trail</span>
+          </div>
+          <span id="auditIdLabel" class="text-xs font-mono-code text-slate-400">ID: as-audit-XXXX</span>
+        </div>
+        <div id="trailLogContainer" class="p-4 space-y-2 font-mono-code text-xs text-slate-300 max-h-64 overflow-y-auto"></div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <footer class="border-t border-slate-800/80 bg-slate-950 py-6 text-center text-xs text-slate-500">
+    <p>AgentScout · Built natively on SharedOS for the Shared OS Hackathon · 5 Credits / Audit</p>
+  </footer>
+
+  <script>
+    const fixtures = {
+      headphone_demo: {
+        question: "Find the best noise cancelling headphones under Rs 3,000 in India with high battery life.",
+        answer: "The boAt Rockerz 450 is a top choice with 15 hours battery life at Rs. 1,499. For active noise cancellation, the Realme Buds Air 5 Pro provides 50dB ANC and costs Rs. 2,499 with quick charging."
+      },
+      sony_anc_demo: {
+        question: "What is the battery life of Sony WH-1000XM5?",
+        answer: "The Sony WH-1000XM5 features 40 hours of continuous music playback with ANC enabled."
+      }
+    };
+
+    function loadFixture(key) {
+      if (fixtures[key]) {
+        document.getElementById('inputQuestion').value = fixtures[key].question;
+        document.getElementById('inputAnswer').value = fixtures[key].answer;
+      }
+    }
+
+    async function handleAuditSubmit(e) {
+      e.preventDefault();
+      const question = document.getElementById('inputQuestion').value.trim();
+      const answer = document.getElementById('inputAnswer').value.trim();
+      if (!question || !answer) return;
+
+      document.getElementById('loadingState').classList.remove('hidden');
+      document.getElementById('resultsSection').classList.add('hidden');
+      document.getElementById('btnSubmit').disabled = true;
+
+      try {
+        const res = await fetch('/audit', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-sharedos-agent-id': 'Arena-Autopsy-UI'
+          },
+          body: JSON.stringify({ question, answer })
+        });
+
+        if (!res.ok) throw new Error('Audit service error: ' + res.statusText);
+        const data = await res.json();
+
+        let trailData = null;
+        try {
+          const trailRes = await fetch(`/api/audit-trail/${data.audit_id}`);
+          if (trailRes.ok) trailData = await trailRes.json();
+        } catch (err) {
+          console.warn('Trail lookup error', err);
+        }
+
+        renderResults(data, trailData);
+      } catch (err) {
+        alert('Audit Error: ' + err.message);
+      } finally {
+        document.getElementById('loadingState').classList.add('hidden');
+        document.getElementById('btnSubmit').disabled = false;
+      }
+    }
+
+    function renderResults(data, trailData) {
+      document.getElementById('resultsSection').classList.remove('hidden');
+      
+      const score = data.reliability;
+      document.getElementById('scoreVal').innerText = score;
+      document.getElementById('statTotal').innerText = data.stats.total_claims;
+      document.getElementById('statSupported').innerText = data.stats.supported;
+      document.getElementById('statContradicted').innerText = data.stats.contradicted;
+      document.getElementById('statUnverified').innerText = data.stats.unverified;
+      document.getElementById('statLatency').innerText = `${data.execution_latency_ms}ms`;
+      document.getElementById('auditIdLabel').innerText = `ID: ${data.audit_id}`;
+      document.getElementById('recommendationText').innerText = data.recommendation;
+
+      const scoreCircle = document.getElementById('scoreCircle');
+      const badge = document.getElementById('verdictSummaryBadge');
+      badge.innerText = data.verdict_summary.replace(/_/g, ' ');
+
+      if (score >= 80) {
+        scoreCircle.className = 'w-16 h-16 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex flex-col items-center justify-center font-black text-emerald-400';
+        badge.className = 'text-sm font-black text-emerald-400 uppercase mt-0.5';
+      } else if (score >= 50) {
+        scoreCircle.className = 'w-16 h-16 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex flex-col items-center justify-center font-black text-amber-400';
+        badge.className = 'text-sm font-black text-amber-400 uppercase mt-0.5';
+      } else {
+        scoreCircle.className = 'w-16 h-16 rounded-2xl bg-rose-500/10 border border-rose-500/30 flex flex-col items-center justify-center font-black text-rose-400';
+        badge.className = 'text-sm font-black text-rose-400 uppercase mt-0.5';
+      }
+
+      const container = document.getElementById('claimsContainer');
+      container.innerHTML = '';
+
+      data.claims.forEach(c => {
+        const isSupported = c.verdict === 'SUPPORTED';
+        const isContradicted = c.verdict === 'CONTRADICTED';
+        const cardBorder = isSupported ? 'border-emerald-500/30 bg-emerald-500/5' : isContradicted ? 'border-rose-500/40 bg-rose-500/5' : 'border-slate-800 bg-slate-900/50';
+        const badgeColor = isSupported ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' : isContradicted ? 'bg-rose-500/20 text-rose-400 border-rose-500/30' : 'bg-slate-700 text-slate-300 border-slate-600';
+        const icon = isSupported ? 'fa-check' : isContradicted ? 'fa-xmark' : 'fa-question';
+
+        let evidenceHtml = '';
+        if (c.evidence && c.evidence.length > 0) {
+          evidenceHtml = `
+            <div class="mt-3 pt-3 border-t border-slate-800/80 space-y-2">
+              <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Independent Evidence Sources:</div>
+              ${c.evidence.map(ev => `
+                <div class="text-xs bg-slate-950/80 border border-slate-800 p-2.5 rounded-lg space-y-1 font-mono-code">
+                  <div class="text-emerald-400 font-semibold truncate flex items-center justify-between">
+                    <span>${ev.source_title || 'Web Citation'}</span>
+                    <a href="${ev.source_url}" target="_blank" class="text-accent hover:underline text-[10px] ml-2"><i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+                  </div>
+                  <div class="text-slate-300 text-[11px] leading-relaxed">"${ev.snippet}"</div>
+                </div>
+              `).join('')}
+            </div>
+          `;
+        }
+
+        let contradictionBox = '';
+        if (c.contradiction_details) {
+          contradictionBox = `
+            <div class="mt-3 p-3 rounded-lg bg-rose-500/10 border border-rose-500/20 text-xs text-rose-300 space-y-1 font-mono-code">
+              <div><strong>Contradiction:</strong> ${c.contradiction_details}</div>
+              ${c.correction ? `<div class="text-emerald-400 font-bold"><strong>Correction:</strong> ${c.correction}</div>` : ''}
+            </div>
+          `;
+        }
+
+        const card = `
+          <div class="border ${cardBorder} rounded-xl p-5 space-y-2">
+            <div class="flex items-start justify-between gap-4">
+              <div class="flex items-start space-x-3">
+                <span class="inline-flex items-center justify-center w-6 h-6 rounded-md ${badgeColor} text-xs font-bold shrink-0 mt-0.5 border">
+                  <i class="fa-solid ${icon}"></i>
+                </span>
+                <div>
+                  <div class="text-xs uppercase font-mono-code text-slate-400 font-bold">Claim #${c.claim_id} · Confidence ${Math.round(c.confidence * 100)}%</div>
+                  <div class="text-sm font-medium text-slate-100 mt-1">"${c.claim_text}"</div>
+                </div>
+              </div>
+              <span class="px-2.5 py-1 rounded-md text-xs font-black uppercase tracking-wider border shrink-0 ${badgeColor}">${c.verdict}</span>
+            </div>
+            ${contradictionBox}
+            ${evidenceHtml}
+          </div>
+        `;
+        container.innerHTML += card;
+      });
+
+      const trailContainer = document.getElementById('trailLogContainer');
+      trailContainer.innerHTML = '';
+      if (trailData && trailData.trail) {
+        trailData.trail.forEach(t => {
+          trailContainer.innerHTML += `
+            <div class="p-2 bg-slate-950 rounded border border-slate-800 flex items-center justify-between">
+              <div>
+                <span class="text-emerald-400 font-bold">[${t.step}]</span>
+                <span class="text-slate-400 ml-2">${t.iso_time}</span>
+              </div>
+              <span class="text-slate-500 text-[10px] truncate max-w-xs">Hash: ${t.event_hash}</span>
+            </div>
+          `;
+        });
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => loadFixture('headphone_demo'));
+  </script>
+</body>
+</html>
