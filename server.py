@@ -134,18 +134,38 @@ def get_api_listing():
     })
 
 
+@app.get("/mcp")
+@app.get("/api/mcp")
+def http_mcp_info():
+    """Returns MCP server metadata and available tools description for GET requests."""
+    from mcp_server import TOOLS_DEFINITIONS
+    return JSONResponse(content={
+        "protocolVersion": "2024-11-05",
+        "serverInfo": {"name": "agentscout-mcp", "version": "1.0.0"},
+        "transport": "HTTP JSON-RPC 2.0",
+        "endpoints": {
+            "post_jsonrpc": "/mcp",
+            "alias": "/api/mcp"
+        },
+        "capabilities": {"tools": {}},
+        "tools": TOOLS_DEFINITIONS,
+        "usage": "Send POST /mcp with JSON-RPC 2.0 payload {'jsonrpc':'2.0','id':1,'method':'tools/list'} or {'method':'tools/call', ...}"
+    })
+
+
+@app.post("/mcp")
 @app.post("/api/mcp")
 async def http_mcp_handler(request: Request):
     """HTTP JSON-RPC MCP Endpoint for remote agents calling tools over HTTP."""
     from mcp_server import handle_tool_call, TOOLS_DEFINITIONS
     try:
         body = await request.json()
-        req_id = body.get("id")
-        method = body.get("method")
+        req_id = body.get("id", 1)
+        method = body.get("method", "")
         
-        if method == "tools/list":
+        if method in ("tools/list", "toolsList"):
             return JSONResponse(content={"jsonrpc": "2.0", "id": req_id, "result": {"tools": TOOLS_DEFINITIONS}})
-        elif method == "tools/call":
+        elif method in ("tools/call", "toolsCall"):
             params = body.get("params", {})
             result = handle_tool_call(params.get("name"), params.get("arguments", {}))
             return JSONResponse(content={"jsonrpc": "2.0", "id": req_id, "result": {"content": [{"type": "text", "text": json.dumps(result, indent=2)}]}})
@@ -154,7 +174,7 @@ async def http_mcp_handler(request: Request):
                 "jsonrpc": "2.0", "id": req_id,
                 "result": {"protocolVersion": "2024-11-05", "serverInfo": {"name": "agentscout-mcp", "version": "1.0.0"}, "capabilities": {"tools": {}}}
             })
-        return JSONResponse(content={"jsonrpc": "2.0", "id": req_id, "result": {}})
+        return JSONResponse(content={"jsonrpc": "2.0", "id": req_id, "result": {"status": "ok", "tools": TOOLS_DEFINITIONS}})
     except Exception as e:
         return JSONResponse(status_code=400, content={"jsonrpc": "2.0", "id": None, "error": {"code": -32603, "message": str(e)}})
 
