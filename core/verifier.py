@@ -121,17 +121,34 @@ class ClaimVerifier:
         claim_prices = re.findall(price_pattern, c_lower)
         if claim_prices:
             for cp in claim_prices:
-                clean_cp = cp.replace(",", "").strip()
+                clean_cp = re.sub(r"[^\d.]", "", cp)
+                if not clean_cp:
+                    continue
+                
                 ev_prices = re.findall(price_pattern, combined_snippets)
-                ev_clean = [p.replace(",", "").strip() for p in ev_prices]
+                ev_clean = [re.sub(r"[^\d.]", "", p) for p in ev_prices if re.sub(r"[^\d.]", "", p)]
                 
                 # If clean claim price is present in evidence prices, it's supported!
                 if clean_cp in ev_clean:
-                    continue
+                    conf = min(0.98, 0.88 + (top_weight * 0.10))
+                    return (VerdictEnum.SUPPORTED, conf, None, None)
 
                 if ev_clean:
                     # Filter out tiny artifacts (< 100) if the claim price is large (> 500)
-                    valid_ev_prices = [p for p in ev_prices if float(p.replace(",", "")) >= 100] or ev_prices
+                    valid_ev_prices = []
+                    for p in ev_prices:
+                        clean_p = re.sub(r"[^\d.]", "", p)
+                        if clean_p:
+                            try:
+                                val = float(clean_p)
+                                if val >= 100 or float(clean_cp) < 100:
+                                    valid_ev_prices.append(p)
+                            except Exception:
+                                pass
+                    
+                    if not valid_ev_prices:
+                        valid_ev_prices = ev_prices
+
                     correct_price = valid_ev_prices[0]
                     curr_match = re.search(r"(rs\.?|inr|₹|\$|usd|eur|€|gbp|£)", c_lower)
                     curr_sym = "Rs." if curr_match and curr_match.group(1).lower().startswith("rs") else (curr_match.group(1) if curr_match else "Rs.")
@@ -142,7 +159,6 @@ class ClaimVerifier:
                         f"Claim states price {curr_sym} {cp}, but verified manufacturer/retailer catalog confirms {curr_sym} {correct_price}.",
                         f"Actual verified price is {curr_sym} {correct_price}"
                     )
-
 
         # ---------------------------------------------------------
         # 2. Generalized Numeric & Specification Contradiction
@@ -166,7 +182,7 @@ class ClaimVerifier:
                 if any(k in c_lower for k in ["anc", "nc on", "nc enabled", "noise cancel"]):
                     for snippet in [e.snippet for e in evidence]:
                         s_lower = snippet.lower()
-                        nc_on_match = re.search(r"(\d+)\s*(?:hours|hrs|hr)?(?:\s*of\s*battery(?:\s*life)?)?\s*(?:with|\()?\s*(?:noise\s*cancell?ation\s*(?:on|enabled)|nc\s*on|with\s*anc|anc\s*on|anc\s*enabled)", s_lower)
+                        nc_on_match = re.search(r"(\d+)\s*(?:hours|hrs|hr)?[^0-9\.\;]*?\b(?:noise\s*cancell?ation|anc|nc)\b[^0-9\.\;]*?\b(on|enabled)\b", s_lower)
                         if nc_on_match:
                             true_nc_val = nc_on_match.group(1)
                             if c_val != true_nc_val:
@@ -174,9 +190,8 @@ class ClaimVerifier:
                                     VerdictEnum.CONTRADICTED,
                                     0.98,
                                     f"Claim asserts {c_val} {norm_c_unit} with ANC enabled, but official specifications confirm {true_nc_val} {norm_c_unit} with ANC ({c_val} {norm_c_unit} only with ANC disabled).",
-                                    f"Battery life is {true_nc_val} {norm_c_unit} with ANC enabled ({c_val} {norm_c_unit} without ANC)."
+                                    f"Verified battery life is {true_nc_val} {norm_c_unit} with ANC enabled"
                                 )
-
 
                 if norm_c_unit in ev_unit_map:
                     matching_ev_vals = ev_unit_map[norm_c_unit]

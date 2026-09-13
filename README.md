@@ -83,7 +83,7 @@ To ensure complete transparency and credibility during judging:
 - **Verification Engine:** Uses deterministic regex pattern matching, numeric unit normalization, and semantic keyword overlap for fast, reproducible evaluation ($<1$s latency); optional GPT-4o-mini reasoning is invoked when `OPENAI_API_KEY` is provided.
 - **SharedOS Compliance & Peer Federation:** Operates as a SharedNet-compliant HTTP server enforcing HMAC-SHA256 turn authorization by default. Dials SharedNet peers via signed HMAC-SHA256 handshakes (`POST /sharednet/peers/dial`) and maintains active peer routing tables (`GET /sharednet/peers`).
 - **Cryptographic Audit Trail:** Logs 5 distinct turns (`TURN_1_INGRESS` to `TURN_5_EGRESS`) with linked SHA-256 event hashes permanently saved to `.sharedos/audit_log.jsonl`.
-- **Search Engine:** All searches query live public REST APIs (Wikipedia Summary/OpenSearch) and DuckDuckGo Lite. Zero static fallback catalogs are used; if live networks return no evidence, claims are marked `UNVERIFIED`.
+- **Search Engine:** All searches query live public REST APIs (Wikipedia REST API) and DuckDuckGo HTML parser, complemented by an authoritative multi-domain verification corpus fallback (`AUTHORITATIVE_CORPUS`) for offline or throttled sandbox execution to prevent unhandled network drops.
 - **Arena Credits Ledger:** Enforces real balance tracking in `.sharedos/ledger.json` (100 credits initial grant, 5 credits billed per audit/repair, HTTP 403 on insufficient balance, and full CSV export at `GET /ledger/export`).
 
 ---

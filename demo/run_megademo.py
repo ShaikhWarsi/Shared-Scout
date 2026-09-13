@@ -143,7 +143,10 @@ def run_megademo():
 
     print(f"\n  [REPAIRED RELIABILITY]: {gate_res.final_reliability} / 100")
     print(f"  [FINAL GATE STATUS]:   ✅ {gate_res.status.value}")
-    print("  [DISPATCH STATUS]:     CLEARED FOR EGRESS TO HUMAN USER")
+    if gate_res.status == GateStatusEnum.REPAIRED_AND_APPROVED or gate_res.status == GateStatusEnum.APPROVED_CLEAN:
+        print("  [DISPATCH STATUS]:     CLEARED FOR EGRESS TO HUMAN USER")
+    else:
+        print("  [DISPATCH STATUS]:     BLOCKED FROM EGRESS TO HUMAN USER")
     time.sleep(1.0)
 
     # -------------------------------------------------------------
@@ -152,7 +155,7 @@ def run_megademo():
     print_banner("ACT 5: 🔏 CRYPTOGRAPHIC PROOF CHAIN & ARENA SETTLEMENT", "-")
     audit_id = gate_res.audit_autopsy.audit_id
     trail = service.audit_history.get(audit_id)
-
+    verify_res = {}
 
     if trail:
         verify_res = trail.verify_integrity()
@@ -169,10 +172,10 @@ def run_megademo():
     print(f"    Latency:            {elapsed:.2f}s total pipeline execution")
 
     print_banner("DEMO SUMMARY: AGENTSCOUT HAS SECURED THE AGENT", "=")
-    print("  1. Flawed Draft Intercepted  -> BLOCKED (51/100)")
-    print("  2. Adversarial Attacks Run   -> 2 Contradictions Caught by Committee")
-    print("  3. Surgical Repair Applied   -> APPROVED (96/100)")
-    print("  4. Immutable Proof Stored    -> SHA-256 Block Persisted")
+    print(f"  1. Flawed Draft Intercepted  -> BLOCKED ({gate_res.initial_reliability}/100)")
+    print(f"  2. Adversarial Attacks Run   -> {gate_res.audit_autopsy.stats.contradicted} Contradiction(s) Caught by Committee")
+    print(f"  3. Surgical Repair Applied   -> {gate_res.status.value} ({gate_res.final_reliability}/100)")
+    print(f"  4. Immutable Proof Stored    -> SHA-256 Block Persisted ({verify_res.get('chain_depth', 5)} Turns)")
     print("=" * 70 + "\n")
 
 
