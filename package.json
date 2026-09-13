@@ -9,6 +9,7 @@
     "sharedos:bridge": "node sharedos/kernel_node_bridge.mjs"
   },
   "dependencies": {
-    "@aicoo/sharedos": "^0.1.0-alpha.5"
+    "@aicoo/sharedos": "^0.1.0-alpha.5",
+    "sharednet": "^0.1.8"
   }
 }
