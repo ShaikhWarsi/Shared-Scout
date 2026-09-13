@@ -3,10 +3,21 @@ import os
 import json
 import pytest
 from fastapi.testclient import TestClient
-from server import app, service
+from server import app, service, cloud_adapter, ledger
 from core.schemas import EvidenceItem
 
 client = TestClient(app)
+
+
+@pytest.fixture(autouse=True)
+def reset_test_ledger():
+    ledger.accounts = {}
+    ledger.transactions = []
+
+
+def get_signed_headers(agent_id: str, payload_dict: dict) -> dict:
+    raw_body = json.dumps(payload_dict, separators=(",", ":")).encode("utf-8")
+    return cloud_adapter.get_auth_headers(agent_id, raw_body)
 
 
 def test_manifest_endpoint():
@@ -23,6 +34,26 @@ def test_purpose_endpoint():
     assert response.status_code == 200
     data = response.json()
     assert "Independent multi-source factual verification" in data["purpose"]
+
+
+def test_credits_endpoint():
+    caller_id = "Agent-Ledger-Test-01"
+    response = client.get(f"/credits/{caller_id}")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["caller_id"] == caller_id
+    assert data["credit_balance"] == 100
+    assert data["status"] == "ACTIVE"
+
+
+def test_topup_endpoint():
+    caller_id = "Agent-Topup-Test"
+    response = client.post(f"/credits/{caller_id}/topup?amount=50")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["caller_id"] == caller_id
+    assert data["credit_balance"] == 150
+    assert data["status"] == "TOPUP_SUCCESS"
 
 
 def test_audit_api_endpoint(monkeypatch):
@@ -53,7 +84,9 @@ def test_audit_api_endpoint(monkeypatch):
         "question": "Find the best noise cancelling headphones under Rs 3,000 in India.",
         "answer": "boAt Rockerz 450 is Rs. 1,499 with 15h battery. Realme Buds Air 5 Pro is Rs. 2,499 with 50dB ANC."
     }
-    response = client.post("/audit", json=payload, headers={"x-sharedos-agent-id": "ArenaAgent-99"})
+    caller = "ArenaAgent-99"
+    headers = get_signed_headers(caller, payload)
+    response = client.post("/audit", json=payload, headers=headers)
     assert response.status_code == 200
     data = response.json()
     assert data["reliability"] <= 60
@@ -62,6 +95,10 @@ def test_audit_api_endpoint(monkeypatch):
     assert data["credits_billed"] == 5
     assert "repaired_answer" in data
     
+    # Check that credits were deducted
+    bal_res = client.get(f"/credits/{caller}")
+    assert bal_res.json()["credit_balance"] == 95
+
     # Check audit trail retrieval
     trail_res = client.get(f"/api/audit-trail/{data['audit_id']}")
     assert trail_res.status_code == 200
@@ -85,14 +122,16 @@ def test_repair_endpoint(monkeypatch):
         "question": "Find headphones under 3000",
         "answer": "The Realme Buds Air 5 Pro costs Rs. 2,499 with 50dB ANC."
     }
-    response = client.post("/repair", json=payload, headers={"x-sharedos-agent-id": "RepairAgent-1"})
+    caller = "RepairAgent-1"
+    headers = get_signed_headers(caller, payload)
+    response = client.post("/repair", json=payload, headers=headers)
     assert response.status_code == 200
     data = response.json()
     assert data["stats"]["contradicted"] >= 1
     assert "Rs. 4,999" in data["repaired_answer"]
 
 
-def test_hmac_signature_verification_and_401_rejection(monkeypatch):
+def test_hmac_signature_verification_and_401_rejection():
     """Verifies that invalid HMAC signatures are rejected with HTTP 401."""
     payload = {
         "question": "Test query",
@@ -112,12 +151,30 @@ def test_hmac_signature_verification_and_401_rejection(monkeypatch):
     assert "SharedOS Authentication Failed" in response.json()["detail"]
 
 
+def test_insufficient_credits_403_rejection():
+    """Verifies that agents with 0 or insufficient credits receive HTTP 403."""
+    caller = "BrokeAgent-007"
+    ledger.accounts[caller] = 2  # Less than required 5 credits
+    
+    payload = {
+        "question": "Test query",
+        "answer": "Sample answer statement."
+    }
+    headers = get_signed_headers(caller, payload)
+    response = client.post("/audit", json=payload, headers=headers)
+    assert response.status_code == 403
+    assert "Insufficient Arena Credits" in response.json()["detail"]
+
+
 def test_batch_audit_endpoint():
     payload = [
         {"question": "boAt price", "answer": "boAt Rockerz 450 is Rs. 1,499."},
         {"question": "Python release", "answer": "Python was created by Guido van Rossum in 1991."}
     ]
-    response = client.post("/batch-audit", json=payload, headers={"x-sharedos-agent-id": "BatchAgent-1"})
+    caller = "BatchAgent-1"
+    raw_body = json.dumps(payload, separators=(",", ":")).encode("utf-8")
+    headers = cloud_adapter.get_auth_headers(caller, raw_body)
+    response = client.post("/batch-audit", json=payload, headers=headers)
     assert response.status_code == 200
     data = response.json()
     assert len(data) == 2

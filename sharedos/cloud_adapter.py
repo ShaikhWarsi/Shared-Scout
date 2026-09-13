@@ -17,7 +17,7 @@ class SharedOSCloudAdapter:
         self.node_id = node_id
         self.purpose = SHAREDOS_PURPOSE_STRING
         self.secret_key = os.getenv("SHAREDOS_SECRET_KEY", "sharedos_production_secret_key_v1")
-        self.enforce_hmac = os.getenv("SHAREDOS_ENFORCE_HMAC", "false").lower() in {"true", "1", "yes"}
+        self.enforce_hmac = os.getenv("SHAREDOS_ENFORCE_HMAC", "true").lower() in {"true", "1", "yes"}
         self.connected_since = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
         self.active_turns_synced = 0
 
@@ -46,6 +46,14 @@ class SharedOSCloudAdapter:
     def generate_signature(self, raw_body: bytes) -> str:
         """Utility for calling agents to sign their payloads."""
         return hmac.new(self.secret_key.encode("utf-8"), raw_body, hashlib.sha256).hexdigest()
+
+    def get_auth_headers(self, agent_id: str, raw_body: bytes) -> Dict[str, str]:
+        """Generates full authenticated SharedNet request headers."""
+        return {
+            "x-sharedos-agent-id": agent_id,
+            "x-sharedos-signature": self.generate_signature(raw_body),
+            "Content-Type": "application/json"
+        }
 
     def get_node_status(self) -> Dict[str, Any]:
         return {

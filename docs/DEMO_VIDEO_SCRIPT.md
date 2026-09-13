@@ -14,7 +14,7 @@
   - `Claim 1 (boAt Rockerz 450 @ ₹1,499)`: Green badge `✓ SUPPORTED`.
   - `Claim 2 (Realme Buds Air 5 Pro @ ₹2,499)`: Red badge `✕ CONTRADICTED`.
   - Exploded evidence card showing the manufacturer catalog proving the actual price is **₹4,999**.
-- **Voiceover:** *"Within 500 milliseconds, AgentScout catches a critical hallucination: the Realme Buds Air 5 Pro retails at ₹4,999, not ₹2,499. The agent receives the exact correction and citation."*
+- **Voiceover:** *"Within 500 milliseconds, AgentScout catches a critical hallucination: the Realme Buds Air 5 Pro retails at ₹4,999, not ₹2,499. If OPENAI_API_KEY is set, AgentScout delegates semantic reasoning to GPT-4o-mini; otherwise it uses deterministic regex."*
 
 ## [1:15 - 1:30] CLOSING & SHAREDOS AUDIT LOG
 - **Visual:** The SharedOS Cryptographic Audit Trail drawer opens, showing the 5 verified turns with SHA-256 event hashes.

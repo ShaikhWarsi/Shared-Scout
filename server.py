@@ -16,6 +16,7 @@ from sharedos.service import AgentScoutService
 from sharedos.manifest import SHAREDOS_MANIFEST, SHAREDOS_PURPOSE_STRING
 from sharedos.cloud_adapter import SharedOSCloudAdapter
 from arena.pitch_bot import ArenaPitchAgent
+from arena.ledger import ArenaLedger
 
 app = FastAPI(
     title="AgentScout - SharedOS Verification Layer",
@@ -34,6 +35,7 @@ app.add_middleware(
 service = AgentScoutService()
 cloud_adapter = SharedOSCloudAdapter()
 pitch_agent = ArenaPitchAgent()
+ledger = ArenaLedger()
 
 # In-Memory Rate Limiter (Max 60 requests/minute per caller agent)
 RATE_LIMIT = 60
@@ -59,6 +61,13 @@ async def authenticate_caller(request: Request) -> str:
             status_code=401,
             detail="SharedOS Authentication Failed: Invalid or missing x-sharedos-signature HMAC token."
         )
+    # Check credit balance
+    balance = ledger.get_balance(caller_id)
+    if balance < 5:
+        raise HTTPException(
+            status_code=403,
+            detail=f"Forbidden: Insufficient Arena Credits for agent '{caller_id}'. Balance: {balance}, Required: 5."
+        )
     return caller_id
 
 
@@ -81,11 +90,33 @@ def get_node_info():
     return JSONResponse(content=cloud_adapter.get_node_status())
 
 
+@app.get("/credits/{caller_id}")
+def get_caller_credits(caller_id: str):
+    """Returns the live Arena credits balance and transaction ledger for a caller agent."""
+    return JSONResponse(content=ledger.get_account_summary(caller_id))
+
+
+@app.post("/credits/{caller_id}/topup")
+def topup_caller_credits(caller_id: str, amount: int = 50):
+    """Credits Arena tokens to the specified agent account."""
+    new_balance = ledger.add_credits(caller_id, amount, reason="MANUAL_TOPUP")
+    return JSONResponse(content={
+        "caller_id": caller_id,
+        "credit_balance": new_balance,
+        "status": "TOPUP_SUCCESS"
+    })
+
+
 @app.post("/audit", response_model=AuditResponse)
 async def audit_answer(req: AuditRequest, request: Request, caller_id: str = Depends(authenticate_caller)):
     try:
+        success, bal, msg = ledger.deduct_credits(caller_id, amount=5, service_name="POST /audit")
+        if not success:
+            raise HTTPException(status_code=403, detail=msg)
         response, trail = service.execute_audit(req, caller_agent_id=caller_id)
         return response
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Audit execution error: {str(e)}")
 
@@ -94,8 +125,13 @@ async def audit_answer(req: AuditRequest, request: Request, caller_id: str = Dep
 async def repair_answer(req: AuditRequest, request: Request, caller_id: str = Depends(authenticate_caller)):
     """Executes audit and returns verified auto-repaired answer text."""
     try:
+        success, bal, msg = ledger.deduct_credits(caller_id, amount=5, service_name="POST /repair")
+        if not success:
+            raise HTTPException(status_code=403, detail=msg)
         response, _ = service.execute_audit(req, caller_agent_id=caller_id)
         return response
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Repair execution error: {str(e)}")
 
@@ -103,6 +139,12 @@ async def repair_answer(req: AuditRequest, request: Request, caller_id: str = De
 @app.post("/batch-audit", response_model=List[AuditResponse])
 async def batch_audit_answers(requests: List[AuditRequest], request: Request, caller_id: str = Depends(authenticate_caller)):
     """Audits multiple agent answers in a single batch call."""
+    req_count = min(len(requests), 5)
+    total_fee = req_count * 5
+    success, bal, msg = ledger.deduct_credits(caller_id, amount=total_fee, service_name="POST /batch-audit")
+    if not success:
+        raise HTTPException(status_code=403, detail=msg)
+
     results = []
     for req in requests[:5]:  # Cap at 5 per batch for safety
         res, _ = service.execute_audit(req, caller_agent_id=caller_id)
